@@ -255,7 +255,7 @@ const resize = () => {
 	const heightZoomPercent = (window.innerHeight) / 480;
 
 	const scale = Math.min(widthZoomPercent, heightZoomPercent);
-	if (scale < 1.0 || document.fullscreenElement || settings.kiosk) {
+	if (scale < 1.0 || document.fullscreenElement) {
 		document.querySelector('#container').style.zoom = scale;
 	} else {
 		document.querySelector('#container').style.zoom = 'unset';

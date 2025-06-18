@@ -15,12 +15,6 @@ const init = () => {
 		changeAction: wideScreenChange,
 		sticky: true,
 	});
-	settings.kiosk = new Setting('kiosk', {
-		name: 'Kiosk',
-		defaultValue: false,
-		changeAction: kioskChange,
-		sticky: false,
-	});
 	settings.speed = new Setting('speed', {
 		name: 'Speed',
 		type: 'select',
@@ -72,16 +66,6 @@ const wideScreenChange = (value) => {
 		container.classList.add('wide');
 	} else {
 		container.classList.remove('wide');
-	}
-};
-
-const kioskChange = (value) => {
-	const body = document.querySelector('body');
-	if (value) {
-		body.classList.add('kiosk');
-		window.dispatchEvent(new Event('resize'));
-	} else {
-		body.classList.remove('kiosk');
 	}
 };
 

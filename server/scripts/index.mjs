@@ -97,9 +97,7 @@ const init = () => {
 		btnGetGpsClick();
 	}
 
-	// if kiosk mode was set via the query string, also play immediately
-	settings.kiosk.value = parsedParameters['settings-kiosk-checkbox'] === 'true';
-	const play = parsedParameters['settings-kiosk-checkbox'] ?? localStorage.getItem('play');
+	const play = localStorage.getItem('play');
 	if (play === null || play === 'true') postMessage('navButton', 'play');
 
 	document.querySelector('#btnClearQuery').addEventListener('click', () => {

@@ -20,12 +20,6 @@ body {
 			color: lightblue;
 		}
 	}
-
-	&.kiosk {
-		margin: 0px;
-		overflow: hidden;
-		width: 100vw;
-	}
 }
 
 #divQuery {
@@ -141,10 +135,6 @@ body {
 	&.wide {
 		max-width: 854px;
 	}
-}
-
-.kiosk #divTwc {
-	max-width: unset;
 }
 
 #divTwcLeft {
@@ -320,14 +310,6 @@ body {
 	background: url(../images/backgrounds/1-wide.png)
 }
 
-#divTwc:fullscreen #container,
-.kiosk #divTwc #container {
-	// background-image: none;
-	width: unset;
-	height: unset;
-	transform-origin: unset;
-}
-
 #loading {
 	width: 640px;
 	height: 480px;
@@ -416,8 +398,7 @@ body {
 	transform: scale(0.75);
 }
 
-#divTwc:fullscreen,
-.kiosk #divTwc {
+#divTwc:fullscreen {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -428,13 +409,11 @@ body {
 	}
 }
 
-#divTwc:fullscreen #display,
-.kiosk #divTwc #display {
+#divTwc:fullscreen #display {
 	position: relative;
 }
 
-#divTwc:fullscreen #divTwcBottom,
-.kiosk #divTwc #divTwcBottom {
+#divTwc:fullscreen #divTwcBottom {
 	display: flex;
 	flex-direction: row;
 	background-color: rgb(0 0 0 / 0.5);
@@ -442,14 +421,6 @@ body {
 	width: 100%;
 	position: absolute;
 	bottom: 0px;
-}
-
-.kiosk {
-	#divTwc #divTwcBottom {
-		>div {
-			display: none;
-		}
-	}
 }
 
 .navButton {
@@ -766,17 +737,4 @@ body {
 
 #share-link-instructions {
 	display: none;
-}
-
-.kiosk {
-
-	#divQuery,
-	>.info,
-	>.related-links,
-	>.heading,
-	#enabledDisplays,
-	#settings,
-	#divInfo {
-		display: none;
-	}
 }
