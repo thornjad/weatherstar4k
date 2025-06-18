@@ -79,21 +79,8 @@ const init = () => {
 	});
 	window.autoComplete = autoComplete;
 
-	// Load location from localStorage
-	const query = localStorage.getItem('latLonQuery');
-	const latLon = localStorage.getItem('latLon');
-	const fromGPS = localStorage.getItem('latLonFromGPS');
-	if (query && latLon && !fromGPS) {
-		const txtAddress = document.querySelector(TXT_ADDRESS_SELECTOR);
-		txtAddress.value = query;
-		loadData(JSON.parse(latLon));
-	}
-	if (fromGPS) {
-		btnGetGpsClick();
-	}
-
-	const play = localStorage.getItem('play');
-	if (play === null || play === 'true') postMessage('navButton', 'play');
+	// Start with play state enabled by default
+	postMessage('navButton', 'play');
 
 	document.querySelector('#btnClearQuery').addEventListener('click', () => {
 		document.querySelector('#spanCity').innerHTML = '';
@@ -102,12 +89,10 @@ const init = () => {
 		document.querySelector('#spanRadarId').innerHTML = '';
 		document.querySelector('#spanZoneId').innerHTML = '';
 
-		localStorage.removeItem('play');
+		// Reset to default play state
 		postMessage('navButton', 'play');
 
-		localStorage.removeItem('latLonQuery');
-		localStorage.removeItem('latLon');
-		localStorage.removeItem('latLonFromGPS');
+		// Clear GPS button state
 		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
 	});
 
@@ -127,7 +112,6 @@ const autocompleteOnSelect = async (suggestion) => {
 
 	const loc = data.locations[0];
 	if (loc) {
-		localStorage.removeItem('latLonFromGPS');
 		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
 		doRedirectToGeometry(loc.feature.geometry);
 	} else {
@@ -137,11 +121,7 @@ const autocompleteOnSelect = async (suggestion) => {
 
 const doRedirectToGeometry = (geom, haveDataCallback) => {
 	const latLon = { lat: round2(geom.y, 4), lon: round2(geom.x, 4) };
-	// Save the query
-	localStorage.setItem('latLonQuery', document.querySelector(TXT_ADDRESS_SELECTOR).value);
-	localStorage.setItem('latLon', JSON.stringify(latLon));
-
-	// get the data
+	// Load the data
 	loadData(latLon, haveDataCallback);
 };
 
@@ -355,7 +335,6 @@ const btnGetGpsClick = async () => {
 	// toggle first
 	if (btn.classList.contains('active')) {
 		btn.classList.remove('active');
-		localStorage.removeItem('latLonFromGPS');
 		return;
 	}
 
@@ -375,11 +354,8 @@ const getForecastFromLatLon = (latitude, longitude, fromGps = false) => {
 
 	doRedirectToGeometry({ y: latitude, x: longitude }, (point) => {
 		const location = point.properties.relativeLocation.properties;
-		// Save the query
+		// Update the display
 		const query = `${location.city}, ${location.state}`;
-		localStorage.setItem('latLon', JSON.stringify({ lat: latitude, lon: longitude }));
-		localStorage.setItem('latLonQuery', query);
-		localStorage.setItem('latLonFromGPS', fromGps);
 		txtAddress.value = `${location.city}, ${location.state}`;
 	});
 };

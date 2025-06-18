@@ -9,7 +9,6 @@ const mediaPlaying = new Setting('mediaPlaying', {
 	name: 'Media Playing',
 	type: 'boolean',
 	defaultValue: false,
-	sticky: true,
 });
 
 document.addEventListener('DOMContentLoaded', () => {

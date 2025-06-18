@@ -1,12 +1,10 @@
-const SETTINGS_KEY = 'ws4kp-settings';
-
+// Default options for settings
 const DEFAULTS = {
 	shortName: undefined,
 	name: undefined,
 	type: 'checkbox',
 	defaultValue: undefined,
 	changeAction: () => { },
-	sticky: true,
 	values: [],
 	visible: true,
 };
@@ -25,16 +23,12 @@ class Setting {
 		this.defaultValue = optionsMerged.defaultValue;
 		this.myValue = this.defaultValue;
 		this.type = optionsMerged?.type;
-		this.sticky = optionsMerged.sticky;
 		this.values = optionsMerged.values;
 		this.visible = optionsMerged.visible;
 		this.changeAction = optionsMerged.changeAction;
 
-		// get existing value if present
-		const storedValue = this.getFromLocalStorage();
-		if (this.sticky && storedValue !== null) {
-			this.myValue = storedValue;
-		}
+		// Always use default value
+		this.myValue = this.defaultValue;
 
 		// call the change function on startup
 		switch (this.type) {
@@ -108,7 +102,6 @@ class Setting {
 	checkboxChange(e) {
 		// update the state
 		this.myValue = e.target.checked;
-		this.storeToLocalStorage(this.myValue);
 
 		// call change action
 		this.changeAction(this.myValue);
@@ -121,41 +114,9 @@ class Setting {
 			// was a string, store as such
 			this.myValue = e.target.value;
 		}
-		this.storeToLocalStorage(this.myValue);
 
 		// call the change action
 		this.changeAction(this.myValue);
-	}
-
-	storeToLocalStorage(value) {
-		if (!this.sticky) return;
-		const allSettingsString = localStorage?.getItem(SETTINGS_KEY) ?? '{}';
-		const allSettings = JSON.parse(allSettingsString);
-		allSettings[this.shortName] = value;
-		localStorage?.setItem(SETTINGS_KEY, JSON.stringify(allSettings));
-	}
-
-	getFromLocalStorage() {
-		const allSettings = localStorage?.getItem(SETTINGS_KEY);
-		try {
-			if (allSettings) {
-				const storedValue = JSON.parse(allSettings)?.[this.shortName];
-				if (storedValue !== undefined) {
-					switch (this.type) {
-						case 'boolean':
-						case 'checkbox':
-							return storedValue;
-						case 'select':
-							return storedValue;
-						default:
-							return null;
-					}
-				}
-			}
-		} catch {
-			return null;
-		}
-		return null;
 	}
 
 	get value() {
@@ -175,7 +136,6 @@ class Setting {
 			default:
 				this.element.querySelector('input').checked = newValue;
 		}
-		this.storeToLocalStorage(this.myValue);
 
 		// call change action
 		this.changeAction(this.myValue);

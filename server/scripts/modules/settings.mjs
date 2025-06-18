@@ -13,7 +13,6 @@ const init = () => {
 		name: 'Widescreen',
 		defaultValue: false,
 		changeAction: wideScreenChange,
-		sticky: true,
 	});
 	settings.speed = new Setting('speed', {
 		name: 'Speed',
@@ -40,7 +39,6 @@ const init = () => {
 	settings.refreshTime = new Setting('refreshTime', {
 		type: 'select',
 		defaultValue: 600_000,
-		sticky: false,
 		values: [
 			[30_000, 'TESTING'],
 			[300_000, '5 minutes'],

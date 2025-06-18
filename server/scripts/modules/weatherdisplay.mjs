@@ -53,13 +53,8 @@ class WeatherDisplay {
 		// no checkbox if progress
 		if (this.elemId === 'progress') return false;
 
-		// get the saved status of the checkbox, but defer to a value set in the url
-		let savedStatus = window.localStorage.getItem(`display-enabled: ${this.elemId}`);
-		if (savedStatus === null) savedStatus = defaultEnabled;
-		this.isEnabled = !!((savedStatus === 'true' || savedStatus === true));
-
-		// refresh (or initially store the state of the checkbox)
-		window.localStorage.setItem(`display-enabled: ${this.elemId}`, this.isEnabled);
+		// Use default enabled state
+		this.isEnabled = defaultEnabled;
 
 		// create a checkbox in the selected displays area
 		const label = document.createElement('label');
@@ -88,8 +83,6 @@ class WeatherDisplay {
 	checkboxChange(e) {
 		// update the state
 		this.isEnabled = e.target.checked;
-		// store the value for the next load
-		window.localStorage.setItem(`display-enabled: ${this.elemId}`, this.isEnabled);
 		// calling get data will update the status and actually get the data if we're set to enabled
 		this.getData();
 	}

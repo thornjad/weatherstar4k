@@ -199,7 +199,6 @@ const currentDisplay = () => displays[currentDisplayIndex()];
 const setPlaying = (newValue) => {
 	playing = newValue;
 	const playButton = document.querySelector('#NavigatePlay');
-	localStorage.setItem('play', playing);
 
 	if (playing) {
 		noSleep(true);
