@@ -8,7 +8,7 @@ import {
 import { json } from './utils/fetch.mjs';
 
 class WeatherDisplay {
-	constructor(navId, elemId, name, defaultEnabled) {
+	constructor(navId, elemId, name) {
 		// navId is used in messaging and sort order
 		this.navId = navId;
 		this.elemId = undefined;
@@ -17,7 +17,7 @@ class WeatherDisplay {
 		this.name = name ?? elemId;
 		this.getDataCallbacks = [];
 		this.stillWaitingCallbacks = [];
-		this.defaultEnabled = defaultEnabled;
+		this.isEnabled = true;
 		this.okToDrawCurrentConditions = true;
 		this.okToDrawCurrentDateTime = true;
 		this.showOnProgress = true;
@@ -35,11 +35,7 @@ class WeatherDisplay {
 		// store elemId once
 		this.storeElemId(elemId);
 
-		if (this.isEnabled) {
-			this.setStatus(STATUS.loading);
-		} else {
-			this.setStatus(STATUS.disabled);
-		}
+		this.setStatus(STATUS.loading);
 		this.startNavCount();
 
 		// get any templates
@@ -48,56 +44,13 @@ class WeatherDisplay {
 		});
 	}
 
-	generateCheckbox(defaultEnabled = true) {
-		// no checkbox if progress
-		if (this.elemId === 'progress') return false;
-
-		// Use default enabled state
-		this.isEnabled = defaultEnabled;
-
-		// create a checkbox in the selected displays area
-		const label = document.createElement('label');
-		label.for = `${this.elemId}-checkbox`;
-		label.id = `${this.elemId}-label`;
-		const checkbox = document.createElement('input');
-		checkbox.type = 'checkbox';
-		checkbox.value = true;
-		checkbox.id = `${this.elemId}-checkbox`;
-		checkbox.name = `${this.elemId}-checkbox`;
-		checkbox.checked = this.isEnabled;
-		checkbox.addEventListener('change', (e) => this.checkboxChange(e));
-		const span = document.createElement('span');
-		span.innerHTML = this.name;
-		const alert = document.createElement('span');
-		alert.innerHTML = '!!!';
-		alert.classList.add('alert');
-
-		label.append(checkbox, span, alert);
-
-		this.checkbox = label;
-
-		return label;
-	}
-
-	checkboxChange(e) {
-		// update the state
-		this.isEnabled = e.target.checked;
-		// calling get data will update the status and actually get the data if we're set to enabled
-		this.getData();
-	}
-
 	// set data status and send update to navigation module
 	setStatus(value) {
-		this.status = value;
+		this.loadingStatus = value;
 		updateStatus({
 			id: this.navId,
-			status: this.status,
+			status: this.loadingStatus,
 		});
-
-		// update coloring of checkbox at bottom of page
-		if (!this.checkbox) return;
-		this.checkbox.classList.remove(...statusClasses);
-		this.checkbox.classList.add(calcStatusClass(value));
 	}
 
 	get status() {

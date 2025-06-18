@@ -21,7 +21,7 @@ const mapOffsetXY = {
 
 class RegionalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Regional Forecast', true);
+		super(navId, elemId, 'Regional Forecast');
 
 		// timings
 		this.timing.totalScreens = 3;

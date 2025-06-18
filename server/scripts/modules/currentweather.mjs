@@ -16,7 +16,7 @@ const skipStations = ['U', 'C', 'H', 'W', 'Y', 'T', 'S', 'M', 'O', 'L', 'A', 'F'
 
 class CurrentWeather extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Current Conditions', true);
+		super(navId, elemId, 'Current Conditions');
 	}
 
 	async getData(weatherParameters, refresh) {

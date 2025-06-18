@@ -7,7 +7,7 @@ import {
 
 class Progress extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, '', false);
+		super(navId, elemId, '');
 
 		// disable any navigation timing
 		this.timing = false;

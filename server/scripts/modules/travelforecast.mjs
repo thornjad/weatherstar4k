@@ -7,9 +7,9 @@ import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
 
 class TravelForecast extends WeatherDisplay {
-	constructor(navId, elemId, defaultActive) {
+	constructor(navId, elemId) {
 		// special height and width for scrolling
-		super(navId, elemId, 'Travel Forecast', defaultActive);
+		super(navId, elemId, 'Travel Forecast');
 
 		// set up the timing
 		this.timing.baseDelay = 20;
@@ -184,4 +184,4 @@ const getTravelCitiesDayName = (cities) => cities.reduce((dayName, city) => {
 }, '');
 
 // register display, not active by default
-registerDisplay(new TravelForecast(5, 'travel', true));
+registerDisplay(new TravelForecast(5, 'travel'));

@@ -7,7 +7,7 @@ import { registerDisplay, timeZone } from './navigation.mjs';
 
 class Almanac extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Almanac', true);
+		super(navId, elemId, 'Almanac');
 
 		// preload the moon images
 		preloadImg(imageName('Full'));

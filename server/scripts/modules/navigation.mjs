@@ -18,8 +18,6 @@ const init = async () => {
 	// set up resize handler
 	window.addEventListener('resize', resize);
 	resize();
-
-	generateCheckboxes();
 };
 
 const message = (data) => {
@@ -91,7 +89,7 @@ const updateStatus = (value) => {
 	if (displays[0].status === STATUS.loading) return;
 
 	// calculate first enabled display
-	const firstDisplayIndex = displays.findIndex((display) => display?.enabled && display?.timing?.totalScreens > 0);
+	const firstDisplayIndex = displays.findIndex((display) => display?.timing?.totalScreens > 0);
 
 	// value.id = 0 is hazards, if they fail to load hot-wire a new value.id to the current display to see if it needs to be loaded
 	// typically this plays out as current conditions loads, then hazards fails.
@@ -269,21 +267,6 @@ const resetStatuses = () => {
 const registerDisplay = (display) => {
 	if (displays[display.navId]) console.warn(`Display nav ID ${display.navId} already in use`);
 	displays[display.navId] = display;
-
-	// generate checkboxes
-	generateCheckboxes();
-};
-
-const generateCheckboxes = () => {
-	const availableDisplays = document.querySelector('#enabledDisplays');
-
-	if (!availableDisplays) return;
-	// generate checkboxes
-	const checkboxes = displays.map((d) => d.generateCheckbox(d.defaultEnabled)).filter((d) => d);
-
-	// write to page
-	availableDisplays.innerHTML = '';
-	availableDisplays.append(...checkboxes);
 };
 
 // special registration method for progress display

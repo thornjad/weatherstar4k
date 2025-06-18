@@ -9,7 +9,7 @@ import { registerDisplay } from './navigation.mjs';
 
 class LatestObservations extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Latest Observations', true);
+		super(navId, elemId, 'Latest Observations');
 
 		// constants
 		this.MaximumRegionalStations = 7;

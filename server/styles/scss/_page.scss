@@ -332,11 +332,6 @@ body {
 
 #settings {
 	margin-bottom: 15px;
-}
-
-#enabledDisplays,
-#settings {
-	margin-bottom: 15px;
 	@include u.status-colors();
 
 	.press-here {

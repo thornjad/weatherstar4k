@@ -28,7 +28,7 @@ const isBot = /twitterbot|Facebot/i.test(window.navigator.userAgent);
 const RADAR_HOST = 'mesonet.agron.iastate.edu';
 class Radar extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Local Radar', !isIos && !isBot);
+		super(navId, elemId, 'Local Radar');
 
 		this.okToDrawCurrentConditions = false;
 		this.okToDrawCurrentDateTime = false;

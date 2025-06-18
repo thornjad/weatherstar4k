@@ -9,7 +9,7 @@ import { registerDisplay } from './navigation.mjs';
 
 class LocalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Local Forecast', true);
+		super(navId, elemId, 'Local Forecast');
 
 		// set timings
 		this.timing.baseDelay = 5000;

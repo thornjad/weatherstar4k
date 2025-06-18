@@ -17,9 +17,9 @@ const hazardModifiers = {
 };
 
 class Hazards extends WeatherDisplay {
-	constructor(navId, elemId, defaultActive) {
+	constructor(navId, elemId) {
 		// special height and width for scrolling
-		super(navId, elemId, 'Hazards', defaultActive);
+		super(navId, elemId, 'Hazards');
 		this.showOnProgress = false;
 		this.okToDrawCurrentConditions = false;
 
@@ -42,9 +42,6 @@ class Hazards extends WeatherDisplay {
 
 		// auto reload must be set up specifically for hazards in case it is disabled via checkbox (for the bottom line scroll)
 		if (this.autoRefreshHandle === null) this.setAutoReload();
-
-		const alert = this.checkbox.querySelector('.alert');
-		alert.classList.remove('show');
 
 		// if not a refresh (new site), all alerts are new
 		if (!refresh) {
@@ -77,8 +74,6 @@ class Hazards extends WeatherDisplay {
 				return count;
 			}, 0);
 
-			// show alert indicator
-			if (unViewed > 0) alert.classList.add('show');
 			// draw the canvas to calculate the new timings and activate hazards in the slide deck again
 			this.drawLongCanvas();
 		} catch (error) {
@@ -217,7 +212,7 @@ const calcSeverity = (severity, event) => {
 };
 
 // register display
-const display = new Hazards(0, 'hazards', true);
+const display = new Hazards(0, 'hazards');
 registerDisplay(display);
 
 export default display.getHazards.bind(display);

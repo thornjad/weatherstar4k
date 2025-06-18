@@ -42,7 +42,7 @@ const barSizes = {
 
 class SpcOutlook extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'SPC Outlook', true);
+		super(navId, elemId, 'SPC Outlook');
 		// don't display on progress/navigation screen
 		this.showOnProgress = false;
 

@@ -10,7 +10,7 @@ import { registerDisplay } from './navigation.mjs';
 
 class ExtendedForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
-		super(navId, elemId, 'Extended Forecast', true);
+		super(navId, elemId, 'Extended Forecast');
 
 		// set timings
 		this.timing.totalScreens = 2;
