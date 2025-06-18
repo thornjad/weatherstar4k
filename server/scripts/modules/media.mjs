@@ -78,7 +78,6 @@ const startMedia = async () => {
   } else {
     try {
       await player.play();
-      setTrackName(playlist.availableFiles[currentTrack]);
     } catch (e) {
       // report the error
       console.error("Couldn't play music");
@@ -86,7 +85,6 @@ const startMedia = async () => {
       // set state back to not playing for good UI experience
       mediaPlaying.value = false;
       stateChanged();
-      setTrackName("Not playing");
     }
   }
 };
@@ -94,7 +92,6 @@ const startMedia = async () => {
 const stopMedia = () => {
   if (!player) return;
   player.pause();
-  setTrackName("Not playing");
 };
 
 const stateChanged = () => {
@@ -142,7 +139,6 @@ const initializePlayer = () => {
 
   // get the first file
   player.src = `music/${playlist.availableFiles[currentTrack]}`;
-  setTrackName(playlist.availableFiles[currentTrack]);
   player.type = "audio/mpeg";
   player.volume = 0.75; // Hardcoded to 75%
 };
@@ -164,12 +160,6 @@ const playerEnded = () => {
   }
   // update the player source
   player.src = `music/${playlist.availableFiles[currentTrack]}`;
-  setTrackName(playlist.availableFiles[currentTrack]);
-};
-
-const setTrackName = (fileName) => {
-  const trackName = fileName.replace(/\.mp3/gi, "").replace(/(_-)/gi, "");
-  document.getElementById("musicTrack").innerHTML = trackName;
 };
 
 export {

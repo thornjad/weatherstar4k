@@ -61,9 +61,6 @@ const getWeather = async (latLon, haveDataCallback) => {
 	weatherParameters.forecastGridData = point.properties.forecastGridData;
 	weatherParameters.stations = stations.features;
 
-	// update the main process for display purposes
-	populateWeatherParameters(weatherParameters);
-
 	// reset the scroll
 	postMessage({ type: 'current-weather-scroll', method: 'reload' });
 
@@ -272,14 +269,6 @@ const registerDisplay = (display) => {
 // special registration method for progress display
 const registerProgress = (_progress) => {
 	progress = _progress;
-};
-
-const populateWeatherParameters = (params) => {
-	document.querySelector('#spanCity').innerHTML = `${params.city}, `;
-	document.querySelector('#spanState').innerHTML = params.state;
-	document.querySelector('#spanStationId').innerHTML = params.stationId;
-	document.querySelector('#spanRadarId').innerHTML = params.radarId;
-	document.querySelector('#spanZoneId').innerHTML = params.zoneId;
 };
 
 const latLonReceived = (data, haveDataCallback) => {

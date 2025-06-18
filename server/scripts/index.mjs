@@ -81,12 +81,6 @@ const init = () => {
 	postMessage('navButton', 'play');
 
 	document.querySelector('#btnClearQuery').addEventListener('click', () => {
-		document.querySelector('#spanCity').innerHTML = '';
-		document.querySelector('#spanState').innerHTML = '';
-		document.querySelector('#spanStationId').innerHTML = '';
-		document.querySelector('#spanRadarId').innerHTML = '';
-		document.querySelector('#spanZoneId').innerHTML = '';
-
 		// Reset to default play state
 		postMessage('navButton', 'play');
 
