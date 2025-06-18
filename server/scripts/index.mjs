@@ -8,7 +8,6 @@ import AutoComplete from './modules/autocomplete.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
 	init();
-	getCustomCode();
 });
 
 const categories = [
@@ -372,18 +371,6 @@ const fullScreenResizeCheck = () => {
 
 	// store state of fullscreen element for next change detection
 	fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
-};
-
-const getCustomCode = async () => {
-	// fetch the custom file and see if it returns a 200 status
-	const response = await fetch('scripts/custom.js', { method: 'HEAD' });
-	if (response.ok) {
-		// add the script element to the page
-		const customElem = document.createElement('script');
-		customElem.src = 'scripts/custom.js';
-		customElem.type = 'text/javascript';
-		document.body.append(customElem);
-	}
 };
 
 // expose functions for external use
