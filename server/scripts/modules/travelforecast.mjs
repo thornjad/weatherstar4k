@@ -48,7 +48,7 @@ class TravelForecast extends WeatherDisplay {
 				try {
 					forecast = await json(`https://api.weather.gov/gridpoints/${city.point.wfo}/${city.point.x},${city.point.y}/forecast`, {
 						data: {
-							units: settings.units.value,
+							units: 'us',
 						},
 					});
 					// store for the next run

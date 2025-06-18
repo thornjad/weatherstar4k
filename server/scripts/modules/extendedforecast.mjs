@@ -25,7 +25,7 @@ class ExtendedForecast extends WeatherDisplay {
 		try {
 			this.data = await json(this.weatherParameters.forecast, {
 				data: {
-					units: settings.units.value,
+					units: 'us',
 				},
 				retryCount: 3,
 				stillWaiting: () => this.stillWaiting(),

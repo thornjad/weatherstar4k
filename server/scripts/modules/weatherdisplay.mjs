@@ -354,7 +354,7 @@ class WeatherDisplay {
 
 	// start and stop base counter
 	startNavCount() {
-		if (!this.navInterval) this.navInterval = setInterval(() => this.navBaseTime(), this.timing.baseDelay * settings.speed.value);
+		if (!this.navInterval) this.navInterval = setInterval(() => this.navBaseTime(), this.timing.baseDelay * 1.0);
 	}
 
 	resetNavBaseCount() {

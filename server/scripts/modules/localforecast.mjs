@@ -64,7 +64,7 @@ class LocalForecast extends WeatherDisplay {
 		try {
 			return await json(weatherParameters.forecast, {
 				data: {
-					units: settings.units.value,
+					units: 'us',
 				},
 				retryCount: 3,
 				stillWaiting: () => this.stillWaiting(),

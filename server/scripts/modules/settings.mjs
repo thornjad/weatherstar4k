@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	init();
 });
 
-// default speed
-const settings = { speed: { value: 1.0 } };
+const settings = {};
 
 const init = () => {
 	// create settings see setting.mjs for defaults
@@ -13,28 +12,6 @@ const init = () => {
 		name: 'Widescreen',
 		defaultValue: false,
 		changeAction: wideScreenChange,
-	});
-	settings.speed = new Setting('speed', {
-		name: 'Speed',
-		type: 'select',
-		defaultValue: 1.0,
-		values: [
-			[0.5, 'Very Fast'],
-			[0.75, 'Fast'],
-			[1.0, 'Normal'],
-			[1.25, 'Slow'],
-			[1.5, 'Very Slow'],
-		],
-	});
-	settings.units = new Setting('units', {
-		name: 'Units',
-		type: 'select',
-		defaultValue: 'us',
-		changeAction: unitChange,
-		values: [
-			['us', 'US'],
-			['si', 'Metric'],
-		],
 	});
 	settings.refreshTime = new Setting('refreshTime', {
 		type: 'select',
@@ -65,15 +42,6 @@ const wideScreenChange = (value) => {
 	} else {
 		container.classList.remove('wide');
 	}
-};
-
-const unitChange = () => {
-	// reload the data at the top level to refresh units
-	// after the initial load
-	if (unitChange.firstRunDone) {
-		window.location.reload();
-	}
-	unitChange.firstRunDone = true;
 };
 
 export default settings;

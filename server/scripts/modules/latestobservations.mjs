@@ -65,13 +65,8 @@ class LatestObservations extends WeatherDisplay {
 		// sort array by station name
 		const sortedConditions = conditions.sort((a, b) => ((a.Name < b.Name) ? -1 : 1));
 
-		if (settings.units.value === 'us') {
-			this.elem.querySelector('.column-headers .temp.english').classList.add('show');
-			this.elem.querySelector('.column-headers .temp.metric').classList.remove('show');
-		} else {
-			this.elem.querySelector('.column-headers .temp.english').classList.remove('show');
-			this.elem.querySelector('.column-headers .temp.metric').classList.add('show');
-		}
+		this.elem.querySelector('.column-headers .temp.english').classList.add('show');
+		this.elem.querySelector('.column-headers .temp.metric').classList.remove('show');
 		// get unit converters
 		const windConverter = windSpeed();
 		const temperatureConverter = temperature();
