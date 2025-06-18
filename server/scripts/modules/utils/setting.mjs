@@ -1,6 +1,4 @@
-import { parseQueryString } from '../share.mjs';
-
-const SETTINGS_KEY = 'Settings';
+const SETTINGS_KEY = 'ws4kp-settings';
 
 const DEFAULTS = {
 	shortName: undefined,
@@ -14,44 +12,27 @@ const DEFAULTS = {
 };
 
 class Setting {
-	constructor(shortName, _options) {
+	constructor(shortName, options = {}) {
 		if (shortName === undefined) {
 			throw new Error('No name provided for setting');
 		}
 		// merge options with defaults
-		const options = { ...DEFAULTS, ...(_options ?? {}) };
+		const optionsMerged = { ...DEFAULTS, ...options };
 
 		// store values and combine with defaults
 		this.shortName = shortName;
-		this.name = options.name ?? shortName;
-		this.defaultValue = options.defaultValue;
+		this.name = optionsMerged.name ?? shortName;
+		this.defaultValue = optionsMerged.defaultValue;
 		this.myValue = this.defaultValue;
-		this.type = options?.type;
-		this.sticky = options.sticky;
-		this.values = options.values;
-		this.visible = options.visible;
-		this.changeAction = options.changeAction;
-
-		// get value from url
-		const urlValue = parseQueryString()?.[`settings-${shortName}-${this.type}`];
-		let urlState;
-		if (this.type === 'checkbox' && urlValue !== undefined) {
-			urlState = urlValue === 'true';
-		}
-		if (this.type === 'boolean' && urlValue !== undefined) {
-			urlState = urlValue === 'true';
-		}
-		if (this.type === 'select' && urlValue !== undefined) {
-			urlState = parseFloat(urlValue);
-		}
-		if (this.type === 'select' && urlValue !== undefined && Number.isNaN(urlState)) {
-			// couldn't parse as a float, store as a string
-			urlState = urlValue;
-		}
+		this.type = optionsMerged?.type;
+		this.sticky = optionsMerged.sticky;
+		this.values = optionsMerged.values;
+		this.visible = optionsMerged.visible;
+		this.changeAction = optionsMerged.changeAction;
 
 		// get existing value if present
-		const storedValue = urlState ?? this.getFromLocalStorage();
-		if ((this.sticky || urlValue !== undefined) && storedValue !== null) {
+		const storedValue = this.getFromLocalStorage();
+		if (this.sticky && storedValue !== null) {
 			this.myValue = storedValue;
 		}
 

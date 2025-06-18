@@ -4,7 +4,6 @@ import {
 	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived,
 } from './modules/navigation.mjs';
 import { round2 } from './modules/utils/units.mjs';
-import { parseQueryString } from './modules/share.mjs';
 import settings from './modules/settings.mjs';
 import AutoComplete from './modules/autocomplete.mjs';
 
@@ -80,14 +79,10 @@ const init = () => {
 	});
 	window.autoComplete = autoComplete;
 
-	// attempt to parse the url parameters
-	const parsedParameters = parseQueryString();
-	const loadFromParsed = parsedParameters.latLonQuery && parsedParameters.latLon;
-
-	// Auto load the parsed parameters and fall back to the previous query
-	const query = parsedParameters.latLonQuery ?? localStorage.getItem('latLonQuery');
-	const latLon = parsedParameters.latLon ?? localStorage.getItem('latLon');
-	const fromGPS = localStorage.getItem('latLonFromGPS') && !loadFromParsed;
+	// Load location from localStorage
+	const query = localStorage.getItem('latLonQuery');
+	const latLon = localStorage.getItem('latLon');
+	const fromGPS = localStorage.getItem('latLonFromGPS');
 	if (query && latLon && !fromGPS) {
 		const txtAddress = document.querySelector(TXT_ADDRESS_SELECTOR);
 		txtAddress.value = query;

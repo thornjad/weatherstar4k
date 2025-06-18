@@ -5,7 +5,6 @@ import { DateTime } from '../vendor/auto/luxon.mjs';
 import {
 	msg, displayNavMessage, isPlaying, updateStatus, timeZone,
 } from './navigation.mjs';
-import { parseQueryString } from './share.mjs';
 import settings from './settings.mjs';
 import { elemForEach } from './utils/elem.mjs';
 
@@ -54,15 +53,8 @@ class WeatherDisplay {
 		// no checkbox if progress
 		if (this.elemId === 'progress') return false;
 
-		// get url provided state
-		const urlValue = parseQueryString()?.[`${this.elemId}-checkbox`];
-		let urlState;
-		if (urlValue !== undefined) {
-			urlState = urlValue === 'true';
-		}
-
 		// get the saved status of the checkbox, but defer to a value set in the url
-		let savedStatus = urlState ?? window.localStorage.getItem(`display-enabled: ${this.elemId}`);
+		let savedStatus = window.localStorage.getItem(`display-enabled: ${this.elemId}`);
 		if (savedStatus === null) savedStatus = defaultEnabled;
 		this.isEnabled = !!((savedStatus === 'true' || savedStatus === true));
 
