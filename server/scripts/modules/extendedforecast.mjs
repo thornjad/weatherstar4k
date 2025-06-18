@@ -3,12 +3,10 @@
 
 import STATUS from './status.mjs';
 import { json } from './utils/fetch.mjs';
+import { getSmallIcon } from './icons.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
-import { getLargeIcon } from './icons.mjs';
-import { preloadImg } from './utils/image.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
-import settings from './settings.mjs';
 
 class ExtendedForecast extends WeatherDisplay {
 	constructor(navId, elemId) {

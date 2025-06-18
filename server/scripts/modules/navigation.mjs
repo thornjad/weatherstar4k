@@ -1,10 +1,9 @@
 // navigation handles progress, next/previous and initial load messages from the parent frame
-import noSleep from './utils/nosleep.mjs';
 import STATUS from './status.mjs';
-import { wrap } from './utils/calc.mjs';
 import { json } from './utils/fetch.mjs';
 import { getPoint } from './utils/weather.mjs';
-import settings from './settings.mjs';
+import noSleep from './utils/nosleep.mjs';
+import { wrap } from './utils/calc.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
 	init();
@@ -249,7 +248,7 @@ const getDisplay = (index) => displays[index];
 
 // resize the container on a page resize
 const resize = () => {
-	const targetWidth = settings.wide.value ? 640 + 107 + 107 : 640;
+	const targetWidth = 640;
 	const widthZoomPercent = (document.querySelector('#divTwcBottom').getBoundingClientRect().width) / targetWidth;
 	const heightZoomPercent = (window.innerHeight) / 480;
 

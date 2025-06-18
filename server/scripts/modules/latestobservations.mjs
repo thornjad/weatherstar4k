@@ -6,7 +6,6 @@ import { locationCleanup } from './utils/string.mjs';
 import { temperature, windSpeed } from './utils/units.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
-import settings from './settings.mjs';
 
 class LatestObservations extends WeatherDisplay {
 	constructor(navId, elemId) {

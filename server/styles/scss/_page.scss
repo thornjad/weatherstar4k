@@ -131,10 +131,6 @@ body {
 	color: #ffffff;
 	width: 100%;
 	max-width: 640px;
-
-	&.wide {
-		max-width: 854px;
-	}
 }
 
 #divTwcLeft {
@@ -301,13 +297,6 @@ body {
 	// overflow: hidden;
 	background-image: url(../images/backgrounds/1.png);
 	transform-origin: 0 0;
-}
-
-.wide #container {
-	padding-left: 107px;
-	padding-right: 107px;
-	background-repeat: no-repeat;
-	background: url(../images/backgrounds/1-wide.png)
 }
 
 #loading {

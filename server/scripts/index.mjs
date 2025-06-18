@@ -4,7 +4,6 @@ import {
 	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived,
 } from './modules/navigation.mjs';
 import { round2 } from './modules/utils/units.mjs';
-import settings from './modules/settings.mjs';
 import AutoComplete from './modules/autocomplete.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {

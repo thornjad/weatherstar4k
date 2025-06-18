@@ -5,8 +5,7 @@ import { DateTime } from '../vendor/auto/luxon.mjs';
 import {
 	msg, displayNavMessage, isPlaying, updateStatus, timeZone,
 } from './navigation.mjs';
-import settings from './settings.mjs';
-import { elemForEach } from './utils/elem.mjs';
+import { json } from './utils/fetch.mjs';
 
 class WeatherDisplay {
 	constructor(navId, elemId, name, defaultEnabled) {
@@ -208,7 +207,6 @@ class WeatherDisplay {
 	hideCanvas() {
 		this.resetNavBaseCount();
 		this.elem.classList.remove('show');
-		// used to change backgrounds for widescreen
 		document.querySelector('#divTwc').classList.remove(this.elemId);
 	}
 
@@ -378,7 +376,7 @@ class WeatherDisplay {
 		this.templates = {};
 		this.elem = document.querySelector(`#${this.elemId}-html`);
 		if (!this.elem) return;
-		elemForEach(`#${this.elemId}-html .template`, (template) => {
+		document.querySelectorAll(`#${this.elemId}-html .template`).forEach((template) => {
 			const className = template.classList[0];
 			const node = template.cloneNode(true);
 			node.classList.remove('template');
@@ -430,7 +428,7 @@ class WeatherDisplay {
 
 	setAutoReload() {
 		// refresh time can be forced by the user (for hazards)
-		const refreshTime = this.refreshTime ?? settings.refreshTime.value;
+		const refreshTime = this.refreshTime ?? 600_000;
 		this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => this.getData(false, true), refreshTime);
 	}
 }
