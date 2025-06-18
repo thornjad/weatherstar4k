@@ -3,7 +3,8 @@
 
 import STATUS from './status.mjs';
 import { json } from './utils/fetch.mjs';
-import { getSmallIcon } from './icons.mjs';
+import { getSmallIcon, getLargeIcon } from './icons.mjs';
+import { preloadImg } from './utils/image.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
