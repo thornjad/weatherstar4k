@@ -111,12 +111,12 @@ const updateStatus = (value) => {
 // the weather.gov api has long load times for some products when you are the first
 // requester for the product after the cache expires
 const countLoadedDisplays = () => displays.reduce((acc, display) => {
-	if (display.status !== STATUS.loading) return acc + 1;
+	if (display?.status !== STATUS.loading) return acc + 1;
 	return acc;
 }, 0);
 
 const hideAllCanvases = () => {
-	displays.forEach((display) => display.hideCanvas());
+	displays.forEach((display) => display?.hideCanvas());
 };
 
 // is playing interface
@@ -154,7 +154,7 @@ const navTo = (direction) => {
 		let firstDisplay;
 		let displayCount = 0;
 		do {
-			if (displays[displayCount].status === STATUS.loaded && displays[displayCount].timing.totalScreens > 0) firstDisplay = displays[displayCount];
+			if (displays[displayCount]?.status === STATUS.loaded && displays[displayCount]?.timing?.totalScreens > 0) firstDisplay = displays[displayCount];
 			displayCount += 1;
 		} while (!firstDisplay && displayCount < displays.length);
 
@@ -172,11 +172,13 @@ const navTo = (direction) => {
 const loadDisplay = (direction) => {
 	const totalDisplays = displays.length;
 	const curIdx = currentDisplayIndex();
+	// If no current display is active, start from index 0
+	const startIdx = curIdx >= 0 ? curIdx : 0;
 	let idx;
 	for (let i = 0; i < totalDisplays; i += 1) {
 		// convert form simple 0-10 to start at current display index +/-1 and wrap
-		idx = wrap(curIdx + (i + 1) * direction, totalDisplays);
-		if (displays[idx].status === STATUS.loaded && displays[idx].timing.totalScreens > 0) break;
+		idx = wrap(startIdx + (i + 1) * direction, totalDisplays);
+		if (displays[idx]?.status === STATUS.loaded && displays[idx]?.timing?.totalScreens > 0) break;
 	}
 	const newDisplay = displays[idx];
 	// hide all displays
@@ -187,8 +189,11 @@ const loadDisplay = (direction) => {
 };
 
 // get the current display index or value
-const currentDisplayIndex = () => displays.findIndex((display) => display.active);
-const currentDisplay = () => displays[currentDisplayIndex()];
+const currentDisplayIndex = () => displays.findIndex((display) => display?.active);
+const currentDisplay = () => {
+	const index = currentDisplayIndex();
+	return index >= 0 ? displays[index] : null;
+};
 
 const setPlaying = (newValue) => {
 	playing = newValue;
@@ -257,7 +262,7 @@ const resize = () => {
 
 // reset all statuses to loading on all displays, used to keep the progress bar accurate during refresh
 const resetStatuses = () => {
-	displays.forEach((display) => { display.status = STATUS.loading; });
+	displays.forEach((display) => { if (display) display.status = STATUS.loading; });
 };
 
 // allow displays to register themselves

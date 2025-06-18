@@ -4,41 +4,18 @@ import {
 	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived,
 } from './modules/navigation.mjs';
 import { round2 } from './modules/utils/units.mjs';
-import AutoComplete from './modules/autocomplete.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
 	init();
 });
 
-const categories = [
-	'Land Features',
-	'Bay', 'Channel', 'Cove', 'Dam', 'Delta', 'Gulf', 'Lagoon', 'Lake', 'Ocean', 'Reef', 'Reservoir', 'Sea', 'Sound', 'Strait', 'Waterfall', 'Wharf', // Water Features
-	'Amusement Park', 'Historical Monument', 'Landmark', 'Tourist Attraction', 'Zoo', // POI/Arts and Entertainment
-	'College', // POI/Education
-	'Beach', 'Campground', 'Golf Course', 'Harbor', 'Nature Reserve', 'Other Parks and Outdoors', 'Park', 'Racetrack',
-	'Scenic Overlook', 'Ski Resort', 'Sports Center', 'Sports Field', 'Wildlife Reserve', // POI/Parks and Outdoors
-	'Airport', 'Ferry', 'Marina', 'Pier', 'Port', 'Resort', // POI/Travel
-	'Postal', 'Populated Place',
-];
-const category = categories.join(',');
-const TXT_ADDRESS_SELECTOR = '#txtAddress';
-const TOGGLE_FULL_SCREEN_SELECTOR = '#ToggleFullScreen';
-const BNT_GET_GPS_SELECTOR = '#btnGetGps';
-
 const init = () => {
-	document.querySelector(TXT_ADDRESS_SELECTOR).addEventListener('focus', (e) => {
-		e.target.select();
-	});
-
 	document.querySelector('#NavigateMenu').addEventListener('click', btnNavigateMenuClick);
 	document.querySelector('#NavigateRefresh').addEventListener('click', btnNavigateRefreshClick);
 	document.querySelector('#NavigateNext').addEventListener('click', btnNavigateNextClick);
 	document.querySelector('#NavigatePrevious').addEventListener('click', btnNavigatePreviousClick);
 	document.querySelector('#NavigatePlay').addEventListener('click', btnNavigatePlayClick);
-	document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR).addEventListener('click', btnFullScreenClick);
-	const btnGetGps = document.querySelector(BNT_GET_GPS_SELECTOR);
-	btnGetGps.addEventListener('click', btnGetGpsClick);
-	if (!navigator.geolocation) btnGetGps.style.display = 'none';
+	document.querySelector('#ToggleFullScreen').addEventListener('click', btnFullScreenClick);
 
 	document.querySelector('#divTwc').addEventListener('mousemove', () => {
 		if (document.fullscreenElement) updateFullScreenNavigate();
@@ -47,67 +24,44 @@ const init = () => {
 	window.addEventListener('resize', fullScreenResizeCheck);
 	fullScreenResizeCheck.wasFull = false;
 
-	document.querySelector('#btnGetLatLng').addEventListener('click', () => autoComplete.directFormSubmit());
-
 	document.addEventListener('keydown', documentKeydown);
 	document.addEventListener('touchmove', (e) => { if (document.fullscreenElement) e.preventDefault(); });
-
-	const autoComplete = new AutoComplete(document.querySelector(TXT_ADDRESS_SELECTOR), {
-		serviceUrl: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest',
-		deferRequestBy: 300,
-		paramName: 'text',
-		params: {
-			f: 'json',
-			countryCode: 'USA',
-			category,
-			maxSuggestions: 10,
-		},
-		dataType: 'json',
-		transformResult: (response) => ({
-			suggestions: response.suggestions.map((i) => ({
-				value: i.text,
-				data: i.magicKey,
-			})),
-		}),
-		minChars: 3,
-		showNoSuggestionNotice: true,
-		noSuggestionNotice: 'No results found. Please try a different search string.',
-		onSelect(suggestion) { autocompleteOnSelect(suggestion); },
-		width: 490,
-	});
-	window.autoComplete = autoComplete;
 
 	// Start with play state enabled by default
 	postMessage('navButton', 'play');
 
-	document.querySelector('#btnClearQuery').addEventListener('click', () => {
-		// Reset to default play state
-		postMessage('navButton', 'play');
-
-		// Clear GPS button state
-		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
-	});
-
 	// swipe functionality
 	document.querySelector('#container').addEventListener('swiped-left', () => swipeCallBack('left'));
 	document.querySelector('#container').addEventListener('swiped-right', () => swipeCallBack('right'));
+
+	// Automatically geolocate user on page load
+	autoGeolocate();
 };
 
-const autocompleteOnSelect = async (suggestion) => {
-	const data = await json('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find', {
-		data: {
-			text: suggestion.value,
-			magicKey: suggestion.data,
-			f: 'json',
-		},
-	});
+const autoGeolocate = async () => {
+	if (!navigator.geolocation) {
+		console.error('Geolocation is not supported by this browser');
+		showGeolocationError();
+		return;
+	}
 
-	const loc = data.locations[0];
-	if (loc) {
-		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
-		doRedirectToGeometry(loc.feature.geometry);
-	} else {
-		console.error('An unexpected error occurred. Please try a different search string.');
+	try {
+		const position = await getPosition();
+		const { latitude, longitude } = position.coords;
+		getForecastFromLatLon(latitude, longitude, true);
+	} catch (error) {
+		console.error('Error getting location:', error);
+		showGeolocationError();
+	}
+};
+
+const showGeolocationError = () => {
+	const loadingDiv = document.querySelector('#loading');
+	if (loadingDiv) {
+		const instructionsDiv = loadingDiv.querySelector('.instructions');
+		if (instructionsDiv) {
+			instructionsDiv.textContent = 'Unable to get your location. Please enable location services and refresh the page.';
+		}
 	}
 };
 
@@ -153,7 +107,7 @@ const enterFullScreen = () => {
 	updateFullScreenNavigate();
 
 	// change hover text and image
-	const img = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
+	const img = document.querySelector('#ToggleFullScreen');
 	img.src = 'images/nav/ic_fullscreen_exit_white_24dp_2x.png';
 	img.title = 'Exit fullscreen';
 };
@@ -177,7 +131,7 @@ const exitFullscreen = () => {
 
 const exitFullScreenVisibilityChanges = () => {
 	// change hover text and image
-	const img = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
+	const img = document.querySelector('#ToggleFullScreen');
 	img.src = 'images/nav/ic_fullscreen_white_24dp_2x.png';
 	img.title = 'Enter fullscreen';
 	document.querySelector('#divTwc').classList.remove('no-cursor');
@@ -199,7 +153,6 @@ const loadData = (_latLon, haveDataCallback) => {
 	// if there's no data stop
 	if (!latLon) return;
 
-	document.querySelector(TXT_ADDRESS_SELECTOR).blur();
 	latLonReceived(latLon, haveDataCallback);
 };
 
@@ -320,35 +273,11 @@ const getPosition = async () => new Promise((resolve) => {
 	navigator.geolocation.getCurrentPosition(resolve);
 });
 
-const btnGetGpsClick = async () => {
-	if (!navigator.geolocation) return;
-	const btn = document.querySelector(BNT_GET_GPS_SELECTOR);
-
-	// toggle first
-	if (btn.classList.contains('active')) {
-		btn.classList.remove('active');
-		return;
-	}
-
-	// set gps active
-	btn.classList.add('active');
-
-	// get position
-	const position = await getPosition();
-	const { latitude, longitude } = position.coords;
-
-	getForecastFromLatLon(latitude, longitude, true);
-};
-
 const getForecastFromLatLon = (latitude, longitude, fromGps = false) => {
-	const txtAddress = document.querySelector(TXT_ADDRESS_SELECTOR);
-	txtAddress.value = `${round2(latitude, 4)}, ${round2(longitude, 4)}`;
-
 	doRedirectToGeometry({ y: latitude, x: longitude }, (point) => {
 		const location = point.properties.relativeLocation.properties;
-		// Update the display
-		const query = `${location.city}, ${location.state}`;
-		txtAddress.value = `${location.city}, ${location.state}`;
+		// Update the display with location name
+		console.log(`Location: ${location.city}, ${location.state}`);
 	});
 };
 
