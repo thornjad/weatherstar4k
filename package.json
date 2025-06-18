@@ -1,0 +1,50 @@
+{
+	"name": "ws4kp",
+	"version": "5.25.1",
+	"description": "Welcome to the WeatherStar 4000+ project page!",
+	"main": "index.mjs",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build:css": "sass --style=compressed ./server/styles/scss/main.scss ./server/styles/main.css",
+		"build": "gulp buildDist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/netbymatt/ws4kp.git"
+	},
+	"author": "Matt Walsh",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/netbymatt/ws4kp/issues"
+	},
+	"homepage": "https://github.com/netbymatt/ws4kp#readme",
+	"devDependencies": {
+		"@aws-sdk/client-cloudfront": "^3.609.0",
+		"ajv": "^8.17.1",
+		"del": "^8.0.0",
+		"gulp": "^5.0.0",
+		"gulp-awspublish": "^8.0.0",
+		"gulp-concat": "^2.6.1",
+		"gulp-ejs": "^5.1.0",
+		"gulp-file": "^0.4.0",
+		"gulp-html-minifier-terser": "^7.1.0",
+		"gulp-rename": "^2.0.0",
+		"gulp-s3-uploader": "^1.0.6",
+		"gulp-sass": "^6.0.0",
+		"gulp-terser": "^2.0.0",
+		"luxon": "^3.0.0",
+		"nosleep.js": "^0.12.0",
+		"sass": "^1.54.0",
+		"suncalc": "^1.8.0",
+		"swiped-events": "^1.1.4",
+		"terser-webpack-plugin": "^5.3.6",
+		"webpack": "^5.99.9",
+		"webpack-stream": "^7.0.0"
+	},
+	"dependencies": {
+		"dotenv": "^16.5.0",
+		"ejs": "^3.1.5",
+		"express": "^5.1.0"
+	}
+}

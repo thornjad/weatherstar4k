@@ -1,0 +1,86 @@
+@use 'shared/_colors'as c;
+@use 'shared/_utils'as u;
+
+#spc-outlook-html.weather-display {
+	background-image: url('../images/backgrounds/6.png');
+}
+
+.weather-display .spc-outlook {
+
+	.container {
+		position: relative;
+		top: 0px;
+		margin: 0px 10px;
+		box-sizing: border-box;
+		height: 300px;
+		overflow: hidden;
+	}
+
+	.risk-levels {
+		position: absolute;
+		left: 206px;
+		font-family: 'Star4000 Small';
+		font-size: 32px;
+		@include u.text-shadow();
+
+
+		.risk-level {
+			position: relative;
+			top: -14px;
+			height: 20px;
+
+			&:nth-child(1) {
+				left: calc(20px * 5);
+			}
+
+			&:nth-child(2) {
+				left: calc(20px * 4);
+			}
+
+			&:nth-child(3) {
+				left: calc(20px * 3);
+			}
+
+			&:nth-child(4) {
+				left: calc(20px * 2);
+			}
+
+			&:nth-child(5) {
+				left: calc(20px * 1);
+			}
+
+			&:nth-child(6) {
+				left: calc(20px * 0);
+			}
+		}
+	}
+
+	.days {
+		position: absolute;
+		top: 120px;
+
+		.day {
+			height: 60px;
+
+			.day-name {
+				position: absolute;
+				font-family: 'Star4000';
+				font-size: 24pt;
+				width: 200px;
+				text-align: right;
+				@include u.text-shadow();
+				padding-top: 20px;
+			}
+
+			.risk-bar {
+				position: absolute;
+				width: 150px;
+				height: 40px;
+				left: 210px;
+				margin-top: 20px;
+				border: 3px outset hsl(0, 0%, 70%);
+				background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
+			}
+		}
+	}
+}
