@@ -4,11 +4,9 @@ import { json } from './utils/fetch.mjs';
 import { temperature as temperatureUnit } from './utils/units.mjs';
 
 const buildForecast = (forecast, city, cityXY) => {
-	// get a unit converter
-	const temperatureConverter = temperatureUnit('us');
 	return {
 		daytime: forecast.isDaytime,
-		temperature: temperatureConverter(forecast.temperature || 0),
+		temperature: forecast.temperature || 0,
 		name: formatCity(city.city),
 		icon: forecast.icon,
 		x: cityXY.x,

@@ -89,7 +89,11 @@ class RegionalForecast extends WeatherDisplay {
 				// start off the observation task
 				const observationPromise = utils.getRegionalObservation(point, city);
 
-				const forecast = await json(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`);
+				const forecast = await json(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`, {
+					data: {
+						units: 'us',
+					},
+				});
 
 				// get XY on map for city
 				const cityXY = utils.getXYForCity(city, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state);
