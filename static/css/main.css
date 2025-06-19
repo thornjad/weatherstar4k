@@ -1250,11 +1250,11 @@ body {
       left: 50px;
 
       .top {
-        top: 2px;
+        top: 0px;
       }
 
       .bottom {
-        top: 37px;
+        top: 32px;
         font-size: 18pt;
       }
     }
