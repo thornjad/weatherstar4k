@@ -670,11 +670,11 @@ body {
         }
 
         .top {
-          top: -3px;
+          top: 0px;
         }
 
         .bottom {
-          top: 26px;
+          top: 32px;
         }
       }
     }
@@ -1255,7 +1255,6 @@ body {
 
       .bottom {
         top: 32px;
-        font-size: 18pt;
       }
     }
 
