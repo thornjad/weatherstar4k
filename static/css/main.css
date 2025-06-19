@@ -47,6 +47,10 @@ body {
     align-items: center;
     justify-content: center;
     align-content: center;
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    background-color: #1c0a57;
 
     &.no-cursor {
       cursor: none;
@@ -70,6 +74,10 @@ body {
       visibility: hidden;
       opacity: 0;
       transition: visibility 0s 1s, opacity 1s linear;
+    }
+
+    .weather-display {
+      background-image: none !important;
     }
   }
 }

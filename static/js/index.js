@@ -2,6 +2,7 @@ import { json } from './modules/utils/fetch.js';
 import noSleep from './modules/utils/nosleep.js';
 import {
 	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived,
+	registerDisplay, registerProgress
 } from './modules/navigation.js';
 import { round2 } from './modules/utils/units.js';
 import { imagePreloader } from './modules/utils/image-preloader.js';
