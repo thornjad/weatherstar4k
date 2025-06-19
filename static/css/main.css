@@ -73,7 +73,9 @@ body {
     .hidden {
       visibility: hidden;
       opacity: 0;
-      transition: visibility 0s 1s, opacity 1s linear;
+      transition:
+        visibility 0s 1s,
+        opacity 1s linear;
     }
 
     .weather-display {
@@ -366,7 +368,9 @@ body {
     .widget {
       display: inline-block;
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+        sans-serif;
       font-size: 0;
       line-height: 0;
       white-space: nowrap;
@@ -636,21 +640,30 @@ body {
 
     .title {
       color: #ff0;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       font-family: "Star4000";
       font-size: 24pt;
       position: absolute;
-      width: 250px;
-      left: 170px;
+      width: 400px;
+      left: 50px;
       top: 25px;
 
       &.single {
-        left: 170px;
+        left: 50px;
         top: 25px;
       }
 
       &.dual {
-        left: 170px;
+        left: 50px;
 
         > div {
           position: absolute;
@@ -688,7 +701,16 @@ body {
       color: #fff;
       font-family: "Star4000 Small";
       font-size: 24pt;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       left: 415px;
       width: 170px;
       text-align: right;
@@ -721,7 +743,16 @@ body {
   }
 
   .scroll {
-    text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+    text-shadow:
+      3px 3px 0 #000,
+      -1.5px -1.5px 0 #000,
+      0 -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      1.5px 0 0 #000,
+      1.5px 1.5px 0 #000,
+      0 1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      -1.5px 0 0 #000;
     width: 640px;
     height: 70px;
     overflow: hidden;
@@ -768,7 +799,16 @@ body {
   }
 
   .day {
-    text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+    text-shadow:
+      3px 3px 0 #000,
+      -1.5px -1.5px 0 #000,
+      0 -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      1.5px 0 0 #000,
+      1.5px 1.5px 0 #000,
+      0 1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      -1.5px 0 0 #000;
     padding: 5px;
     height: 285px;
     width: 155px;
@@ -847,7 +887,16 @@ body {
       position: absolute;
       top: -14px;
       z-index: 5;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
     }
 
     .temp {
@@ -868,14 +917,29 @@ body {
   .travel-lines {
     min-height: 338px;
     padding-top: 10px;
-    background: repeating-linear-gradient(0deg, #001040 0px, #102080 136px, #102080 202px, #001040 338px);
+    background: repeating-linear-gradient(
+      0deg,
+      #001040 0px,
+      #102080 136px,
+      #102080 202px,
+      #001040 338px
+    );
 
     .travel-row {
       font-family: "Star4000 Large";
       font-size: 24pt;
       height: 72px;
       color: #ff0;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       position: relative;
 
       > div {
@@ -931,7 +995,16 @@ body {
       font-size: 24pt;
       position: absolute;
       top: -14px;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
     }
 
     .temp {
@@ -962,7 +1035,16 @@ body {
     .observation-row {
       font-family: "Star4000";
       font-size: 24pt;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       position: relative;
       height: 40px;
 
@@ -997,14 +1079,32 @@ body {
     font-family: "Star4000";
     font-size: 24pt;
     text-transform: uppercase;
-    text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+    text-shadow:
+      3px 3px 0 #000,
+      -1.5px -1.5px 0 #000,
+      0 -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      1.5px 0 0 #000,
+      1.5px 1.5px 0 #000,
+      0 1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      -1.5px 0 0 #000;
     min-height: 280px;
     line-height: 40px;
   }
 }
 
 .weather-display .progress {
-  text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+  text-shadow:
+    3px 3px 0 #000,
+    -1.5px -1.5px 0 #000,
+    0 -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    1.5px 0 0 #000,
+    1.5px 1.5px 0 #000,
+    0 1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    -1.5px 0 0 #000;
   font-family: "Star4000 Extended";
   font-size: 19pt;
 
@@ -1100,7 +1200,23 @@ body {
       height: 20px;
       margin: 2px;
       width: 520px;
-      background: repeating-linear-gradient(90deg, #09246f 0px, #09246f 5px, #364ac0 5px, #364ac0 10px, #4f99f9 10px, #4f99f9 15px, #8ffdfa 15px, #8ffdfa 20px, #4f99f9 20px, #4f99f9 25px, #364ac0 25px, #364ac0 30px, #09246f 30px, #09246f 40px);
+      background: repeating-linear-gradient(
+        90deg,
+        #09246f 0px,
+        #09246f 5px,
+        #364ac0 5px,
+        #364ac0 10px,
+        #4f99f9 10px,
+        #4f99f9 15px,
+        #8ffdfa 15px,
+        #8ffdfa 20px,
+        #4f99f9 20px,
+        #4f99f9 25px,
+        #364ac0 25px,
+        #364ac0 30px,
+        #09246f 30px,
+        #09246f 40px
+      );
       animation-duration: 2s;
       animation-fill-mode: forwards;
       animation-iteration-count: infinite;
@@ -1131,14 +1247,15 @@ body {
       font-family: "Arial", sans-serif;
       font-weight: bold;
       font-size: 28pt;
-      left: 155px;
+      left: 50px;
 
       .top {
-        top: -4px;
+        top: 2px;
       }
 
       .bottom {
-        top: 31px;
+        top: 37px;
+        font-size: 18pt;
       }
     }
 
@@ -1150,7 +1267,16 @@ body {
       font-family: "Star4000";
       font-size: 18pt;
       font-weight: bold;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       text-align: center;
 
       .scale {
@@ -1218,6 +1344,12 @@ body {
         font-size: 24pt;
       }
     }
+
+    .noaa-logo {
+      position: absolute;
+      top: 39px;
+      left: 356px;
+    }
   }
 }
 
@@ -1261,7 +1393,16 @@ body {
 
     > div {
       position: absolute;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
     }
 
     .icon {
@@ -1295,7 +1436,7 @@ body {
 
   .header {
     .title.single {
-      left: 170px;
+      left: 50px;
       top: 25px;
       text-align: center;
       width: 300px;
@@ -1306,7 +1447,16 @@ body {
 .weather-display .main.almanac {
   font-family: "Star4000";
   font-size: 24pt;
-  text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+  text-shadow:
+    3px 3px 0 #000,
+    -1.5px -1.5px 0 #000,
+    0 -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    1.5px 0 0 #000,
+    1.5px 1.5px 0 #000,
+    0 1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    -1.5px 0 0 #000;
 
   .sun {
     display: table;
@@ -1388,7 +1538,16 @@ body {
       font-family: "Star4000";
       font-size: 24pt;
       color: #fff;
-      text-shadow: 0px 0px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        0px 0px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
       position: relative;
       text-transform: uppercase;
       margin-top: 10px;
@@ -1448,7 +1607,16 @@ body {
     left: 206px;
     font-family: "Star4000 Small";
     font-size: 32px;
-    text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+    text-shadow:
+      3px 3px 0 #000,
+      -1.5px -1.5px 0 #000,
+      0 -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      1.5px 0 0 #000,
+      1.5px 1.5px 0 #000,
+      0 1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      -1.5px 0 0 #000;
 
     .risk-level {
       position: relative;
@@ -1494,7 +1662,16 @@ body {
         font-size: 24pt;
         width: 200px;
         text-align: right;
-        text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+        text-shadow:
+          3px 3px 0 #000,
+          -1.5px -1.5px 0 #000,
+          0 -1.5px 0 #000,
+          1.5px -1.5px 0 #000,
+          1.5px 0 0 #000,
+          1.5px 1.5px 0 #000,
+          0 1.5px 0 #000,
+          -1.5px 1.5px 0 #000,
+          -1.5px 0 0 #000;
         padding-top: 20px;
       }
 
@@ -1505,7 +1682,12 @@ body {
         left: 210px;
         margin-top: 20px;
         border: 3px outset hsl(0, 0%, 70%);
-        background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
+        background: linear-gradient(
+          0deg,
+          hsl(0, 0%, 40%) 0%,
+          hsl(0, 0%, 60%) 50%,
+          hsl(0, 0%, 40%) 100%
+        );
       }
     }
   }
@@ -1522,7 +1704,16 @@ body {
       margin-top: 10px;
       padding-top: 10px;
       position: absolute;
-      text-shadow: 3px 3px 0 #000, -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 1.5px 1.5px 0 #000, 0 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
 
       &.left {
         font-family: "Star4000 Extended";
