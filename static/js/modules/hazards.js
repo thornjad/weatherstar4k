@@ -127,7 +127,7 @@ class Hazards extends WeatherDisplay {
 
 	setTiming(list) {
 		// set up the timing
-		this.timing.baseDelay = 20;
+		this.timing.baseDelay = 30;
 		// 24 hours = 6 pages
 		const pages = Math.max(Math.ceil(list.scrollHeight / 480) - 4);
 		const timingStep = 480;

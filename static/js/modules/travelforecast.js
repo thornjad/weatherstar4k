@@ -12,7 +12,7 @@ class TravelForecast extends WeatherDisplay {
 		super(navId, elemId, 'Travel Forecast');
 
 		// set up the timing
-		this.timing.baseDelay = 20;
+		this.timing.baseDelay = 30;
 		// page sizes are 4 cities, calculate the number of pages necessary plus overflow
 		const pagesFloat = TravelCities.length / 4;
 		const pages = Math.floor(pagesFloat) - 2; // first page is already displayed, last page doesn't happen

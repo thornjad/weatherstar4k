@@ -26,8 +26,8 @@ class WeatherDisplay {
 		// default navigation timing
 		this.timing = {
 			totalScreens: 1,
-			baseDelay: 9000, // 5 seconds
-			delay: 1, // 1*1second = 1 second total display time
+			baseDelay: 13500, // 13.5 seconds
+			delay: 1, // 1*13.5seconds = 13.5 seconds total display time
 		};
 		this.navBaseCount = 0;
 		this.screenIndex = -1;	// special starting condition

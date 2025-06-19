@@ -22,27 +22,27 @@ class Radar extends WeatherDisplay {
 		// set max images
 		this.dopplerRadarImageMax = 6;
 		// update timing
-		this.timing.baseDelay = 350;
+		this.timing.baseDelay = 525;
 		this.timing.delay = [
-			{ time: 4, si: 5 },
-			{ time: 1, si: 0 },
-			{ time: 1, si: 1 },
-			{ time: 1, si: 2 },
-			{ time: 1, si: 3 },
-			{ time: 1, si: 4 },
-			{ time: 4, si: 5 },
-			{ time: 1, si: 0 },
-			{ time: 1, si: 1 },
-			{ time: 1, si: 2 },
-			{ time: 1, si: 3 },
-			{ time: 1, si: 4 },
-			{ time: 4, si: 5 },
-			{ time: 1, si: 0 },
-			{ time: 1, si: 1 },
-			{ time: 1, si: 2 },
-			{ time: 1, si: 3 },
-			{ time: 1, si: 4 },
-			{ time: 12, si: 5 },
+			{ time: 6, si: 5 },
+			{ time: 2, si: 0 },
+			{ time: 2, si: 1 },
+			{ time: 2, si: 2 },
+			{ time: 2, si: 3 },
+			{ time: 2, si: 4 },
+			{ time: 6, si: 5 },
+			{ time: 2, si: 0 },
+			{ time: 2, si: 1 },
+			{ time: 2, si: 2 },
+			{ time: 2, si: 3 },
+			{ time: 2, si: 4 },
+			{ time: 6, si: 5 },
+			{ time: 2, si: 0 },
+			{ time: 2, si: 1 },
+			{ time: 2, si: 2 },
+			{ time: 2, si: 3 },
+			{ time: 2, si: 4 },
+			{ time: 18, si: 5 },
 		];
 	}
 
