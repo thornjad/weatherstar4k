@@ -19,6 +19,7 @@ import './modules/extendedforecast.js';
 import './modules/latestobservations.js';
 import './modules/localforecast.js';
 import './modules/radar.js';
+import './modules/location-info.js';
 import './modules/regionalforecast.js';
 import './modules/travelforecast.js';
 import './modules/progress.js';

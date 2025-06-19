@@ -1795,3 +1795,71 @@ body {
     }
   }
 }
+
+#location-info-html.weather-display {
+  background-image: url("../images/backgrounds/1.png");
+
+  .header {
+    .version {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-family: "Star4000";
+      font-size: 16px;
+      color: #fff;
+      text-shadow:
+        2px 2px 0 #000,
+        -1px -1px 0 #000,
+        0 -1px 0 #000,
+        1px -1px 0 #000,
+        1px 0 0 #000,
+        1px 1px 0 #000,
+        0 1px 0 #000,
+        -1px 1px 0 #000,
+        -1px 0 0 #000;
+    }
+  }
+
+  .main.location-info {
+    .container {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .location-details {
+      display: inline-block;
+      text-align: left;
+      font-family: "Star4000 Large";
+      font-size: 20px;
+      color: #fff;
+      text-shadow:
+        3px 3px 0 #000,
+        -1.5px -1.5px 0 #000,
+        0 -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        1.5px 0 0 #000,
+        1.5px 1.5px 0 #000,
+        0 1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        -1.5px 0 0 #000;
+
+      .location-row {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+
+        .label {
+          width: 100px;
+          font-weight: bold;
+          color: #ff0;
+        }
+
+        .value {
+          margin-left: 27px;
+          max-width: 350px;
+          font-weight: normal;
+        }
+      }
+    }
+  }
+}
