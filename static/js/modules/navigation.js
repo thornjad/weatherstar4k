@@ -111,6 +111,7 @@ const updateStatus = (value) => {
 // the weather.gov api has long load times for some products when you are the first
 // requester for the product after the cache expires
 const countLoadedDisplays = () => displays.reduce((acc, display) => {
+	if (display?.showOnProgress === false) return acc;
 	if (display?.status !== STATUS.loading) return acc + 1;
 	return acc;
 }, 0);
