@@ -50,7 +50,7 @@ body {
     max-width: none;
     width: 100vw;
     height: 100vh;
-    background-color: #1c0a57;
+    background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
 
     &.no-cursor {
       cursor: none;
