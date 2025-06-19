@@ -11,23 +11,6 @@ import setTiles from './radar-tiles.js';
 // Empty overrides object for static version
 const OVERRIDES = {};
 
-// TEMPORARY fix to disable radar on ios safari. The same engine (webkit) is
-// used for all ios browers (chrome, brave, firefox, etc) so it's safe to skip
-// any subsequent narrowing of the user-agent.
-const isIos = /iP(ad|od|hone)/i.test(window.navigator.userAgent);
-// NOTE: iMessages/Messages preview is provided by an Apple scraper that uses a
-// user-agent similar to: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1)
-// AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4
-// facebookexternalhit/1.1 Facebot Twitterbot/1.0`. There is currently a bug in
-// Messages macos/ios where a constantly crashing website seems to cause an
-// entire Messages thread to permanently lockup until the individual website
-// preview is deleted! Messages ios will judder but allows the message to be
-// deleted eventually. Messages macos beachballs forever and prevents the
-// successful deletion. See
-// https://github.com/netbymatt/ws4kp/issues/74#issuecomment-2921154962 for more
-// context.
-const isBot = /twitterbot|Facebot/i.test(window.navigator.userAgent);
-
 const RADAR_HOST = 'mesonet.agron.iastate.edu';
 class Radar extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -230,7 +213,4 @@ const radarWorker = () => {
 };
 
 // register display
-// TEMPORARY: except on IOS and bots
-if (!isIos && !isBot) {
-	registerDisplay(new Radar(11, 'radar'));
-}
+registerDisplay(new Radar(11, 'radar'));

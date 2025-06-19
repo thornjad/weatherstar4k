@@ -43,14 +43,9 @@ const init = () => {
 	fullScreenResizeCheck.wasFull = false;
 
 	document.addEventListener('keydown', documentKeydown);
-	document.addEventListener('touchmove', (e) => { if (document.fullscreenElement) e.preventDefault(); });
 
 	// Start with play state enabled by default
 	postMessage('navButton', 'play');
-
-	// swipe functionality
-	document.querySelector('#container').addEventListener('swiped-left', () => swipeCallBack('left'));
-	document.querySelector('#container').addEventListener('swiped-right', () => swipeCallBack('right'));
 
 	// Initialize image preloader to prevent unnecessary refetching
 	initImagePreloader();
@@ -120,9 +115,6 @@ const enterFullScreen = () => {
 	if (requestMethod) {
 		// Native full screen.
 		requestMethod.call(element, { navigationUI: 'hide' });
-	} else {
-		// iOS doesn't support FullScreen API.
-		window.scrollTo(0, 0);
 	}
 	resize();
 	updateFullScreenNavigate();
@@ -175,19 +167,6 @@ const loadData = (_latLon, haveDataCallback) => {
 	if (!latLon) return;
 
 	latLonReceived(latLon, haveDataCallback);
-};
-
-const swipeCallBack = (direction) => {
-	switch (direction) {
-		case 'left':
-			btnNavigateNextClick();
-			break;
-
-		case 'right':
-		default:
-			btnNavigatePreviousClick();
-			break;
-	}
 };
 
 const btnNavigateRefreshClick = () => {
