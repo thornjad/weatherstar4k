@@ -1,4 +1,4 @@
 .PHONY: dev
 
 dev:
-	npx http-server static -c-1
+	npx http-server weatherstar -c-1

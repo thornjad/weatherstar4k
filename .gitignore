@@ -1,14 +1,2 @@
 .DS_Store
-node_modules
 **/debug.log
-
-#music folder
-server/music/*
-#except for the readme
-!server/music/readme.txt
-#and the sample songs
-!server/music/default
-
-#dist folder
-dist/*
-!dist/readme.txt
