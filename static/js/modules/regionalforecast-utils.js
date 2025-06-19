@@ -2,6 +2,7 @@ import { getSmallIcon } from './icons.js';
 import { preloadImg } from './utils/image.js';
 import { json } from './utils/fetch.js';
 import { temperature as temperatureUnit } from './utils/units.js';
+import { imagePreloader } from './utils/image-preloader.js';
 
 const buildForecast = (forecast, city, cityXY) => {
 	return {
@@ -24,11 +25,14 @@ const getRegionalObservation = async (point, city) => {
 		const station = stations.features[0].id;
 		// get the observation data
 		const observation = await json(`${station}/observations/latest`);
-		// preload the image
+		// preload the image using the new caching system
 		if (!observation.properties.icon) return false;
 		const icon = getSmallIcon(observation.properties.icon, !observation.properties.daytime);
 		if (!icon) return false;
-		preloadImg(icon);
+		
+		// Use the new image preloader for better caching
+		imagePreloader.getImageElement(icon);
+		
 		// return the observation
 		return observation.properties;
 	} catch (error) {

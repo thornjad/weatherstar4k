@@ -1,5 +1,5 @@
 // display sun and moon data
-import { preloadImg } from './utils/image.js';
+import { imagePreloader } from './utils/image-preloader.js';
 import { plusDays, minusDays, getDayName, formatTimeSimple } from './utils/date-utils.js';
 import STATUS from './status.js';
 import WeatherDisplay from './weatherdisplay.js';
@@ -9,11 +9,8 @@ class Almanac extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Almanac');
 
-		// preload the moon images
-		preloadImg(imageName('Full'));
-		preloadImg(imageName('Last'));
-		preloadImg(imageName('New'));
-		preloadImg(imageName('First'));
+		// Moon images are now preloaded globally by imagePreloader
+		// No need to preload them individually here
 
 		this.timing.totalScreens = 1;
 	}
@@ -131,7 +128,9 @@ class Almanac extends WeatherDisplay {
 
 			fill.date = date;
 			fill.type = MoonPhase.phase;
-			fill.icon = { type: 'img', src: imageName(MoonPhase.phase) };
+			// Use cached image element for better performance
+			const imageSrc = imageName(MoonPhase.phase);
+			fill.icon = { type: 'img', src: imageSrc };
 
 			return this.fillTemplate('day', fill);
 		});

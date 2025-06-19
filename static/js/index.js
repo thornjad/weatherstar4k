@@ -4,6 +4,8 @@ import {
 	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived,
 } from './modules/navigation.js';
 import { round2 } from './modules/utils/units.js';
+import { imagePreloader } from './modules/utils/image-preloader.js';
+import { cacheMonitor } from './modules/utils/cache-monitor.js';
 
 // Import all display modules to ensure they register themselves
 import './modules/hazards.js';
@@ -49,6 +51,9 @@ const init = () => {
 	// swipe functionality
 	document.querySelector('#container').addEventListener('swiped-left', () => swipeCallBack('left'));
 	document.querySelector('#container').addEventListener('swiped-right', () => swipeCallBack('right'));
+
+	// Initialize image preloader to prevent unnecessary refetching
+	initImagePreloader();
 
 	// Automatically geolocate user on page load
 	autoGeolocate();
@@ -314,3 +319,22 @@ const fullScreenResizeCheck = () => {
 
 // expose functions for external use
 window.getForecastFromLatLon = getForecastFromLatLon;
+
+const initImagePreloader = async () => {
+	try {
+		// Start preloading common images in the background
+		// This will prevent refetching during app loops
+		imagePreloader.preloadCommonImages();
+		
+		// Also preload critical categories immediately
+		await Promise.all([
+			imagePreloader.preloadCategory('moon'),
+			imagePreloader.preloadCategory('weather')
+		]);
+
+		// Cache monitoring and tests are now only available via window.cacheMonitor()
+		// No automatic execution - must be called explicitly
+	} catch (error) {
+		console.warn('Failed to initialize image preloader:', error);
+	}
+};
