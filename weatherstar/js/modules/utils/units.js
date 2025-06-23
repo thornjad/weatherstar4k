@@ -1,14 +1,16 @@
 // *********************************** unit conversions ***********************
 
 // round 2 provided for lat/lon formatting
-const round2 = (value, decimals) =>
-  Math.trunc(value * 10 ** decimals) / 10 ** decimals;
+const round2 = (value, decimals) => Math.trunc(value * 10 ** decimals) / 10 ** decimals;
 
 const kphToMph = Kph => Math.round(Kph / 1.609_34);
 const celsiusToFahrenheit = Celsius => Math.round((Celsius * 9) / 5 + 32);
 const kilometersToMiles = Kilometers => Math.round(Kilometers / 1.609_34);
 const metersToFeet = Meters => Math.round(Meters / 0.3048);
-const pascalToInHg = Pascal => round2(Pascal * 0.000_295_3, 2);
+const pascalToMillibars = Pascal => {
+  const result = Math.round(Pascal * 0.01);
+  return result;
+};
 
 const windSpeed = () => {
   const converter = value => kphToMph(value);
@@ -38,8 +40,8 @@ const distanceKilometers = () => {
 };
 
 const pressure = () => {
-  const converter = value => pascalToInHg(value).toFixed(2);
-  converter.units = ' in.hg';
+  const converter = value => pascalToMillibars(value);
+  converter.units = ' mb';
   return converter;
 };
 
