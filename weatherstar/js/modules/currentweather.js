@@ -79,17 +79,21 @@ class CurrentWeather extends WeatherDisplay {
         }
 
         // test data quality
-        if (
-          observations.features[0].properties.temperature.value === null ||
-          observations.features[0].properties.windSpeed.value === null ||
-          observations.features[0].properties.textDescription === null ||
-          observations.features[0].properties.textDescription === '' ||
-          observations.features[0].properties.icon === null ||
-          observations.features[0].properties.dewpoint.value === null ||
-          observations.features[0].properties.barometricPressure.value === null
-        ) {
+        const missingFields = [];
+        const obs = observations.features[0].properties;
+
+        if (obs.temperature.value === null) missingFields.push('temperature');
+        if (obs.windSpeed.value === null) missingFields.push('windSpeed');
+        if (obs.textDescription === null || obs.textDescription === '') missingFields.push('textDescription');
+        if (obs.icon === null) missingFields.push('icon');
+        if (obs.dewpoint.value === null) missingFields.push('dewpoint');
+        if (obs.barometricPressure.value === null) missingFields.push('barometricPressure');
+
+        if (missingFields.length > 0) {
           observations = undefined;
-          throw new Error(`Incomplete data set for: ${station.properties.stationIdentifier}, trying next station`);
+          throw new Error(
+            `Incomplete data set for: ${station.properties.stationIdentifier}, missing fields: ${missingFields.join(', ')}, trying next station`
+          );
         }
       } catch (error) {
         console.error(error);
