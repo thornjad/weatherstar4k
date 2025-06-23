@@ -84,7 +84,6 @@ class CurrentWeather extends WeatherDisplay {
 
         if (obs.temperature.value === null) missingFields.push('temperature');
         if (obs.windSpeed.value === null) missingFields.push('windSpeed');
-        if (obs.textDescription === null || obs.textDescription === '') missingFields.push('textDescription');
         if (obs.icon === null) missingFields.push('icon');
         if (obs.dewpoint.value === null) missingFields.push('dewpoint');
         if (obs.barometricPressure.value === null) missingFields.push('barometricPressure');
