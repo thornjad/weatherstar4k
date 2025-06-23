@@ -41,6 +41,12 @@ class ImagePreloader {
       'images/icons/current-conditions/Light-Snow.gif',
       'images/icons/current-conditions/Thunderstorm.gif',
       'images/icons/current-conditions/Windy.gif',
+      'images/icons/current-conditions/Freezing-Rain-Sleet.gif',
+      'images/icons/current-conditions/Mostly-Cloudy.gif',
+      'images/icons/current-conditions/Partly-Clear.gif',
+      'images/icons/current-conditions/Thunder.gif',
+      'images/icons/current-conditions/ThunderSnow.gif',
+      'images/icons/current-conditions/Wintry-Mix.gif',
 
       // Regional map icons
       'images/icons/regional-maps/Sunny.gif',
@@ -51,6 +57,21 @@ class ImagePreloader {
       'images/icons/regional-maps/Cloudy.gif',
       'images/icons/regional-maps/Thunderstorm.gif',
       'images/icons/regional-maps/Scattered-Tstorms-1994.gif',
+      'images/icons/regional-maps/AM-Snow-1994.gif',
+      'images/icons/regional-maps/Freezing-Rain-Sleet-1992.gif',
+      'images/icons/regional-maps/Freezing-Rain-Snow-1992.gif',
+      'images/icons/regional-maps/Heavy-Snow-1992.gif',
+      'images/icons/regional-maps/Mostly-Cloudy-1992.gif',
+      'images/icons/regional-maps/Mostly-Cloudy-Night-1992.gif',
+      'images/icons/regional-maps/Rain-Wind-1994.gif',
+      'images/icons/regional-maps/Scattered-Showers-1992.gif',
+      'images/icons/regional-maps/Scattered-Snow-Showers-1992.gif',
+      'images/icons/regional-maps/Scattered-Tstorms-1992-Early.gif',
+      'images/icons/regional-maps/Scattered-Tstorms-1992.gif',
+      'images/icons/regional-maps/Shower.gif',
+      'images/icons/regional-maps/Snow-Wind.gif',
+      'images/icons/regional-maps/Thunder.gif',
+      'images/icons/regional-maps/Wintry-Mix-1992.gif',
 
       // Map backgrounds
       'images/maps/basemap.webp',
@@ -107,6 +128,12 @@ class ImagePreloader {
         'images/icons/current-conditions/Light-Snow.gif',
         'images/icons/current-conditions/Thunderstorm.gif',
         'images/icons/current-conditions/Windy.gif',
+        'images/icons/current-conditions/Freezing-Rain-Sleet.gif',
+        'images/icons/current-conditions/Mostly-Cloudy.gif',
+        'images/icons/current-conditions/Partly-Clear.gif',
+        'images/icons/current-conditions/Thunder.gif',
+        'images/icons/current-conditions/ThunderSnow.gif',
+        'images/icons/current-conditions/Wintry-Mix.gif',
       ],
       regional: [
         'images/icons/regional-maps/Sunny.gif',
@@ -117,12 +144,23 @@ class ImagePreloader {
         'images/icons/regional-maps/Cloudy.gif',
         'images/icons/regional-maps/Thunderstorm.gif',
         'images/icons/regional-maps/Scattered-Tstorms-1994.gif',
+        'images/icons/regional-maps/AM-Snow-1994.gif',
+        'images/icons/regional-maps/Freezing-Rain-Sleet-1992.gif',
+        'images/icons/regional-maps/Freezing-Rain-Snow-1992.gif',
+        'images/icons/regional-maps/Heavy-Snow-1992.gif',
+        'images/icons/regional-maps/Mostly-Cloudy-1992.gif',
+        'images/icons/regional-maps/Mostly-Cloudy-Night-1992.gif',
+        'images/icons/regional-maps/Rain-Wind-1994.gif',
+        'images/icons/regional-maps/Scattered-Showers-1992.gif',
+        'images/icons/regional-maps/Scattered-Snow-Showers-1992.gif',
+        'images/icons/regional-maps/Scattered-Tstorms-1992-Early.gif',
+        'images/icons/regional-maps/Scattered-Tstorms-1992.gif',
+        'images/icons/regional-maps/Shower.gif',
+        'images/icons/regional-maps/Snow-Wind.gif',
+        'images/icons/regional-maps/Thunder.gif',
+        'images/icons/regional-maps/Wintry-Mix-1992.gif',
       ],
-      maps: [
-        'images/maps/basemap.webp',
-        'images/maps/radar-hawaii.png',
-        'images/maps/radar-alaska.png',
-      ],
+      maps: ['images/maps/basemap.webp', 'images/maps/radar-hawaii.png', 'images/maps/radar-alaska.png'],
       radar: [
         'images/maps/radar/map-1-5.webp',
         'images/maps/radar/map-1-6.webp',
@@ -180,9 +218,26 @@ class ImagePreloader {
   getImageElement(src) {
     return imageCache.getImageElement(src);
   }
+
+  /**
+   * Force clear all icon caches (memory, localStorage, and browser cache)
+   */
+  static async forceClearAllIconCaches() {
+    // Clear in-memory and localStorage cache
+    imageCache.clear();
+    // Also clear preloader state
+    if (window.imagePreloader) {
+      window.imagePreloader.preloaded = false;
+    }
+    console.log('Force-cleared all icon caches (memory and localStorage)');
+  }
 }
 
 // Create global preloader instance
 const imagePreloader = new ImagePreloader();
 
 export { imagePreloader, ImagePreloader };
+
+if (typeof window !== 'undefined') {
+  window.forceClearAllIconCaches = ImagePreloader.forceClearAllIconCaches;
+}

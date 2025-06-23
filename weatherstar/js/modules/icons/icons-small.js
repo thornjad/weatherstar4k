@@ -154,6 +154,65 @@ const smallIcon = (link, _isNightTime) => {
     case 'haze':
       return addPath('Haze.gif');
 
+    // New icon mappings for unique conditions
+    case 'am_snow':
+    case 'am_snow-n':
+      return addPath('AM-Snow-1994.gif');
+
+    case 'freezing_rain_sleet':
+    case 'freezing_rain_sleet-n':
+      return addPath('Freezing-Rain-Sleet-1992.gif');
+
+    case 'freezing_rain_snow':
+    case 'freezing_rain_snow-n':
+      return addPath('Freezing-Rain-Snow-1992.gif');
+
+    case 'heavy_snow':
+    case 'heavy_snow-n':
+      return addPath('Heavy-Snow-1992.gif');
+
+    case 'mostly_cloudy':
+      return addPath('Mostly-Cloudy-1992.gif');
+
+    case 'mostly_cloudy-n':
+      return addPath('Mostly-Cloudy-Night-1992.gif');
+
+    case 'rain_wind':
+    case 'rain_wind-n':
+      return addPath('Rain-Wind-1994.gif');
+
+    case 'scattered_showers':
+    case 'scattered_showers-n':
+      return addPath('Scattered-Showers-1992.gif');
+
+    case 'scattered_snow_showers':
+    case 'scattered_snow_showers-n':
+      return addPath('Scattered-Snow-Showers-1992.gif');
+
+    case 'scattered_tstorms_early':
+    case 'scattered_tstorms_early-n':
+      return addPath('Scattered-Tstorms-1992-Early.gif');
+
+    case 'scattered_tstorms':
+    case 'scattered_tstorms-n':
+      return addPath('Scattered-Tstorms-1992.gif');
+
+    case 'shower':
+    case 'shower-n':
+      return addPath('Shower.gif');
+
+    case 'snow_wind':
+    case 'snow_wind-n':
+      return addPath('Snow-Wind.gif');
+
+    case 'thunder':
+    case 'thunder-n':
+      return addPath('Thunder.gif');
+
+    case 'wintry_mix':
+    case 'wintry_mix-n':
+      return addPath('Wintry-Mix-1992.gif');
+
     default:
       console.log(
         `Unable to locate regional icon for ${conditionName} ${link} ${isNightTime}`

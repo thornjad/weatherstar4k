@@ -136,6 +136,31 @@ const largeIcon = (link, _isNightTime) => {
     case 'blizzard-n':
       return addPath('Blowing-Snow.gif');
 
+    // New icon mappings for unique conditions
+    case 'freezing_rain_sleet':
+    case 'freezing_rain_sleet-n':
+      return addPath('Freezing-Rain-Sleet.gif');
+
+    case 'mostly_cloudy':
+    case 'mostly_cloudy-n':
+      return addPath('Mostly-Cloudy.gif');
+
+    case 'partly_clear':
+    case 'partly_clear-n':
+      return addPath('Partly-Clear.gif');
+
+    case 'thunder':
+    case 'thunder-n':
+      return addPath('Thunder.gif');
+
+    case 'thunder_snow':
+    case 'thunder_snow-n':
+      return addPath('ThunderSnow.gif');
+
+    case 'wintry_mix':
+    case 'wintry_mix-n':
+      return addPath('Wintry-Mix.gif');
+
     default:
       console.log(
         `Unable to locate icon for ${conditionName} ${link} ${isNightTime}`
