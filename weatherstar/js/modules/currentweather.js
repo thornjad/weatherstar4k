@@ -83,7 +83,6 @@ class CurrentWeather extends WeatherDisplay {
         const obs = observations.features[0].properties;
 
         if (obs.temperature.value === null) missingFields.push('temperature');
-        if (obs.windSpeed.value === null) missingFields.push('windSpeed');
         if (obs.icon === null) missingFields.push('icon');
         if (obs.dewpoint.value === null) missingFields.push('dewpoint');
         if (obs.barometricPressure.value === null) missingFields.push('barometricPressure');
@@ -135,7 +134,6 @@ class CurrentWeather extends WeatherDisplay {
     const fill = {
       temp: this.data.Temperature + String.fromCharCode(176),
       condition,
-      wind: this.data.WindDirection.padEnd(3, '') + this.data.WindSpeed.toString().padStart(3, ' '),
       location: locationCleanup(this.data.station.properties.name).substr(0, 20),
       humidity: `${this.data.Humidity}%`,
       dewpoint: this.data.DewPoint + String.fromCharCode(176),
@@ -145,8 +143,14 @@ class CurrentWeather extends WeatherDisplay {
       icon: { type: 'img', src: this.data.Icon },
     };
 
-    if (this.data.WindGust) {
-      fill['wind-gusts'] = `Gusts to ${this.data.WindGust}`;
+    // Only add wind information if windSpeed is available
+    if (this.data.WindSpeed !== null && this.data.WindSpeed !== undefined) {
+      fill.wind = this.data.WindDirection.padEnd(3, '') + this.data.WindSpeed.toString().padStart(3, ' ');
+
+      // Only add wind gusts if wind data is available
+      if (this.data.WindGust) {
+        fill['wind-gusts'] = `Gusts to ${this.data.WindGust}`;
+      }
     }
 
     if (this.data.observations.heatIndex.value && this.data.HeatIndex !== this.data.Temperature) {
@@ -229,11 +233,21 @@ const parseData = data => {
   data.PressureUnit = pressureConverter.units;
   data.HeatIndex = temperatureConverter(observations.heatIndex.value);
   data.WindChill = temperatureConverter(observations.windChill.value);
-  data.WindSpeed = windConverter(observations.windSpeed.value);
-  data.WindDirection = directionToNSEW(observations.windDirection.value);
-  data.WindGust = windConverter(observations.windGust.value);
-  data.WindSpeed = windConverter(data.WindSpeed);
-  data.WindUnit = windConverter.units;
+
+  // Handle wind data - set to null if windSpeed is not available
+  if (observations.windSpeed.value !== null) {
+    data.WindSpeed = windConverter(observations.windSpeed.value);
+    data.WindDirection = directionToNSEW(observations.windDirection.value);
+    data.WindGust = windConverter(observations.windGust.value);
+    data.WindSpeed = windConverter(data.WindSpeed);
+    data.WindUnit = windConverter.units;
+  } else {
+    data.WindSpeed = null;
+    data.WindDirection = null;
+    data.WindGust = null;
+    data.WindUnit = null;
+  }
+
   data.Humidity = Math.round(observations.relativeHumidity.value);
   data.Icon = getLargeIcon(observations.icon);
   data.PressureDirection = '';
