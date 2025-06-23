@@ -2,7 +2,7 @@
 // technically uses the same data as the local forecast, we'll let the browser do the caching of that
 
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon, getLargeIcon } from './icons.js';
 import { preloadImg } from './utils/image.js';
 import { startOfDay, plusDays, getShortDayName } from './utils/date-utils.js';
@@ -22,7 +22,7 @@ class ExtendedForecast extends WeatherDisplay {
 
 		// request us or si units
 		try {
-			this.data = await json(this.weatherParameters.forecast, {
+			this.data = await fetchAsync(this.weatherParameters.forecast, "json", {
 				data: {
 					units: 'us',
 				},

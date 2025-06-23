@@ -1,6 +1,6 @@
 // current weather conditions display
 import STATUS from './status.js';
-import { text } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { minusDays, startOfDay, fromObject, formatTimeSimple, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay, timeZone } from './navigation.js';
@@ -78,7 +78,7 @@ class Radar extends WeatherDisplay {
 		const lists = (await Promise.all(baseUrls.map(async (url) => {
 			try {
 				// get a list of available radars
-				return text(url);
+				return fetchAsync(url, "text");
 			} catch (error) {
 				console.log('Unable to get list of radars');
 				console.error(error);

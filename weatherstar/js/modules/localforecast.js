@@ -1,7 +1,7 @@
 // display text based local forecast
 
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon } from './icons.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
@@ -62,7 +62,7 @@ class LocalForecast extends WeatherDisplay {
 	async getRawData(weatherParameters) {
 		// request us or si units
 		try {
-			return await json(weatherParameters.forecast, {
+			return await fetchAsync(weatherParameters.forecast, "json", {
 				data: {
 					units: 'us',
 				},

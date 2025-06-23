@@ -1,7 +1,7 @@
 // hourly forecast list
 
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 
@@ -53,7 +53,7 @@ class Hazards extends WeatherDisplay {
 			// get the forecast
 			const url = new URL('https://api.weather.gov/alerts/active');
 			url.searchParams.append('point', `${this.weatherParameters.latitude},${this.weatherParameters.longitude}`);
-			const alerts = await json(url, { retryCount: 3, stillWaiting: () => this.stillWaiting() });
+			const alerts = await fetchAsync(url, "json", { retryCount: 3, stillWaiting: () => this.stillWaiting() });
 			const allUnsortedAlerts = alerts.features ?? [];
 			const unsortedAlerts = allUnsortedAlerts.slice(0, 5);
 			const hasImmediate = unsortedAlerts.reduce((acc, hazard) => acc || hazard.properties.urgency === 'Immediate', false);

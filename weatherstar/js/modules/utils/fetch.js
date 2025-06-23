@@ -1,9 +1,5 @@
 import { rewriteUrl } from "./cors.js";
 
-const json = (url, params) => fetchAsync(url, "json", params);
-const text = (url, params) => fetchAsync(url, "text", params);
-const blob = (url, params) => fetchAsync(url, "blob", params);
-
 const fetchAsync = async (_url, responseType, _params = {}) => {
   // add user agent header to json request at api.weather.gov
   const headers = {};
@@ -124,4 +120,4 @@ const retryDelay = (retryNumber) => {
   }
 };
 
-export { json, text, blob };
+export { fetchAsync };

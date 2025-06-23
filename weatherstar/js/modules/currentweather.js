@@ -1,7 +1,7 @@
 // current weather conditions display
 import STATUS from './status.js';
 import { preloadImg } from './utils/image.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { directionToNSEW } from './utils/calc.js';
 import { locationCleanup } from './utils/string.js';
 import { getLargeIcon } from './icons.js';
@@ -41,7 +41,7 @@ class CurrentWeather extends WeatherDisplay {
 			try {
 				// station observations
 				// eslint-disable-next-line no-await-in-loop
-				observations = await json(`${station.id}/observations`, {
+				observations = await fetchAsync(`${station.id}/observations`, "json", {
 					data: {
 						limit: 2,
 					},

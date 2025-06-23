@@ -1,5 +1,5 @@
 /* eslint-disable default-case */
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 
 const KEYS = {
 	ESC: 27,
@@ -193,7 +193,7 @@ class AutoComplete {
 		let result = this.cachedResponses[search];
 		if (!result) {
 			// make the request
-			const resultRaw = await json(url);
+			const resultRaw = await fetchAsync(url, "json");
 
 			// use the provided parser
 			result = this.options.transformResult(resultRaw);

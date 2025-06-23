@@ -1,6 +1,6 @@
 // current weather conditions display
 import { distance as calcDistance, directionToNSEW } from './utils/calc.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import STATUS from './status.js';
 import { locationCleanup } from './utils/string.js';
 import { temperature, windSpeed } from './utils/units.js';
@@ -122,7 +122,7 @@ const shortenCurrentConditions = (_condition) => {
 const getStations = async (stations) => {
 	const stationData = await Promise.all(stations.map(async (station) => {
 		try {
-			const data = await json(`https://api.weather.gov/stations/${station.id}/observations/latest`, { retryCount: 1, stillWaiting: () => this.stillWaiting() });
+			const data = await fetchAsync(`https://api.weather.gov/stations/${station.id}/observations/latest`, "json", { retryCount: 1, stillWaiting: () => this.stillWaiting() });
 			// test for temperature, weather and wind values present
 			if (data.properties.temperature.value === null
 				|| data.properties.textDescription === ''

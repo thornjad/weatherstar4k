@@ -1,6 +1,6 @@
 // navigation handles progress, next/previous and initial load messages from the parent frame
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { getPoint } from './utils/weather.js';
 import noSleep from './utils/nosleep.js';
 import { wrap } from './utils/calc.js';
@@ -34,7 +34,7 @@ const getWeather = async (latLon, haveDataCallback) => {
 	if (typeof haveDataCallback === 'function') haveDataCallback(point);
 
 	// get stations
-	const stations = await json(point.properties.observationStations);
+	const stations = await fetchAsync(point.properties.observationStations, "json");
 
 	const StationId = stations.features[0].properties.stationIdentifier;
 

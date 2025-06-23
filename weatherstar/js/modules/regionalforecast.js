@@ -2,7 +2,7 @@
 // type 0 = observations, 1 = first forecast, 2 = second forecast
 
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon } from './icons.js';
 import { preloadImg } from './utils/image.js';
 import { getPoint } from './utils/weather.js';
@@ -89,7 +89,7 @@ class RegionalForecast extends WeatherDisplay {
 				// start off the observation task
 				const observationPromise = utils.getRegionalObservation(point, city);
 
-				const forecast = await json(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`, {
+				const forecast = await fetchAsync(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`, "json", {
 					data: {
 						units: 'us',
 					},

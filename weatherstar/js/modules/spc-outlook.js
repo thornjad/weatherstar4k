@@ -1,7 +1,7 @@
 // display spc outlook in a bar graph
 
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { plusDays, getDayName } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
@@ -60,7 +60,7 @@ class SpcOutlook extends WeatherDisplay {
 		if (!this.initialData || refresh) {
 			try {
 				// get the three categorical files to get started
-				const filePromises = await Promise.allSettled(this.files.map((file) => json(file)));
+				const filePromises = await Promise.allSettled(this.files.map((file) => fetchAsync(file, "json")));
 				// store the data, promise will always be fulfilled
 				this.initialData = filePromises.map((outlookDay) => outlookDay.value);
 			} catch (error) {

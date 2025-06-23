@@ -1,6 +1,6 @@
 // travel forecast display
 import STATUS from './status.js';
-import { json } from './utils/fetch.js';
+import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon } from './icons.js';
 import { plusDays, getDayName } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
@@ -45,7 +45,7 @@ class TravelForecast extends WeatherDisplay {
 				if (!city.point) throw new Error('No pre-loaded point');
 				let forecast;
 				try {
-					forecast = await json(`https://api.weather.gov/gridpoints/${city.point.wfo}/${city.point.x},${city.point.y}/forecast`, {
+					forecast = await fetchAsync(`https://api.weather.gov/gridpoints/${city.point.wfo}/${city.point.x},${city.point.y}/forecast`, "json", {
 						data: {
 							units: 'us',
 						},

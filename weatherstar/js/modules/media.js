@@ -1,4 +1,4 @@
-import { json } from "./utils/fetch.js";
+import { fetchAsync } from "./utils/fetch.js";
 import Setting from "./utils/setting.js";
 
 let playlist;
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const getMedia = async () => {
   try {
     // fetch the playlist
-    const rawPlaylist = await json("playlist.json");
+    const rawPlaylist = await fetchAsync("playlist.json", "json");
     // store the playlist
     playlist = rawPlaylist;
     // enable the media player
