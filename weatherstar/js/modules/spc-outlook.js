@@ -2,7 +2,7 @@
 
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
-import { plusDays, getDayName } from './utils/date-utils.js';
+import { getDayName, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 import testPolygon from './utils/polygon.js';
@@ -19,12 +19,12 @@ const testAllPoints = (point, data) => {
 		// initialize the result
 		result[index] = false;
 		// if there's no data (file didn't load), exit early
-		if (day === undefined) return;
+		if (day === undefined) {return;}
 		// loop through each category
 		day.features.forEach((feature) => {
-			if (!feature.geometry.coordinates) return;
+			if (!feature.geometry.coordinates) {return;}
 			const inPolygon = testPolygon(point, feature.geometry);
-			if (inPolygon) result[index] = feature.properties;
+			if (inPolygon) {result[index] = feature.properties;}
 		});
 	});
 
@@ -54,7 +54,7 @@ class SpcOutlook extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 
 		// initial data does not need to be reloaded on a location change, only during silent refresh
 		if (!this.initialData || refresh) {

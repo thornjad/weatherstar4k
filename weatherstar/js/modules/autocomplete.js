@@ -1,4 +1,3 @@
-/* eslint-disable default-case */
 import { fetchAsync } from './utils/fetch.js';
 
 const KEYS = {
@@ -23,7 +22,7 @@ const DEFAULT_OPTIONS = {
 	noSuggestionNotice: 'No results',
 };
 
-const escapeRegExChars = (string) => string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+const escapeRegExChars = (str) => str.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 
 const formatResult = (suggestion, search) => {
 	// Do not replace anything if the current value is empty
@@ -141,6 +140,9 @@ class AutoComplete {
 					this.directFormSubmit();
 				}
 				return;
+			default:
+				// Handle other keys - do nothing
+				break;
 		}
 
 		if (this.currentValue !== this.elem.value) {
@@ -162,7 +164,7 @@ class AutoComplete {
 		clearTimeout(this.onValueChange);
 
 		// confirm value actually changed
-		if (this.currentValue === this.elem.value) return;
+		if (this.currentValue === this.elem.value) {return;}
 		// store new value
 		this.currentValue = this.elem.value;
 
@@ -203,7 +205,7 @@ class AutoComplete {
 		this.cachedResponses[search] = result;
 		this.suggestions = result.suggestions;
 
-		if (skipHtml) return;
+		if (skipHtml) {return;}
 
 		// populate the suggestion area
 		this.populateSuggestions();
@@ -240,7 +242,7 @@ class AutoComplete {
 	// the submit button has been pressed and we'll just use the first suggestion found
 	async directFormSubmit() {
 		// check for minimum length
-		if (this.currentValue.length < this.options.minChars) return;
+		if (this.currentValue.length < this.options.minChars) {return;}
 		await this.getSuggestions(this.elem.value, true);
 		const suggestion = this.suggestions?.[0];
 		if (suggestion) {
@@ -253,16 +255,16 @@ class AutoComplete {
 	// return the index of the selected item in suggestions
 	getSelected() {
 		const index = this.results.querySelector('.selected')?.dataset?.item;
-		if (index !== undefined) return parseInt(index, 10);
+		if (index !== undefined) {return parseInt(index, 10);}
 		return index;
 	}
 
 	// move the selection highlight up or down
 	keySelect(key) {
 		// if the suggestions are hidden do nothing
-		if (this.results.style.display === 'none') return;
+		if (this.results.style.display === 'none') {return;}
 		// if there are no suggestions do nothing
-		if (this.suggestions.length <= 0) return;
+		if (this.suggestions.length <= 0) {return;}
 
 		// get the currently selected index (or default to off the top of the list)
 		let index = this.getSelected();
@@ -275,6 +277,9 @@ class AutoComplete {
 				break;
 			case KEYS.DOWN:
 				index = (index ?? -1) + 1;
+				break;
+			default:
+				// Handle other keys - do nothing
 				break;
 		}
 
@@ -296,8 +301,8 @@ class AutoComplete {
 
 	// if a click is detected on the page, generally we hide the suggestions, unless the click was within the autocomplete elements
 	checkOutsideClick(e) {
-		if (e.target.id === 'txtAddress') return;
-		if (e.target?.parentNode?.classList.contains(this.options.containerClass)) return;
+		if (e.target.id === 'txtAddress') {return;}
+		if (e.target?.parentNode?.classList.contains(this.options.containerClass)) {return;}
 		this.hideSuggestions();
 	}
 }

@@ -1,5 +1,5 @@
 import { removeDopplerRadarImageNoise } from './radar-utils.js';
-import { RADAR_FULL_SIZE, RADAR_FINAL_SIZE } from './radar-constants.js';
+import { RADAR_FINAL_SIZE, RADAR_FULL_SIZE } from './radar-constants.js';
 
 onmessage = async (e) => {
 	const {
@@ -25,7 +25,7 @@ onmessage = async (e) => {
 
 	// test response
 	const radarResponse = await radarResponsePromise;
-	if (!radarResponse.ok) throw new Error(`Unable to fetch radar error ${radarResponse.status} ${radarResponse.statusText} from ${radarResponse.url}`);
+	if (!radarResponse.ok) {throw new Error(`Unable to fetch radar error ${radarResponse.status} ${radarResponse.statusText} from ${radarResponse.url}`);}
 
 	// get the blob
 	const radarImgBlob = await radarResponse.blob();

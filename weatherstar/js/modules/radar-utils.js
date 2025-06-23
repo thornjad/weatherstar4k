@@ -1,4 +1,4 @@
-import { TILE_SIZE, TILE_FULL_SIZE } from './radar-constants.js';
+import { TILE_FULL_SIZE, TILE_SIZE } from './radar-constants.js';
 
 // limit a value to within a range
 const coerce = (low, value, high) => Math.max(Math.min(value, high), low);

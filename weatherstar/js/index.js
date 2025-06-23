@@ -1,10 +1,10 @@
 import noSleep from "./modules/utils/nosleep.js";
 import {
-  message as navMessage,
   isPlaying,
-  resize,
-  resetStatuses,
   latLonReceived,
+  message as navMessage,
+  resetStatuses,
+  resize,
 } from "./modules/navigation.js";
 import { round2 } from "./modules/utils/units.js";
 import { imagePreloader } from "./modules/utils/image-preloader.js";
@@ -51,7 +51,7 @@ const init = () => {
     .addEventListener("click", btnFullScreenClick);
 
   document.querySelector("#divTwc").addEventListener("mousemove", () => {
-    if (document.fullscreenElement) updateFullScreenNavigate();
+    if (document.fullscreenElement) {updateFullScreenNavigate();}
   });
   // local change detection when exiting full screen via ESC key (or other non button click methods)
   window.addEventListener("resize", fullScreenResizeCheck);
@@ -179,11 +179,11 @@ const btnNavigateMenuClick = () => {
 
 const loadData = (_latLon, haveDataCallback) => {
   // if latlon is provided store it locally
-  if (_latLon) loadData.latLon = _latLon;
+  if (_latLon) {loadData.latLon = _latLon;}
   // get the data
   const { latLon } = loadData;
   // if there's no data stop
-  if (!latLon) return;
+  if (!latLon) {return;}
 
   latLonReceived(latLon, haveDataCallback);
 };
@@ -232,7 +232,7 @@ const updateFullScreenNavigate = () => {
 
 const documentKeydown = (e) => {
   // don't trigger on ctrl/alt/shift modified key
-  if (e.altKey || e.ctrlKey || e.shiftKey) return false;
+  if (e.altKey || e.ctrlKey || e.shiftKey) {return false;}
   const { key } = e;
 
   if (document.fullscreenElement || document.activeElement === document.body) {
@@ -293,7 +293,7 @@ const getPosition = async () =>
     navigator.geolocation.getCurrentPosition(resolve);
   });
 
-const getForecastFromLatLon = (latitude, longitude, fromGps = false) => {
+const getForecastFromLatLon = (latitude, longitude) => {
   doRedirectToGeometry({ y: latitude, x: longitude }, (point) => {
     const location = point.properties.relativeLocation.properties;
     // Update the display with location name

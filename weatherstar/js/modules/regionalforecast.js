@@ -8,7 +8,7 @@ import { preloadImg } from './utils/image.js';
 import { getPoint } from './utils/weather.js';
 import { temperature } from './utils/units.js';
 import { distance } from './utils/calc.js';
-import { now, fromISO, getDayName } from './utils/date-utils.js';
+import { fromISO, getDayName, now } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 import * as utils from './regionalforecast-utils.js';
@@ -28,7 +28,7 @@ class RegionalForecast extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 		// regional forecast implements a silent reload
 		// but it will not fall back to previously loaded data if data can not be loaded
 		// there are enough other cities available to populate the map sufficiently even if some do not load
@@ -50,7 +50,7 @@ class RegionalForecast extends WeatherDisplay {
 
 		// get a target distance
 		let targetDistance = 2.5;
-		if (this.weatherParameters.state === 'HI') targetDistance = 1;
+		if (this.weatherParameters.state === 'HI') {targetDistance = 1;}
 
 		// make station info into an array
 		const stationInfoArray = Object.values(StationInfo).map((station) => ({ ...station, targetDistance }));
@@ -70,7 +70,7 @@ class RegionalForecast extends WeatherDisplay {
 					const cityDistance = distance(city.lon, city.lat, testCity.lon, testCity.lat);
 					return acc && cityDistance >= targetDist;
 				}, true);
-				if (okToAddCity) regionalCities.push(city);
+				if (okToAddCity) {regionalCities.push(city);}
 			}
 		});
 
@@ -84,7 +84,7 @@ class RegionalForecast extends WeatherDisplay {
 		const regionalDataAll = await Promise.all(regionalCities.map(async (city) => {
 			try {
 				const point = city?.point ?? (await getAndFormatPoint(city.lat, city.lon));
-				if (!point) throw new Error('No pre-loaded point');
+				if (!point) {throw new Error('No pre-loaded point');}
 
 				// start off the observation task
 				const observationPromise = utils.getRegionalObservation(point, city);
@@ -101,7 +101,7 @@ class RegionalForecast extends WeatherDisplay {
 				// wait for the regional observation if it's not done yet
 				const observation = await observationPromise;
 
-				if (!observation) return false;
+				if (!observation) {return false;}
 
 				// format the observation the same as the forecast
 				const regionalObservation = {

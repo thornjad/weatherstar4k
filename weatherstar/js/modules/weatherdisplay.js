@@ -2,12 +2,12 @@
 
 import STATUS from "./status.js";
 import {
-  msg,
   displayNavMessage,
   isPlaying,
+  msg,
   updateStatus,
 } from "./navigation.js";
-import { formatTimeWithSeconds, formatDate } from "./utils/date-utils.js";
+import { formatDate, formatTimeWithSeconds } from "./utils/date-utils.js";
 
 class WeatherDisplay {
   constructor(navId, elemId, name) {
@@ -65,7 +65,7 @@ class WeatherDisplay {
 
   storeElemId(elemId) {
     // only create it once
-    if (this.elemId) return;
+    if (this.elemId) {return;}
     this.elemId = elemId;
   }
 
@@ -79,7 +79,7 @@ class WeatherDisplay {
     }
 
     // store weatherParameters locally in case we need them later
-    if (weatherParameters) this.weatherParameters = weatherParameters;
+    if (weatherParameters) {this.weatherParameters = weatherParameters;}
 
     // set status
     if (this.isEnabled) {
@@ -107,10 +107,10 @@ class WeatherDisplay {
 
   drawCanvas() {
     // clean up the first-run flag in screen index
-    if (this.screenIndex < 0) this.screenIndex = 0;
-    if (this.okToDrawCurrentDateTime) this.drawCurrentDateTime();
+    if (this.screenIndex < 0) {this.screenIndex = 0;}
+    if (this.okToDrawCurrentDateTime) {this.drawCurrentDateTime();}
     if (this.okToDrawCurrentConditions)
-      postMessage({ type: "current-weather-scroll", method: "start" });
+      {postMessage({ type: "current-weather-scroll", method: "start" });}
   }
 
   finishDraw() {
@@ -154,8 +154,8 @@ class WeatherDisplay {
   showCanvas(navCmd) {
     // reset timing if enabled
     // if a nav command is present call it to set the screen index
-    if (navCmd === msg.command.firstFrame) this.navNext(navCmd);
-    if (navCmd === msg.command.lastFrame) this.navPrev(navCmd);
+    if (navCmd === msg.command.firstFrame) {this.navNext(navCmd);}
+    if (navCmd === msg.command.lastFrame) {this.navPrev(navCmd);}
 
     this.startNavCount();
 
@@ -187,12 +187,12 @@ class WeatherDisplay {
   //	if the array forms are used totalScreens is overwritten by the size of the array
   navBaseTime() {
     // see if play is active and screen is active
-    if (!isPlaying() || !this.active) return;
+    if (!isPlaying() || !this.active) {return;}
     // increment the base count
     this.navBaseCount += 1;
 
     // call base count change if available for this function
-    if (this.baseCountChange) this.baseCountChange(this.navBaseCount);
+    if (this.baseCountChange) {this.baseCountChange(this.navBaseCount);}
 
     // handle base count/screen index changes
     this.updateScreenFromBaseCount();
@@ -210,7 +210,7 @@ class WeatherDisplay {
     }
 
     // test for no change and exit early
-    if (nextScreenIndex === this.screenIndex) return;
+    if (nextScreenIndex === this.screenIndex) {return;}
 
     // test for -1 (no screen displayed yet)
     this.screenIndex = nextScreenIndex === -1 ? 0 : nextScreenIndex;
@@ -228,20 +228,20 @@ class WeatherDisplay {
   // this.timing.fullDelay = [end of screen index 0 in base counts, end of screen index 1...]
   // this.timing.screenIndexes = [screen index to use during this.timing.fullDelay[0], screen index to use during this.timing.fullDelay[1], ...]
   calcNavTiming() {
-    if (this.timing === false) return;
+    if (this.timing === false) {return;}
     // update total screens
     if (Array.isArray(this.timing.delay))
-      this.timing.totalScreens = this.timing.delay.length;
+      {this.timing.totalScreens = this.timing.delay.length;}
 
     // if the delay is provided as a single value, expand it to a series of the same value
     let intermediateDelay = [];
     if (typeof this.timing.delay === "number") {
       for (let i = 0; i < this.timing.totalScreens; i += 1)
-        intermediateDelay.push(this.timing.delay);
+        {intermediateDelay.push(this.timing.delay);}
     } else {
       // map just the delays to the intermediate block
       intermediateDelay = this.timing.delay.map((delay) => {
-        if (typeof delay === "object") return delay.time;
+        if (typeof delay === "object") {return delay.time;}
         return delay;
       });
     }
@@ -265,7 +265,7 @@ class WeatherDisplay {
       // generate sequential screen indexes
       this.timing.screenIndexes = [];
       for (let i = 0; i < this.timing.totalScreens; i += 1)
-        this.timing.screenIndexes.push(i);
+        {this.timing.screenIndexes.push(i);}
     }
   }
 
@@ -293,7 +293,7 @@ class WeatherDisplay {
     } else {
       // find the highest fullDelay that is less than the current base count
       const newBaseCount = this.timing.fullDelay.reduce((acc, delay) => {
-        if (delay < this.navBaseCount) return delay;
+        if (delay < this.navBaseCount) {return delay;}
         return acc;
       }, 0);
       // if the new base count is zero then we're already at the first screen
@@ -309,24 +309,24 @@ class WeatherDisplay {
   // get the screen index for the current base count, returns false if past end of timing array (go to next screen, stop timing)
   screenIndexFromBaseCount() {
     // test for timing enabled
-    if (!this.timing) return 0;
-    if (this.timing.totalScreens === 0) return false;
+    if (!this.timing) {return 0;}
+    if (this.timing.totalScreens === 0) {return false;}
     // find the first timing in the timing array that is greater than the base count
-    if (this.timing && !this.timing.fullDelay) this.calcNavTiming();
+    if (this.timing && !this.timing.fullDelay) {this.calcNavTiming();}
     const timingIndex = this.timing.fullDelay.findIndex(
       (delay) => delay > this.navBaseCount,
     );
-    if (timingIndex === -1) return false;
+    if (timingIndex === -1) {return false;}
     return this.timing.screenIndexes[timingIndex];
   }
 
   // start and stop base counter
   startNavCount() {
     if (!this.navInterval)
-      this.navInterval = setInterval(
+      {this.navInterval = setInterval(
         () => this.navBaseTime(),
         this.timing.baseDelay * 1.0,
-      );
+      );}
   }
 
   resetNavBaseCount() {
@@ -349,7 +349,7 @@ class WeatherDisplay {
   loadTemplates() {
     this.templates = {};
     this.elem = document.querySelector(`#${this.elemId}-html`);
-    if (!this.elem) return;
+    if (!this.elem) {return;}
     document
       .querySelectorAll(`#${this.elemId}-html .template`)
       .forEach((template) => {
@@ -364,7 +364,7 @@ class WeatherDisplay {
   fillTemplate(name, fillValues) {
     // get the template
     const templateNode = this.templates[name];
-    if (!templateNode) return false;
+    if (!templateNode) {return false;}
 
     // clone it
     const template = templateNode.cloneNode(true);
@@ -372,7 +372,7 @@ class WeatherDisplay {
     Object.entries(fillValues).forEach(([key, value]) => {
       // get the specified element
       const elem = template.querySelector(`.${key}`);
-      if (!elem) return;
+      if (!elem) {return;}
 
       // fill based on type provided
       if (typeof value === "string" || typeof value === "number") {
@@ -391,7 +391,7 @@ class WeatherDisplay {
 
   // still waiting for data (retries triggered)
   stillWaiting() {
-    if (this.isEnabled) this.setStatus(STATUS.retrying);
+    if (this.isEnabled) {this.setStatus(STATUS.retrying);}
     // handle still waiting callbacks
     this.stillWaitingCallbacks.forEach((callback) => callback());
     this.stillWaitingCallbacks = [];

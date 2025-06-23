@@ -1,11 +1,11 @@
-import { RADAR_FINAL_SIZE, TILE_SIZE, TILE_COUNT } from './radar-constants.js';
+import { RADAR_FINAL_SIZE, TILE_COUNT, TILE_SIZE } from './radar-constants.js';
 import { elemForEach } from './utils/elem.js';
 
 // convert a pixel location to a file/tile combination
 const pixelToFile = (xPixel, yPixel) => {
 	const xTile = Math.floor(xPixel / TILE_SIZE.x);
 	const yTile = Math.floor(yPixel / TILE_SIZE.y);
-	if (xTile < 0 || xTile > TILE_COUNT.x || yTile < 0 || yTile > TILE_COUNT.y) return false;
+	if (xTile < 0 || xTile > TILE_COUNT.x || yTile < 0 || yTile > TILE_COUNT.y) {return false;}
 	return `${yTile}-${xTile}`;
 };
 
@@ -107,7 +107,7 @@ const setTiles = (data) => {
 	// helper function for populating tiles
 	const populateTile = (tileName) => (elem, index) => {
 		// check if the tile is used
-		if (!usedTiles[index]) return;
+		if (!usedTiles[index]) {return;}
 
 		// set the image source and size
 		elem.src = `/images/maps/radar/${tileName}-${baseMapTiles[index]}.webp`;

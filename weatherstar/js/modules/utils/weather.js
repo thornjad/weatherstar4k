@@ -11,6 +11,5 @@ const getPoint = async (lat, lon) => {
 };
 
 export {
-	// eslint-disable-next-line import/prefer-default-export
 	getPoint,
 };

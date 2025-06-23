@@ -1,9 +1,9 @@
 // current weather conditions display
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
-import { minusDays, startOfDay, fromObject, formatTimeSimple, plusDays } from './utils/date-utils.js';
+import { formatTimeSimple, fromObject, minusDays, plusDays, startOfDay } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay, timeZone } from './navigation.js';
+import { registerDisplay } from './navigation.js';
 import * as utils from './radar-utils.js';
 import { version } from './progress.js';
 import setTiles from './radar-tiles.js';
@@ -47,7 +47,7 @@ class Radar extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 
 		// ALASKA AND HAWAII AREN'T SUPPORTED!
 		if (this.weatherParameters.state === 'AK' || this.weatherParameters.state === 'HI') {

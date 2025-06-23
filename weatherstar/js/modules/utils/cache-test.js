@@ -85,8 +85,6 @@ class CacheTest {
 	async testPersistence() {
 		console.log('  Testing persistence...');
 		
-		const originalSize = imageCache.cache.size;
-		
 		// Simulate cache persistence by checking if images are still cached
 		const cachedCount = this.testImages.filter(img => imageCache.isCached(img)).length;
 		

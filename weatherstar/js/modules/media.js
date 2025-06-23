@@ -90,7 +90,7 @@ const startMedia = async () => {
 };
 
 const stopMedia = () => {
-  if (!player) return;
+  if (!player) {return;}
   player.pause();
 };
 
@@ -145,7 +145,7 @@ const initializePlayer = () => {
 
 const playerCanPlay = async () => {
   // check to make sure they user still wants music (protect against slow loading music)
-  if (!mediaPlaying.value) return;
+  if (!mediaPlaying.value) {return;}
   // start playing
   startMedia();
 };
@@ -160,9 +160,4 @@ const playerEnded = () => {
   }
   // update the player source
   player.src = `music/${playlist.availableFiles[currentTrack]}`;
-};
-
-export {
-  // eslint-disable-next-line import/prefer-default-export
-  toggleMedia,
 };

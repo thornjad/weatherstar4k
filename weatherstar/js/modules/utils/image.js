@@ -248,7 +248,7 @@ const imageCache = new ImageCache(150); // Cache up to 150 images
 
 // Legacy compatibility function
 const preloadImg = (src) => {
-  if (!src) return false;
+  if (!src) {return false;}
 
   // Start preloading in background
   imageCache.preloadImage(src).catch((err) => {

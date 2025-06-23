@@ -16,7 +16,7 @@ class LatestObservations extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 		// latest observations does a silent refresh but will not fall back to previously fetched data
 		// this is intentional because up to 30 stations are available to pull data from
 
@@ -37,7 +37,7 @@ class LatestObservations extends WeatherDisplay {
 		let lastStation = Math.min(regionalStations.length, 7);
 		let firstStation = 0;
 		while (actualConditions.length < 7 && (lastStation) <= regionalStations.length) {
-			// eslint-disable-next-line no-await-in-loop
+			 
 			const someStations = await getStations(regionalStations.slice(firstStation, lastStation));
 
 			actualConditions.push(...someStations);
@@ -126,7 +126,7 @@ const getStations = async (stations) => {
 			// test for temperature, weather and wind values present
 			if (data.properties.temperature.value === null
 				|| data.properties.textDescription === ''
-				|| data.properties.windSpeed.value === null) return false;
+				|| data.properties.windSpeed.value === null) {return false;}
 			// format the return values
 			return {
 				...data.properties,

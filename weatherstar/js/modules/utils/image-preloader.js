@@ -77,17 +77,9 @@ class ImagePreloader {
 			return;
 		}
 
-		const startTime = performance.now();
-
 		try {
 			await imageCache.preloadImages(this.commonImages);
 			this.preloaded = true;
-			
-			const endTime = performance.now();
-			const duration = (endTime - startTime).toFixed(2);
-			
-			// Log cache stats
-			const stats = imageCache.getStats();
 		} catch (error) {
 			console.warn('Failed to preload some common images:', error);
 		}

@@ -41,7 +41,7 @@ class Hazards extends WeatherDisplay {
 		// this is intentional to ensure the latest alerts only are displayed.
 
 		// auto reload must be set up specifically for hazards in case it is disabled via checkbox (for the bottom line scroll)
-		if (this.autoRefreshHandle === null) this.setAutoReload();
+		if (this.autoRefreshHandle === null) {this.setAutoReload();}
 
 		// if not a refresh (new site), all alerts are new
 		if (!refresh) {
@@ -69,8 +69,8 @@ class Hazards extends WeatherDisplay {
 			this.viewedGetCount += 1;
 
 			// count up un-viewed alerts
-			const unViewed = this.data.reduce((count, hazard) => {
-				if (!this.viewedAlerts.has(hazard.id)) return count + 1;
+			this.data.reduce((count, hazard) => {
+				if (!this.viewedAlerts.has(hazard.id)) {return count + 1;}
 				return count;
 			}, 0);
 
@@ -79,7 +79,7 @@ class Hazards extends WeatherDisplay {
 		} catch (error) {
 			console.error('Get hazards failed');
 			console.error(error.status, error.responseJSON);
-			if (this.isEnabled) this.setStatus(STATUS.failed);
+			if (this.isEnabled) {this.setStatus(STATUS.failed);}
 			// return undefined to other subscribers
 			this.getDataCallback(undefined);
 			return;
@@ -133,7 +133,7 @@ class Hazards extends WeatherDisplay {
 		const timingStep = 480;
 		this.timing.delay = [150 + timingStep];
 		// add additional pages
-		for (let i = 0; i < pages; i += 1) this.timing.delay.push(timingStep);
+		for (let i = 0; i < pages; i += 1) {this.timing.delay.push(timingStep);}
 		// add the final 3 second delay
 		this.timing.delay.push(250);
 		this.calcNavTiming();
@@ -161,7 +161,7 @@ class Hazards extends WeatherDisplay {
 		let offsetY = Math.min(this.elem.querySelector('.hazard-lines').offsetHeight - 390, (count - 150));
 
 		// don't let offset go negative
-		if (offsetY < 0) offsetY = 0;
+		if (offsetY < 0) {offsetY = 0;}
 
 		// move the element
 		this.elem.querySelector('.main').scrollTo(0, offsetY);
@@ -170,9 +170,9 @@ class Hazards extends WeatherDisplay {
 	// make data available outside this class
 	// promise allows for data to be requested before it is available
 	async getCurrentData(stillWaiting) {
-		if (stillWaiting) this.stillWaitingCallbacks.push(stillWaiting);
+		if (stillWaiting) {this.stillWaitingCallbacks.push(stillWaiting);}
 		return new Promise((resolve) => {
-			if (this.data) resolve(this.data);
+			if (this.data) {resolve(this.data);}
 			// data not available, put it into the data callback queue
 			this.getDataCallbacks.push(() => resolve(this.data));
 		});
@@ -195,9 +195,9 @@ class Hazards extends WeatherDisplay {
 	// make data available outside this class
 	// promise allows for data to be requested before it is available
 	async getHazards(stillWaiting) {
-		if (stillWaiting) this.stillWaitingCallbacks.push(stillWaiting);
+		if (stillWaiting) {this.stillWaitingCallbacks.push(stillWaiting);}
 		return new Promise((resolve) => {
-			if (this.data) resolve(this.data);
+			if (this.data) {resolve(this.data);}
 			// data not available, put it into the data callback queue
 			this.getDataCallbacks.push(() => resolve(this.data));
 		});

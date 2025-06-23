@@ -21,7 +21,7 @@ let resetFlag;
 const start = () => {
 	// if already started, draw the screen on a reset flag and return
 	if (interval) {
-		if (resetFlag) drawScreen();
+		if (resetFlag) {drawScreen();}
 		resetFlag = false;
 		return;
 	}
@@ -48,7 +48,7 @@ const incrementInterval = (force) => {
 	if (!force) {
 		// test for elapsed time (0.5s ticks);
 		sinceLastUpdate += 1;
-		if (sinceLastUpdate < nextUpdate) return;
+		if (sinceLastUpdate < nextUpdate) {return;}
 	}
 	// reset flags
 	sinceLastUpdate = 0;
@@ -76,15 +76,15 @@ const drawScreen = async () => {
 	}
 
 	// nothing to do if there's no data yet
-	if (!data) return;
+	if (!data) {return;}
 
 	const thisScreen = screens[screenIndex](data);
 
 	// update classes on the scroll area
 	elemForEach('.weather-display .scroll', (elem) => {
-		elem.classList.forEach((cls) => { if (cls !== 'scroll') elem.classList.remove(cls); });
+		elem.classList.forEach((cls) => { if (cls !== 'scroll') {elem.classList.remove(cls);} });
 		// no scroll on progress
-		if (elem.parentElement.id === 'progress-html') return;
+		if (elem.parentElement.id === 'progress-html') {return;}
 		thisScreen?.classes?.forEach((cls) => elem.classList.add(cls));
 	});
 
@@ -113,7 +113,7 @@ const drawScreen = async () => {
 
 const hazards = (data) => {
 	// test for data
-	if (!data.hazards || data.hazards.length === 0) return false;
+	if (!data.hazards || data.hazards.length === 0) {return false;}
 
 	const hazard = `${data.hazards[0].properties.event} ${data.hazards[0].properties.description}`;
 
@@ -233,8 +233,8 @@ const drawScrollCondition = (screen) => {
 
 const parseMessage = (event) => {
 	if (event?.data?.type === 'current-weather-scroll') {
-		if (event.data?.method === 'start') start();
-		if (event.data?.method === 'reload') stop(true);
+		if (event.data?.method === 'start') {start();}
+		if (event.data?.method === 'reload') {stop(true);}
 	}
 };
 

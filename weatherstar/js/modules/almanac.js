@@ -1,9 +1,8 @@
 // display sun and moon data
-import { imagePreloader } from './utils/image-preloader.js';
-import { plusDays, minusDays, getDayName, formatTimeSimple } from './utils/date-utils.js';
+import { formatTimeSimple, getDayName, minusDays, plusDays } from './utils/date-utils.js';
 import STATUS from './status.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay, timeZone } from './navigation.js';
+import { registerDisplay } from './navigation.js';
 
 class Almanac extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -29,7 +28,7 @@ class Almanac extends WeatherDisplay {
 		// share data
 		this.getDataCallback();
 
-		if (!superResponse) return;
+		if (!superResponse) {return;}
 
 		// update status
 		this.setStatus(STATUS.loaded);
@@ -54,10 +53,10 @@ class Almanac extends WeatherDisplay {
 			moonDate = plusDays(moonDate, 1);
 			phase = SunCalc.getMoonIllumination(moonDate).phase;
 			// check for 4 cases
-			if (lastPhase < 0.25 && phase >= 0.25) moon.push(this.getMoonTransition(0.25, 'First', moonDate));
-			if (lastPhase < 0.50 && phase >= 0.50) moon.push(this.getMoonTransition(0.50, 'Full', moonDate));
-			if (lastPhase < 0.75 && phase >= 0.75) moon.push(this.getMoonTransition(0.75, 'Last', moonDate));
-			if (lastPhase > phase) moon.push(this.getMoonTransition(0.00, 'New', moonDate));
+			if (lastPhase < 0.25 && phase >= 0.25) {moon.push(this.getMoonTransition(0.25, 'First', moonDate));}
+			if (lastPhase < 0.50 && phase >= 0.50) {moon.push(this.getMoonTransition(0.50, 'Full', moonDate));}
+			if (lastPhase < 0.75 && phase >= 0.75) {moon.push(this.getMoonTransition(0.75, 'Last', moonDate));}
+			if (lastPhase > phase) {moon.push(this.getMoonTransition(0.00, 'New', moonDate));}
 
 			// stop after 30 days or 4 moon phases
 			iterations += 1;
@@ -84,7 +83,7 @@ class Almanac extends WeatherDisplay {
 		// increasing test
 		let test = (lastPhase, testPhase) => lastPhase < threshold && testPhase >= threshold;
 		// decreasing test
-		if (iteration % 2 === 0) test = (lastPhase, testPhase) => lastPhase > threshold && testPhase <= threshold;
+		if (iteration % 2 === 0) {test = (lastPhase, testPhase) => lastPhase > threshold && testPhase <= threshold;}
 
 		do {
 			// store last phase
@@ -93,11 +92,11 @@ class Almanac extends WeatherDisplay {
 			moonDate = new Date(moonDate.getTime() + (step.hours * 60 * 60 * 1000) + (step.minutes * 60 * 1000) + (step.seconds * 1000) + step.milliseconds);
 			phase = SunCalc.getMoonIllumination(moonDate).phase;
 			// wrap phases > 0.9 to -0.1 for ease of detection
-			if (phase > 0.9) phase -= 1.0;
+			if (phase > 0.9) {phase -= 1.0;}
 			// compare
 			if (test(lastPhase, phase)) {
 				// last iteration is three, return value
-				if (iteration >= 3) break;
+				if (iteration >= 3) {break;}
 				// iterate recursively
 				return this.getMoonTransition(threshold, phaseName, moonDate, iteration + 1);
 			}
@@ -146,7 +145,7 @@ class Almanac extends WeatherDisplay {
 	// promise allows for data to be requested before it is available
 	async getSun() {
 		return new Promise((resolve) => {
-			if (this.data) resolve(this.data);
+			if (this.data) {resolve(this.data);}
 			// data not available, put it into the data callback queue
 			this.getDataCallbacks.push(resolve);
 		});

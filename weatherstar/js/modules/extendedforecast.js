@@ -3,9 +3,9 @@
 
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
-import { getSmallIcon, getLargeIcon } from './icons.js';
+import { getLargeIcon } from './icons.js';
 import { preloadImg } from './utils/image.js';
-import { startOfDay, plusDays, getShortDayName } from './utils/date-utils.js';
+import { getShortDayName, plusDays, startOfDay } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 
@@ -18,7 +18,7 @@ class ExtendedForecast extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 
 		// request us or si units
 		try {

@@ -2,7 +2,7 @@
 import STATUS, { calcStatusClass, statusClasses } from './status.js';
 import WeatherDisplay from './weatherdisplay.js';
 import {
-	registerProgress, message, getDisplay, msg,
+	getDisplay, message, msg, registerProgress,
 } from './navigation.js';
 
 class Progress extends WeatherDisplay {
@@ -22,16 +22,16 @@ class Progress extends WeatherDisplay {
 	}
 
 	async drawCanvas(displays, loadedCount) {
-		if (!this.elem) return;
+		if (!this.elem) {return;}
 		super.drawCanvas();
 
 		// get the progress bar cover (makes percentage)
-		if (!this.progressCover) this.progressCover = this.elem.querySelector('.scroll .cover');
+		if (!this.progressCover) {this.progressCover = this.elem.querySelector('.scroll .cover');}
 
 		// if no displays provided just draw the backgrounds (above)
-		if (!displays) return;
+		if (!displays) {return;}
 		const lines = displays.map((display, index) => {
-			if (display.showOnProgress === false) return false;
+			if (display.showOnProgress === false) {return false;}
 			const fill = {
 				name: display.name,
 			};
@@ -41,7 +41,7 @@ class Progress extends WeatherDisplay {
 			// make the line
 			const line = this.fillTemplate('item', fill);
 			// because of timing, this might get called before the template is loaded
-			if (!line) return false;
+			if (!line) {return false;}
 
 			// update the status
 			const links = line.querySelector('.links');
@@ -75,7 +75,7 @@ class Progress extends WeatherDisplay {
 	lineClick(e) {
 		// get index
 		const indexRaw = e.target?.parentNode?.dataset?.index;
-		if (indexRaw === undefined) return;
+		if (indexRaw === undefined) {return;}
 		const index = +indexRaw;
 
 		// stop playing

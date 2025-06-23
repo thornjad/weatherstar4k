@@ -22,8 +22,8 @@ const init = async () => {
 
 const message = (data) => {
 	// dispatch event
-	if (!data.type) return false;
-	if (data.type === 'navButton') return handleNavButton(data.message);
+	if (!data.type) {return false;}
+	if (data.type === 'navButton') {return handleNavButton(data.message);}
 	return console.error(`Unknown event ${data.type}`);
 };
 
@@ -31,7 +31,7 @@ const getWeather = async (latLon, haveDataCallback) => {
 	// get initial weather data
 	const point = await getPoint(latLon.lat, latLon.lon);
 
-	if (typeof haveDataCallback === 'function') haveDataCallback(point);
+	if (typeof haveDataCallback === 'function') {haveDataCallback(point);}
 
 	// get stations
 	const stations = await fetchAsync(point.properties.observationStations, "json");
@@ -78,12 +78,12 @@ const getWeather = async (latLon, haveDataCallback) => {
 
 // receive a status update from a module {id, value}
 const updateStatus = (value) => {
-	if (value.id < 0) return;
-	if (!progress) return;
+	if (value.id < 0) {return;}
+	if (!progress) {return;}
 	progress.drawCanvas(displays, countLoadedDisplays());
 
 	// first display is hazards and it must load before evaluating the first display
-	if (displays[0].status === STATUS.loading) return;
+	if (displays[0].status === STATUS.loading) {return;}
 
 	// calculate first enabled display
 	const firstDisplayIndex = displays.findIndex((display) => display?.timing?.totalScreens > 0);
@@ -111,8 +111,8 @@ const updateStatus = (value) => {
 // the weather.gov api has long load times for some products when you are the first
 // requester for the product after the cache expires
 const countLoadedDisplays = () => displays.reduce((acc, display) => {
-	if (display?.showOnProgress === false) return acc;
-	if (display?.status !== STATUS.loading) return acc + 1;
+	if (display?.showOnProgress === false) {return acc;}
+	if (display?.status !== STATUS.loading) {return acc + 1;}
 	return acc;
 }, 0);
 
@@ -140,8 +140,8 @@ const msg = {
 
 // receive navigation messages from displays
 const displayNavMessage = (myMessage) => {
-	if (myMessage.type === msg.response.previous) loadDisplay(-1);
-	if (myMessage.type === msg.response.next) loadDisplay(1);
+	if (myMessage.type === msg.response.previous) {loadDisplay(-1);}
+	if (myMessage.type === msg.response.next) {loadDisplay(1);}
 };
 
 // navigate to next or previous
@@ -155,18 +155,18 @@ const navTo = (direction) => {
 		let firstDisplay;
 		let displayCount = 0;
 		do {
-			if (displays[displayCount]?.status === STATUS.loaded && displays[displayCount]?.timing?.totalScreens > 0) firstDisplay = displays[displayCount];
+			if (displays[displayCount]?.status === STATUS.loaded && displays[displayCount]?.timing?.totalScreens > 0) {firstDisplay = displays[displayCount];}
 			displayCount += 1;
 		} while (!firstDisplay && displayCount < displays.length);
 
-		if (!firstDisplay) return;
+		if (!firstDisplay) {return;}
 
 		firstDisplay.navNext(msg.command.firstFrame);
 		firstDisplay.showCanvas();
 		return;
 	}
-	if (direction === msg.command.nextFrame) currentDisplay().navNext();
-	if (direction === msg.command.previousFrame) currentDisplay().navPrev();
+	if (direction === msg.command.nextFrame) {currentDisplay().navNext();}
+	if (direction === msg.command.previousFrame) {currentDisplay().navPrev();}
 };
 
 // find the next or previous available display
@@ -179,14 +179,14 @@ const loadDisplay = (direction) => {
 	for (let i = 0; i < totalDisplays; i += 1) {
 		// convert form simple 0-10 to start at current display index +/-1 and wrap
 		idx = wrap(startIdx + (i + 1) * direction, totalDisplays);
-		if (displays[idx]?.status === STATUS.loaded && displays[idx]?.timing?.totalScreens > 0) break;
+		if (displays[idx]?.status === STATUS.loaded && displays[idx]?.timing?.totalScreens > 0) {break;}
 	}
 	const newDisplay = displays[idx];
 	// hide all displays
 	hideAllCanvases();
 	// show the new display and navigate to an appropriate display
-	if (direction < 0) newDisplay.showCanvas(msg.command.lastFrame);
-	if (direction > 0) newDisplay.showCanvas(msg.command.firstFrame);
+	if (direction < 0) {newDisplay.showCanvas(msg.command.lastFrame);}
+	if (direction > 0) {newDisplay.showCanvas(msg.command.firstFrame);}
 };
 
 // get the current display index or value
@@ -210,8 +210,8 @@ const setPlaying = (newValue) => {
 		playButton.src = 'images/nav/ic_play_arrow_white_24dp_2x.png';
 	}
 	// if we're playing and on the progress screen jump to the next screen
-	if (!progress) return;
-	if (playing && !currentDisplay()) navTo(msg.command.firstFrame);
+	if (!progress) {return;}
+	if (playing && !currentDisplay()) {navTo(msg.command.firstFrame);}
 };
 
 // handle all navigation buttons
@@ -263,12 +263,12 @@ const resize = () => {
 
 // reset all statuses to loading on all displays, used to keep the progress bar accurate during refresh
 const resetStatuses = () => {
-	displays.forEach((display) => { if (display) display.status = STATUS.loading; });
+	displays.forEach((display) => { if (display) {display.status = STATUS.loading;} });
 };
 
 // allow displays to register themselves
 const registerDisplay = (display) => {
-	if (displays[display.navId]) console.warn(`Display nav ID ${display.navId} already in use`);
+	if (displays[display.navId]) {console.warn(`Display nav ID ${display.navId} already in use`);}
 	displays[display.navId] = display;
 };
 

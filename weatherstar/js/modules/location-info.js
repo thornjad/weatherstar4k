@@ -18,7 +18,7 @@ class LocationInfo extends WeatherDisplay {
   }
 
   async getData(weatherParameters, refresh) {
-    if (!super.getData(weatherParameters, refresh)) return;
+    if (!super.getData(weatherParameters, refresh)) {return;}
 
     // Format the location name (same as what gets logged to console)
     const locationName = `${this.weatherParameters.city}, ${this.weatherParameters.state}`;

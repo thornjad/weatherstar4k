@@ -21,7 +21,7 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
 
   // build a url, including the rewrite for cors if necessary
   let corsUrl = _url;
-  if (params.cors === true) corsUrl = rewriteUrl(_url);
+  if (params.cors === true) {corsUrl = rewriteUrl(_url);}
   const url = new URL(corsUrl, `${window.location.origin}/`);
   // match the security protocol when not on localhost
   // url.protocol = window.location.hostname === 'localhost' ? url.protocol : window.location.protocol;
@@ -40,9 +40,9 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
 
   // check for ok response
   if (!response.ok)
-    throw new Error(
+    {throw new Error(
       `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`,
-    );
+    );}
   // return the requested response
   switch (responseType) {
     case "json":

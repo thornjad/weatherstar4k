@@ -74,10 +74,10 @@ export const getShortDayName = (date) => {
 // Create date from object (simplified)
 export const fromObject = (obj) => {
 	const date = new Date();
-	if (obj.year) date.setFullYear(obj.year);
-	if (obj.month) date.setMonth(obj.month - 1); // JS months are 0-indexed
-	if (obj.day) date.setDate(obj.day);
-	if (obj.hour) date.setHours(obj.hour);
-	if (obj.minute) date.setMinutes(obj.minute);
+	if (obj.year) {date.setFullYear(obj.year);}
+	if (obj.month) {date.setMonth(obj.month - 1);} // JS months are 0-indexed
+	if (obj.day) {date.setDate(obj.day);}
+	if (obj.hour) {date.setHours(obj.hour);}
+	if (obj.minute) {date.setMinutes(obj.minute);}
 	return date;
 }; 

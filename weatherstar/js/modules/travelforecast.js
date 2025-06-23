@@ -2,7 +2,7 @@
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon } from './icons.js';
-import { plusDays, getDayName } from './utils/date-utils.js';
+import { getDayName, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 
@@ -20,9 +20,9 @@ class TravelForecast extends WeatherDisplay {
 		const timingStep = 75 * 4;
 		this.timing.delay = [150 + timingStep];
 		// add additional pages
-		for (let i = 0; i < pages; i += 1) this.timing.delay.push(timingStep);
+		for (let i = 0; i < pages; i += 1) {this.timing.delay.push(timingStep);}
 		// add the extra (not exactly 4 pages portion)
-		if (extra !== 0) this.timing.delay.push(Math.round(this.extra * this.cityHeight));
+		if (extra !== 0) {this.timing.delay.push(Math.round(this.extra * this.cityHeight));}
 		// add the final 3 second delay
 		this.timing.delay.push(150);
 
@@ -32,7 +32,7 @@ class TravelForecast extends WeatherDisplay {
 
 	async getData(weatherParameters, refresh) {
 		// super checks for enabled
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 
 		// clear stored data if not refresh
 		if (!refresh) {
@@ -42,7 +42,7 @@ class TravelForecast extends WeatherDisplay {
 		const forecastPromises = TravelCities.map(async (city, index) => {
 			try {
 				// get point then forecast
-				if (!city.point) throw new Error('No pre-loaded point');
+				if (!city.point) {throw new Error('No pre-loaded point');}
 				let forecast;
 				try {
 					forecast = await fetchAsync(`https://api.weather.gov/gridpoints/${city.point.wfo}/${city.point.x},${city.point.y}/forecast`, "json", {
@@ -102,7 +102,7 @@ class TravelForecast extends WeatherDisplay {
 		const cities = this.data;
 
 		const lines = cities.map((city) => {
-			if (city.error) return false;
+			if (city.error) {return false;}
 			const fillValues = {
 				city,
 			};
@@ -160,7 +160,7 @@ class TravelForecast extends WeatherDisplay {
 		let offsetY = Math.min(this.elem.querySelector('.travel-lines').offsetHeight - 289, (count - 150));
 
 		// don't let offset go negative
-		if (offsetY < 0) offsetY = 0;
+		if (offsetY < 0) {offsetY = 0;}
 
 		// copy the scrolled portion of the canvas
 		this.elem.querySelector('.main').scrollTo(0, offsetY);

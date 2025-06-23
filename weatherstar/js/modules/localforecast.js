@@ -2,7 +2,6 @@
 
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
-import { getSmallIcon } from './icons.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 
@@ -15,7 +14,7 @@ class LocalForecast extends WeatherDisplay {
 	}
 
 	async getData(weatherParameters, refresh) {
-		if (!super.getData(weatherParameters, refresh)) return;
+		if (!super.getData(weatherParameters, refresh)) {return;}
 
 		// get raw data
 		const rawData = await this.getRawData(this.weatherParameters);

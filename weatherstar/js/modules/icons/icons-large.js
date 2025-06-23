@@ -3,7 +3,7 @@
 const addPath = (icon) => `images/icons/current-conditions/${icon}`;
 
 const largeIcon = (link, _isNightTime) => {
-	if (!link) return false;
+	if (!link) {return false;}
 
 	// extract day or night if not provided
 	const isNightTime = _isNightTime ?? link.indexOf('/night/') >= 0;
@@ -81,7 +81,7 @@ const largeIcon = (link, _isNightTime) => {
 
 		case 'snow':
 		case 'snow-n':
-			if (value > 50) return addPath('Heavy-Snow.gif');
+			if (value > 50) {return addPath('Heavy-Snow.gif');}
 			return addPath('Light-Snow.gif');
 
 		case 'rain_snow':

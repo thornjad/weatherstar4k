@@ -72,7 +72,7 @@ const smallIcon = (link, _isNightTime) => {
 
 		case 'snow':
 		case 'snow-n':
-			if (value > 50) return addPath('Heavy-Snow-1994.gif');
+			if (value > 50) {return addPath('Heavy-Snow-1994.gif');}
 			return addPath('Light-Snow.gif');
 
 		case 'rain_snow':
