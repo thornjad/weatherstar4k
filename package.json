@@ -1,0 +1,18 @@
+{
+  "name": "weatherstar4k",
+  "version": "1.2.1",
+  "description": "Thornjad's WeatherStar - Weather display application",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint weatherstar/js/ --fix --no-warn-ignored",
+    "format": "prettier --write weatherstar/js/**/*.js",
+    "format:check": "prettier --check weatherstar/js/**/*.js",
+    "clean": "npm run format && npm run lint"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "eslint": "^9.21.0",
+    "globals": "^15.12.0",
+    "prettier": "^3.4.2"
+  }
+}

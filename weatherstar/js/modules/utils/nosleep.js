@@ -2,7 +2,7 @@
 
 // Detect native Wake Lock API support
 const nativeWakeLock = () => {
-  return "wakeLock" in navigator;
+  return 'wakeLock' in navigator;
 };
 
 class NoSleep {
@@ -12,24 +12,24 @@ class NoSleep {
     if (nativeWakeLock()) {
       this._wakeLock = null;
       const handleVisibilityChange = () => {
-        if (this._wakeLock !== null && document.visibilityState === "visible") {
+        if (this._wakeLock !== null && document.visibilityState === 'visible') {
           this.enable();
         }
       };
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      document.addEventListener("fullscreenchange", handleVisibilityChange);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      document.addEventListener('fullscreenchange', handleVisibilityChange);
     } else {
       // Set up no sleep video element for browsers without Wake Lock API
-      this.noSleepVideo = document.createElement("video");
-      this.noSleepVideo.setAttribute("title", "No Sleep");
-      this.noSleepVideo.setAttribute("playsinline", "");
+      this.noSleepVideo = document.createElement('video');
+      this.noSleepVideo.setAttribute('title', 'No Sleep');
+      this.noSleepVideo.setAttribute('playsinline', '');
 
       // Create a minimal video source (1x1 pixel transparent video)
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = 1;
       canvas.height = 1;
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "transparent";
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'transparent';
       ctx.fillRect(0, 0, 1, 1);
 
       const stream = canvas.captureStream();
@@ -41,15 +41,15 @@ class NoSleep {
   async enable() {
     if (nativeWakeLock()) {
       try {
-        this._wakeLock = await navigator.wakeLock.request("screen");
+        this._wakeLock = await navigator.wakeLock.request('screen');
         this.enabled = true;
-        console.log("Wake Lock active.");
-        this._wakeLock.addEventListener("release", () => {
-          console.log("Wake Lock released.");
+        console.log('Wake Lock active.');
+        this._wakeLock.addEventListener('release', () => {
+          console.log('Wake Lock released.');
         });
       } catch (err) {
         this.enabled = false;
-        console.error(err.name + ", " + err.message);
+        console.error(err.name + ', ' + err.message);
         throw err;
       }
     } else {
@@ -86,13 +86,19 @@ let wakeLock = false;
 
 const noSleep = (enable = false) => {
   // get a nosleep controller
-  if (!noSleep.controller) {noSleep.controller = new NoSleep();}
+  if (!noSleep.controller) {
+    noSleep.controller = new NoSleep();
+  }
   // don't call anything if the states match
-  if (wakeLock === enable) {return false;}
+  if (wakeLock === enable) {
+    return false;
+  }
   // store the value
   wakeLock = enable;
   // call the function
-  if (enable) {return noSleep.controller.enable();}
+  if (enable) {
+    return noSleep.controller.enable();
+  }
   return noSleep.controller.disable();
 };
 

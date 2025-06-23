@@ -9,4 +9,4 @@ const RegionalCities = await fetch('./js/data/json/regionalcities.json')
   });
 
 // Make it globally available
-window.RegionalCities = RegionalCities; 
+window.RegionalCities = RegionalCities;

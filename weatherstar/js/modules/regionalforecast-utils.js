@@ -1,6 +1,6 @@
-import { getSmallIcon } from "./icons.js";
-import { fetchAsync } from "./utils/fetch.js";
-import { imagePreloader } from "./utils/image-preloader.js";
+import { getSmallIcon } from './icons.js';
+import { fetchAsync } from './utils/fetch.js';
+import { imagePreloader } from './utils/image-preloader.js';
 
 const buildForecast = (forecast, city, cityXY) => {
   return {
@@ -19,23 +19,21 @@ const getRegionalObservation = async (point, city) => {
     // get stations
     const stations = await fetchAsync(
       `https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/stations?limit=1`,
-      "json",
+      'json'
     );
 
     // get the first station
     const station = stations.features[0].id;
     // get the observation data
-    const observation = await fetchAsync(
-      `${station}/observations/latest`,
-      "json",
-    );
+    const observation = await fetchAsync(`${station}/observations/latest`, 'json');
     // preload the image using the new caching system
-    if (!observation.properties.icon) {return false;}
-    const icon = getSmallIcon(
-      observation.properties.icon,
-      !observation.properties.daytime,
-    );
-    if (!icon) {return false;}
+    if (!observation.properties.icon) {
+      return false;
+    }
+    const icon = getSmallIcon(observation.properties.icon, !observation.properties.daytime);
+    if (!icon) {
+      return false;
+    }
 
     // Use the new image preloader for better caching
     imagePreloader.getImageElement(icon);
@@ -43,26 +41,20 @@ const getRegionalObservation = async (point, city) => {
     // return the observation
     return observation.properties;
   } catch (error) {
-    console.log(
-      `Unable to get regional observations for ${city.Name ?? city.city}`,
-    );
+    console.log(`Unable to get regional observations for ${city.Name ?? city.city}`);
     console.error(error.status, error.responseJSON);
     return false;
   }
 };
 
 // utility latitude/pixel conversions
-const getXYFromLatitudeLongitude = (
-  Latitude,
-  Longitude,
-  OffsetX,
-  OffsetY,
-  state,
-) => {
-  if (state === "AK")
-    {return getXYFromLatitudeLongitudeAK(Latitude, Longitude, OffsetX, OffsetY);}
-  if (state === "HI")
-    {return getXYFromLatitudeLongitudeHI(Latitude, Longitude, OffsetX, OffsetY);}
+const getXYFromLatitudeLongitude = (Latitude, Longitude, OffsetX, OffsetY, state) => {
+  if (state === 'AK') {
+    return getXYFromLatitudeLongitudeAK(Latitude, Longitude, OffsetX, OffsetY);
+  }
+  if (state === 'HI') {
+    return getXYFromLatitudeLongitudeHI(Latitude, Longitude, OffsetX, OffsetY);
+  }
   let y = 0;
   let x = 0;
   const ImgHeight = 1600;
@@ -89,12 +81,7 @@ const getXYFromLatitudeLongitude = (
   return { x, y };
 };
 
-const getXYFromLatitudeLongitudeAK = (
-  Latitude,
-  Longitude,
-  OffsetX,
-  OffsetY,
-) => {
+const getXYFromLatitudeLongitudeAK = (Latitude, Longitude, OffsetX, OffsetY) => {
   let y = 0;
   let x = 0;
   const ImgHeight = 1142;
@@ -121,12 +108,7 @@ const getXYFromLatitudeLongitudeAK = (
   return { x, y };
 };
 
-const getXYFromLatitudeLongitudeHI = (
-  Latitude,
-  Longitude,
-  OffsetX,
-  OffsetY,
-) => {
+const getXYFromLatitudeLongitudeHI = (Latitude, Longitude, OffsetX, OffsetY) => {
   let y = 0;
   let x = 0;
   const ImgHeight = 571;
@@ -154,10 +136,12 @@ const getXYFromLatitudeLongitudeHI = (
 };
 
 const getMinMaxLatitudeLongitude = (X, Y, OffsetX, OffsetY, state) => {
-  if (state === "AK")
-    {return getMinMaxLatitudeLongitudeAK(X, Y, OffsetX, OffsetY);}
-  if (state === "HI")
-    {return getMinMaxLatitudeLongitudeHI(X, Y, OffsetX, OffsetY);}
+  if (state === 'AK') {
+    return getMinMaxLatitudeLongitudeAK(X, Y, OffsetX, OffsetY);
+  }
+  if (state === 'HI') {
+    return getMinMaxLatitudeLongitudeHI(X, Y, OffsetX, OffsetY);
+  }
   const maxLat = (Y / 55.2 - 50.5) * -1;
   const minLat = ((Y + OffsetY * 2) / 55.2 - 50.5) * -1;
   const minLon = ((X * -1) / 41.775 + 127.5) * -1;
@@ -200,16 +184,28 @@ const getMinMaxLatitudeLongitudeHI = (X, Y, OffsetX, OffsetY) => {
 };
 
 const getXYForCity = (City, MaxLatitude, MinLongitude, state) => {
-  if (state === "AK") {getXYForCityAK(City, MaxLatitude, MinLongitude);}
-  if (state === "HI") {getXYForCityHI(City, MaxLatitude, MinLongitude);}
+  if (state === 'AK') {
+    getXYForCityAK(City, MaxLatitude, MinLongitude);
+  }
+  if (state === 'HI') {
+    getXYForCityHI(City, MaxLatitude, MinLongitude);
+  }
   let x = (City.lon - MinLongitude) * 57;
   let y = (MaxLatitude - City.lat) * 70;
 
-  if (y < 30) {y = 30;}
-  if (y > 282) {y = 282;}
+  if (y < 30) {
+    y = 30;
+  }
+  if (y > 282) {
+    y = 282;
+  }
 
-  if (x < 40) {x = 40;}
-  if (x > 580) {x = 580;}
+  if (x < 40) {
+    x = 40;
+  }
+  if (x > 580) {
+    x = 580;
+  }
 
   return { x, y };
 };
@@ -218,11 +214,19 @@ const getXYForCityAK = (City, MaxLatitude, MinLongitude) => {
   let x = (City.lon - MinLongitude) * 37;
   let y = (MaxLatitude - City.lat) * 70;
 
-  if (y < 30) {y = 30;}
-  if (y > 282) {y = 282;}
+  if (y < 30) {
+    y = 30;
+  }
+  if (y > 282) {
+    y = 282;
+  }
 
-  if (x < 40) {x = 40;}
-  if (x > 580) {x = 580;}
+  if (x < 40) {
+    x = 40;
+  }
+  if (x > 580) {
+    x = 580;
+  }
   return { x, y };
 };
 
@@ -230,17 +234,25 @@ const getXYForCityHI = (City, MaxLatitude, MinLongitude) => {
   let x = (City.lon - MinLongitude) * 57;
   let y = (MaxLatitude - City.lat) * 70;
 
-  if (y < 30) {y = 30;}
-  if (y > 282) {y = 282;}
+  if (y < 30) {
+    y = 30;
+  }
+  if (y > 282) {
+    y = 282;
+  }
 
-  if (x < 40) {x = 40;}
-  if (x > 580) {x = 580;}
+  if (x < 40) {
+    x = 40;
+  }
+  if (x > 580) {
+    x = 580;
+  }
 
   return { x, y };
 };
 
 // to fit on the map, remove anything after punctuation and then limit to 15 characters
-const formatCity = (city) => city.match(/[^,/;\\-]*/)[0].substr(0, 12);
+const formatCity = city => city.match(/[^,/;\\-]*/)[0].substr(0, 12);
 
 export {
   buildForecast,

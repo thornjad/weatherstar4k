@@ -21,7 +21,7 @@ class ImageCache {
    */
   initCache() {
     try {
-      const cached = localStorage.getItem("weatherstar4k_image_cache");
+      const cached = localStorage.getItem('weatherstar4k_image_cache');
       if (cached) {
         const parsed = JSON.parse(cached);
         // Only restore cache entries that are still valid (within 24 hours)
@@ -32,11 +32,11 @@ class ImageCache {
           }
         });
         console.log(
-          `Restored ${this.cache.size} cached images from localStorage`,
+          `Restored ${this.cache.size} cached images from localStorage`
         );
       }
     } catch (error) {
-      console.warn("Failed to restore image cache from localStorage:", error);
+      console.warn('Failed to restore image cache from localStorage:', error);
     }
   }
 
@@ -47,11 +47,11 @@ class ImageCache {
     try {
       const cacheArray = Array.from(this.cache.entries());
       localStorage.setItem(
-        "weatherstar4k_image_cache",
-        JSON.stringify(cacheArray),
+        'weatherstar4k_image_cache',
+        JSON.stringify(cacheArray)
       );
     } catch (error) {
-      console.warn("Failed to save image cache to localStorage:", error);
+      console.warn('Failed to save image cache to localStorage:', error);
     }
   }
 
@@ -147,7 +147,7 @@ class ImageCache {
     this.cache.clear();
     this.loadingPromises.clear();
     this.stats = { hits: 0, misses: 0, loads: 0, evictions: 0 };
-    localStorage.removeItem("weatherstar4k_image_cache");
+    localStorage.removeItem('weatherstar4k_image_cache');
   }
 
   /**
@@ -192,8 +192,8 @@ class ImageCache {
       };
 
       // Set crossOrigin for external images
-      if (src.startsWith("http")) {
-        img.crossOrigin = "anonymous";
+      if (src.startsWith('http')) {
+        img.crossOrigin = 'anonymous';
       }
 
       img.src = src;
@@ -204,11 +204,11 @@ class ImageCache {
    * Preload multiple images in parallel
    */
   async preloadImages(srcs) {
-    const promises = srcs.map((src) =>
-      this.preloadImage(src).catch((err) => {
+    const promises = srcs.map(src =>
+      this.preloadImage(src).catch(err => {
         console.warn(`Failed to preload image ${src}:`, err);
         return null;
-      }),
+      })
     );
 
     return Promise.all(promises);
@@ -229,13 +229,13 @@ class ImageCache {
 
     // Create new image and start preloading
     const img = new Image();
-    if (src.startsWith("http")) {
-      img.crossOrigin = "anonymous";
+    if (src.startsWith('http')) {
+      img.crossOrigin = 'anonymous';
     }
     img.src = src;
 
     // Start preloading in background
-    this.preloadImage(src).catch((err) => {
+    this.preloadImage(src).catch(err => {
       console.warn(`Background preload failed for ${src}:`, err);
     });
 
@@ -247,11 +247,13 @@ class ImageCache {
 const imageCache = new ImageCache(150); // Cache up to 150 images
 
 // Legacy compatibility function
-const preloadImg = (src) => {
-  if (!src) {return false;}
+const preloadImg = src => {
+  if (!src) {
+    return false;
+  }
 
   // Start preloading in background
-  imageCache.preloadImage(src).catch((err) => {
+  imageCache.preloadImage(src).catch(err => {
     console.warn(`Preload failed for ${src}:`, err);
   });
 

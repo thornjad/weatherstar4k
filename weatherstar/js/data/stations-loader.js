@@ -9,4 +9,4 @@ const StationInfo = await fetch('./js/data/json/stations.json')
   });
 
 // Make it globally available
-window.StationInfo = StationInfo; 
+window.StationInfo = StationInfo;

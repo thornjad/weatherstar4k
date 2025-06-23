@@ -1,19 +1,19 @@
-import { fetchAsync } from "./utils/fetch.js";
-import Setting from "./utils/setting.js";
+import { fetchAsync } from './utils/fetch.js';
+import Setting from './utils/setting.js';
 
 let playlist;
 let currentTrack = 0;
 let player;
 
-const mediaPlaying = new Setting("mediaPlaying", {
-  name: "Media Playing",
-  type: "boolean",
+const mediaPlaying = new Setting('mediaPlaying', {
+  name: 'Media Playing',
+  type: 'boolean',
   defaultValue: false,
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   // add the event handler to the page
-  document.getElementById("ToggleMedia").addEventListener("click", toggleMedia);
+  document.getElementById('ToggleMedia').addEventListener('click', toggleMedia);
   // get the playlist
   getMedia();
 });
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const getMedia = async () => {
   try {
     // fetch the playlist
-    const rawPlaylist = await fetchAsync("playlist.json", "json");
+    const rawPlaylist = await fetchAsync('playlist.json', 'json');
     // store the playlist
     playlist = rawPlaylist;
     // enable the media player
@@ -38,8 +38,8 @@ const enableMediaPlayer = () => {
     // randomize the list
     randomizePlaylist();
     // enable the icon
-    const icon = document.getElementById("ToggleMedia");
-    icon.classList.add("available");
+    const icon = document.getElementById('ToggleMedia');
+    icon.classList.add('available');
     // set the button type
     setIcon();
     // if we're already playing (sticky option) then try to start playing
@@ -51,17 +51,17 @@ const enableMediaPlayer = () => {
 
 const setIcon = () => {
   // get the icon
-  const icon = document.getElementById("ToggleMedia");
+  const icon = document.getElementById('ToggleMedia');
   if (mediaPlaying.value === true) {
-    icon.classList.add("playing");
+    icon.classList.add('playing');
   } else {
-    icon.classList.remove("playing");
+    icon.classList.remove('playing');
   }
 };
 
-const toggleMedia = (forcedState) => {
+const toggleMedia = forcedState => {
   // handle forcing
-  if (typeof forcedState === "boolean") {
+  if (typeof forcedState === 'boolean') {
     mediaPlaying.value = forcedState;
   } else {
     // toggle the state
@@ -90,7 +90,9 @@ const startMedia = async () => {
 };
 
 const stopMedia = () => {
-  if (!player) {return;}
+  if (!player) {
+    return;
+  }
   player.pause();
 };
 
@@ -122,7 +124,7 @@ const randomizePlaylist = () => {
 const initializePlayer = () => {
   // basic sanity checks
   if (!playlist.availableFiles || playlist?.availableFiles.length === 0) {
-    throw new Error("No playlist available");
+    throw new Error('No playlist available');
   }
   if (player) {
     return;
@@ -134,18 +136,20 @@ const initializePlayer = () => {
   currentTrack = 0;
 
   // add event handlers
-  player.addEventListener("canplay", playerCanPlay);
-  player.addEventListener("ended", playerEnded);
+  player.addEventListener('canplay', playerCanPlay);
+  player.addEventListener('ended', playerEnded);
 
   // get the first file
   player.src = `music/${playlist.availableFiles[currentTrack]}`;
-  player.type = "audio/mpeg";
+  player.type = 'audio/mpeg';
   player.volume = 0.75; // Hardcoded to 75%
 };
 
 const playerCanPlay = async () => {
   // check to make sure they user still wants music (protect against slow loading music)
-  if (!mediaPlaying.value) {return;}
+  if (!mediaPlaying.value) {
+    return;
+  }
   // start playing
   startMedia();
 };

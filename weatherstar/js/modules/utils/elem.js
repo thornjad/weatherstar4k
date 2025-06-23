@@ -1,7 +1,5 @@
 const elemForEach = (selector, callback) => {
-	[...document.querySelectorAll(selector)].forEach(callback);
+  [...document.querySelectorAll(selector)].forEach(callback);
 };
 
-export {
-	elemForEach,
-};
+export { elemForEach };

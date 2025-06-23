@@ -9,4 +9,4 @@ const TravelCities = await fetch('./js/data/json/travelcities.json')
   });
 
 // Make it globally available
-window.TravelCities = TravelCities; 
+window.TravelCities = TravelCities;

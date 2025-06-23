@@ -1,17 +1,17 @@
-import { rewriteUrl } from "./cors.js";
+import { rewriteUrl } from './cors.js';
 
 const fetchAsync = async (_url, responseType, _params = {}) => {
   // add user agent header to json request at api.weather.gov
   const headers = {};
   if (_url.toString().match(/api\.weather\.gov/)) {
-    headers["user-agent"] =
-      "Jmthornton WeatherStar; michael+weatherstar@jmthornton.net";
+    headers['user-agent'] =
+      'Jmthornton WeatherStar; michael+weatherstar@jmthornton.net';
   }
   // combine default and provided parameters
   const params = {
-    method: "GET",
-    mode: "cors",
-    type: "GET",
+    method: 'GET',
+    mode: 'cors',
+    type: 'GET',
     retryCount: 0,
     ..._params,
     headers,
@@ -21,13 +21,15 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
 
   // build a url, including the rewrite for cors if necessary
   let corsUrl = _url;
-  if (params.cors === true) {corsUrl = rewriteUrl(_url);}
+  if (params.cors === true) {
+    corsUrl = rewriteUrl(_url);
+  }
   const url = new URL(corsUrl, `${window.location.origin}/`);
   // match the security protocol when not on localhost
   // url.protocol = window.location.hostname === 'localhost' ? url.protocol : window.location.protocol;
   // add parameters if necessary
   if (params.data) {
-    Object.keys(params.data).forEach((key) => {
+    Object.keys(params.data).forEach(key => {
       // get the value
       const value = params.data[key];
       // add to the url
@@ -39,17 +41,18 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
   const response = await doFetch(url, params);
 
   // check for ok response
-  if (!response.ok)
-    {throw new Error(
-      `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`,
-    );}
+  if (!response.ok) {
+    throw new Error(
+      `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`
+    );
+  }
   // return the requested response
   switch (responseType) {
-    case "json":
+    case 'json':
       return response.json();
-    case "text":
+    case 'text':
       return response.text();
-    case "blob":
+    case 'blob':
       return response.blob();
     default:
       return response;
@@ -60,7 +63,7 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
 const doFetch = (url, params) =>
   new Promise((resolve, reject) => {
     fetch(url, params)
-      .then((response) => {
+      .then(response => {
         if (params.retryCount > 0) {
           // 500 status codes should be retried after a short backoff
           if (
@@ -70,7 +73,7 @@ const doFetch = (url, params) =>
           ) {
             // call the "still waiting" function
             if (
-              typeof params.stillWaiting === "function" &&
+              typeof params.stillWaiting === 'function' &&
               params.retryCount === params.originalRetries
             ) {
               params.stillWaiting();
@@ -85,8 +88,8 @@ const doFetch = (url, params) =>
                 retryDelay(params.originalRetries - newParams.retryCount),
                 doFetch,
                 url,
-                newParams,
-              ),
+                newParams
+              )
             );
           }
           // not 500 status
@@ -99,13 +102,13 @@ const doFetch = (url, params) =>
   });
 
 const delay = (time, func, ...args) =>
-  new Promise((resolve) => {
+  new Promise(resolve => {
     setTimeout(() => {
       resolve(func(...args));
     }, time);
   });
 
-const retryDelay = (retryNumber) => {
+const retryDelay = retryNumber => {
   switch (retryNumber) {
     case 1:
       return 1000;

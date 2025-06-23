@@ -15,4 +15,4 @@ export const TravelCities = travelCitiesData;
 export const StationInfo = stationsData;
 
 // Also export the consolidated cities data
-export const Cities = citiesData; 
+export const Cities = citiesData;

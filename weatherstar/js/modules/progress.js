@@ -1,92 +1,104 @@
 // regional forecast and observations
 import STATUS, { calcStatusClass, statusClasses } from './status.js';
 import WeatherDisplay from './weatherdisplay.js';
-import {
-	getDisplay, message, msg, registerProgress,
-} from './navigation.js';
+import { getDisplay, message, msg, registerProgress } from './navigation.js';
 
 class Progress extends WeatherDisplay {
-	constructor(navId, elemId) {
-		super(navId, elemId, '');
+  constructor(navId, elemId) {
+    super(navId, elemId, '');
 
-		// disable any navigation timing
-		this.timing = false;
+    // disable any navigation timing
+    this.timing = false;
 
-		// setup event listener for dom-required initialization
-		document.addEventListener('DOMContentLoaded', () => {
-			this.version = document.querySelector('#version').innerHTML.replace(/\s/g, '');
-			this.elem.querySelector('.container').addEventListener('click', this.lineClick.bind(this));
-		});
+    // setup event listener for dom-required initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      this.version = document.querySelector('#version').innerHTML.replace(/\s/g, '');
+      this.elem.querySelector('.container').addEventListener('click', this.lineClick.bind(this));
+    });
 
-		this.okToDrawCurrentConditions = false;
-	}
+    this.okToDrawCurrentConditions = false;
+  }
 
-	async drawCanvas(displays, loadedCount) {
-		if (!this.elem) {return;}
-		super.drawCanvas();
+  async drawCanvas(displays, loadedCount) {
+    if (!this.elem) {
+      return;
+    }
+    super.drawCanvas();
 
-		// get the progress bar cover (makes percentage)
-		if (!this.progressCover) {this.progressCover = this.elem.querySelector('.scroll .cover');}
+    // get the progress bar cover (makes percentage)
+    if (!this.progressCover) {
+      this.progressCover = this.elem.querySelector('.scroll .cover');
+    }
 
-		// if no displays provided just draw the backgrounds (above)
-		if (!displays) {return;}
-		const lines = displays.map((display, index) => {
-			if (display.showOnProgress === false) {return false;}
-			const fill = {
-				name: display.name,
-			};
+    // if no displays provided just draw the backgrounds (above)
+    if (!displays) {
+      return;
+    }
+    const lines = displays
+      .map((display, index) => {
+        if (display.showOnProgress === false) {
+          return false;
+        }
+        const fill = {
+          name: display.name,
+        };
 
-			const statusClass = calcStatusClass(display.status);
+        const statusClass = calcStatusClass(display.status);
 
-			// make the line
-			const line = this.fillTemplate('item', fill);
-			// because of timing, this might get called before the template is loaded
-			if (!line) {return false;}
+        // make the line
+        const line = this.fillTemplate('item', fill);
+        // because of timing, this might get called before the template is loaded
+        if (!line) {
+          return false;
+        }
 
-			// update the status
-			const links = line.querySelector('.links');
-			links.classList.remove(...statusClasses);
-			links.classList.add(statusClass);
-			links.dataset.index = index;
-			return line;
-		}).filter((d) => d);
+        // update the status
+        const links = line.querySelector('.links');
+        links.classList.remove(...statusClasses);
+        links.classList.add(statusClass);
+        links.dataset.index = index;
+        return line;
+      })
+      .filter(d => d);
 
-		// get the container and update
-		const container = this.elem.querySelector('.container');
-		container.innerHTML = '';
-		container.append(...lines);
+    // get the container and update
+    const container = this.elem.querySelector('.container');
+    container.innerHTML = '';
+    container.append(...lines);
 
-		this.finishDraw();
+    this.finishDraw();
 
-		// calculate loaded percent
-		const visibleDisplays = displays.filter(display => display.showOnProgress !== false);
-		const loadedPercent = (loadedCount / visibleDisplays.length);
+    // calculate loaded percent
+    const visibleDisplays = displays.filter(display => display.showOnProgress !== false);
+    const loadedPercent = loadedCount / visibleDisplays.length;
 
-		this.progressCover.style.width = `${(1.0 - loadedPercent) * 100}%`;
-		if (loadedPercent < 1.0) {
-			// show the progress bar and set width
-			this.progressCover.parentNode.classList.add('show');
-		} else {
-			// hide the progressbar after 1 second (lines up with with width transition animation)
-			setTimeout(() => this.progressCover.parentNode.classList.remove('show'), 1000);
-		}
-	}
+    this.progressCover.style.width = `${(1.0 - loadedPercent) * 100}%`;
+    if (loadedPercent < 1.0) {
+      // show the progress bar and set width
+      this.progressCover.parentNode.classList.add('show');
+    } else {
+      // hide the progressbar after 1 second (lines up with with width transition animation)
+      setTimeout(() => this.progressCover.parentNode.classList.remove('show'), 1000);
+    }
+  }
 
-	lineClick(e) {
-		// get index
-		const indexRaw = e.target?.parentNode?.dataset?.index;
-		if (indexRaw === undefined) {return;}
-		const index = +indexRaw;
+  lineClick(e) {
+    // get index
+    const indexRaw = e.target?.parentNode?.dataset?.index;
+    if (indexRaw === undefined) {
+      return;
+    }
+    const index = +indexRaw;
 
-		// stop playing
-		message('navButton');
-		// use the y value to determine an index
-		const display = getDisplay(index);
-		if (display && display.status === STATUS.loaded) {
-			display.showCanvas(msg.command.firstFrame);
-			this.elem.classList.remove('show');
-		}
-	}
+    // stop playing
+    message('navButton');
+    // use the y value to determine an index
+    const display = getDisplay(index);
+    if (display && display.status === STATUS.loaded) {
+      display.showCanvas(msg.command.firstFrame);
+      this.elem.classList.remove('show');
+    }
+  }
 }
 
 // register our own display
@@ -96,6 +108,4 @@ registerProgress(progress);
 const version = () => progress.version;
 
 export default progress;
-export {
-	version,
-};
+export { version };

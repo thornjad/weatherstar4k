@@ -1,0 +1,11 @@
+# Vendor files
+weatherstar/js/vendor/**/*
+
+# Build artifacts
+node_modules/
+dist/
+build/
+
+# Generated files
+*.min.js
+*.bundle.js 

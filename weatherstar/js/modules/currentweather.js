@@ -1,48 +1,42 @@
 // current weather conditions display
-import STATUS from "./status.js";
-import { preloadImg } from "./utils/image.js";
-import { fetchAsync } from "./utils/fetch.js";
-import { directionToNSEW } from "./utils/calc.js";
-import { locationCleanup } from "./utils/string.js";
-import { getLargeIcon } from "./icons.js";
-import WeatherDisplay from "./weatherdisplay.js";
-import { registerDisplay } from "./navigation.js";
-import {
-  distanceKilometers,
-  distanceMeters,
-  pressure,
-  temperature,
-  windSpeed,
-} from "./utils/units.js";
+import STATUS from './status.js';
+import { preloadImg } from './utils/image.js';
+import { fetchAsync } from './utils/fetch.js';
+import { directionToNSEW } from './utils/calc.js';
+import { locationCleanup } from './utils/string.js';
+import { getLargeIcon } from './icons.js';
+import WeatherDisplay from './weatherdisplay.js';
+import { registerDisplay } from './navigation.js';
+import { distanceKilometers, distanceMeters, pressure, temperature, windSpeed } from './utils/units.js';
 
 // some stations prefixed do not provide all the necessary data
 const skipStations = [
-  "U",
-  "C",
-  "H",
-  "W",
-  "Y",
-  "T",
-  "S",
-  "M",
-  "O",
-  "L",
-  "A",
-  "F",
-  "B",
-  "N",
-  "V",
-  "R",
-  "D",
-  "E",
-  "I",
-  "G",
-  "J",
+  'U',
+  'C',
+  'H',
+  'W',
+  'Y',
+  'T',
+  'S',
+  'M',
+  'O',
+  'L',
+  'A',
+  'F',
+  'B',
+  'N',
+  'V',
+  'R',
+  'D',
+  'E',
+  'I',
+  'G',
+  'J',
 ];
 
 class CurrentWeather extends WeatherDisplay {
   constructor(navId, elemId) {
-    super(navId, elemId, "Current Conditions");
+    super(navId, elemId, 'Current Conditions');
   }
 
   async getData(weatherParameters, refresh) {
@@ -53,11 +47,9 @@ class CurrentWeather extends WeatherDisplay {
 
     // filter for 4-letter observation stations, only those contain sky conditions and thus an icon
     const filteredStations = this.weatherParameters.stations.filter(
-      (station) =>
+      station =>
         station?.properties?.stationIdentifier?.length === 4 &&
-        !skipStations.includes(
-          station.properties.stationIdentifier.slice(0, 1),
-        ),
+        !skipStations.includes(station.properties.stationIdentifier.slice(0, 1))
     );
 
     // Load the observations
@@ -72,7 +64,7 @@ class CurrentWeather extends WeatherDisplay {
       stationNum += 1;
       try {
         // station observations
-        observations = await fetchAsync(`${station.id}/observations`, "json", {
+        observations = await fetchAsync(`${station.id}/observations`, 'json', {
           data: {
             limit: 2,
           },
@@ -80,25 +72,24 @@ class CurrentWeather extends WeatherDisplay {
           stillWaiting: () => this.stillWaiting(),
         });
 
-        if (observations.features.length === 0)
-          {throw new Error(
-            `No features returned for station: ${station.properties.stationIdentifier}, trying next station`,
-          );}
+        if (observations.features.length === 0) {
+          throw new Error(
+            `No features returned for station: ${station.properties.stationIdentifier}, trying next station`
+          );
+        }
 
         // test data quality
         if (
           observations.features[0].properties.temperature.value === null ||
           observations.features[0].properties.windSpeed.value === null ||
           observations.features[0].properties.textDescription === null ||
-          observations.features[0].properties.textDescription === "" ||
+          observations.features[0].properties.textDescription === '' ||
           observations.features[0].properties.icon === null ||
           observations.features[0].properties.dewpoint.value === null ||
           observations.features[0].properties.barometricPressure.value === null
         ) {
           observations = undefined;
-          throw new Error(
-            `Incomplete data set for: ${station.properties.stationIdentifier}, trying next station`,
-          );
+          throw new Error(`Incomplete data set for: ${station.properties.stationIdentifier}, trying next station`);
         }
       } catch (error) {
         console.error(error);
@@ -107,8 +98,10 @@ class CurrentWeather extends WeatherDisplay {
     }
     // test for data received
     if (!observations) {
-      console.error("All current weather stations exhausted");
-      if (this.isEnabled) {this.setStatus(STATUS.failed);}
+      console.error('All current weather stations exhausted');
+      if (this.isEnabled) {
+        this.setStatus(STATUS.failed);
+      }
       // send failed to subscribers
       this.getDataCallback(undefined);
       return;
@@ -119,7 +112,9 @@ class CurrentWeather extends WeatherDisplay {
     this.getDataCallback();
 
     // stop here if we're disabled
-    if (!superResult) {return;}
+    if (!superResult) {
+      return;
+    }
 
     // preload the icon
     preloadImg(getLargeIcon(observations.features[0].properties.icon));
@@ -137,46 +132,36 @@ class CurrentWeather extends WeatherDisplay {
     const fill = {
       temp: this.data.Temperature + String.fromCharCode(176),
       condition,
-      wind:
-        this.data.WindDirection.padEnd(3, "") +
-        this.data.WindSpeed.toString().padStart(3, " "),
-      location: locationCleanup(this.data.station.properties.name).substr(
-        0,
-        20,
-      ),
+      wind: this.data.WindDirection.padEnd(3, '') + this.data.WindSpeed.toString().padStart(3, ' '),
+      location: locationCleanup(this.data.station.properties.name).substr(0, 20),
       humidity: `${this.data.Humidity}%`,
       dewpoint: this.data.DewPoint + String.fromCharCode(176),
-      ceiling:
-        this.data.Ceiling === 0
-          ? "Unlimited"
-          : this.data.Ceiling + this.data.CeilingUnit,
+      ceiling: this.data.Ceiling === 0 ? 'Unlimited' : this.data.Ceiling + this.data.CeilingUnit,
       visibility: this.data.Visibility + this.data.VisibilityUnit,
       pressure: `${this.data.Pressure} ${this.data.PressureDirection}`,
-      icon: { type: "img", src: this.data.Icon },
+      icon: { type: 'img', src: this.data.Icon },
     };
 
-    if (this.data.WindGust)
-      {fill["wind-gusts"] = `Gusts to ${this.data.WindGust}`;}
-
-    if (
-      this.data.observations.heatIndex.value &&
-      this.data.HeatIndex !== this.data.Temperature
-    ) {
-      fill["heat-index-label"] = "Heat Index:";
-      fill["heat-index"] = this.data.HeatIndex + String.fromCharCode(176);
-    } else if (
-      this.data.observations.windChill.value &&
-      this.data.WindChill !== "" &&
-      this.data.WindChill < this.data.Temperature
-    ) {
-      fill["heat-index-label"] = "Wind Chill:";
-      fill["heat-index"] = this.data.WindChill + String.fromCharCode(176);
+    if (this.data.WindGust) {
+      fill['wind-gusts'] = `Gusts to ${this.data.WindGust}`;
     }
 
-    const area = this.elem.querySelector(".main");
+    if (this.data.observations.heatIndex.value && this.data.HeatIndex !== this.data.Temperature) {
+      fill['heat-index-label'] = 'Heat Index:';
+      fill['heat-index'] = this.data.HeatIndex + String.fromCharCode(176);
+    } else if (
+      this.data.observations.windChill.value &&
+      this.data.WindChill !== '' &&
+      this.data.WindChill < this.data.Temperature
+    ) {
+      fill['heat-index-label'] = 'Wind Chill:';
+      fill['heat-index'] = this.data.WindChill + String.fromCharCode(176);
+    }
 
-    area.innerHTML = "";
-    area.append(this.fillTemplate("weather", fill));
+    const area = this.elem.querySelector('.main');
+
+    area.innerHTML = '';
+    area.append(this.fillTemplate('weather', fill));
 
     this.finishDraw();
   }
@@ -186,36 +171,40 @@ class CurrentWeather extends WeatherDisplay {
   async getCurrentWeather(stillWaiting) {
     // an external caller has requested data, set up auto reload
     this.setAutoReload();
-    if (stillWaiting) {this.stillWaitingCallbacks.push(stillWaiting);}
-    return new Promise((resolve) => {
-      if (this.data) {resolve(this.data);}
+    if (stillWaiting) {
+      this.stillWaitingCallbacks.push(stillWaiting);
+    }
+    return new Promise(resolve => {
+      if (this.data) {
+        resolve(this.data);
+      }
       // data not available, put it into the data callback queue
       this.getDataCallbacks.push(() => resolve(this.data));
     });
   }
 }
 
-const shortConditions = (_condition) => {
+const shortConditions = _condition => {
   let condition = _condition;
-  condition = condition.replace(/Light/g, "L");
-  condition = condition.replace(/Heavy/g, "H");
-  condition = condition.replace(/Partly/g, "P");
-  condition = condition.replace(/Mostly/g, "M");
-  condition = condition.replace(/Few/g, "F");
+  condition = condition.replace(/Light/g, 'L');
+  condition = condition.replace(/Heavy/g, 'H');
+  condition = condition.replace(/Partly/g, 'P');
+  condition = condition.replace(/Mostly/g, 'M');
+  condition = condition.replace(/Few/g, 'F');
   condition = condition.replace(/Thunderstorm/g, "T'storm");
-  condition = condition.replace(/ in /g, "");
-  condition = condition.replace(/Vicinity/g, "");
-  condition = condition.replace(/ and /g, " ");
-  condition = condition.replace(/Freezing Rain/g, "Frz Rn");
-  condition = condition.replace(/Freezing/g, "Frz");
-  condition = condition.replace(/Unknown Precip/g, "");
-  condition = condition.replace(/L Snow Fog/g, "L Snw/Fog");
-  condition = condition.replace(/ with /g, "/");
+  condition = condition.replace(/ in /g, '');
+  condition = condition.replace(/Vicinity/g, '');
+  condition = condition.replace(/ and /g, ' ');
+  condition = condition.replace(/Freezing Rain/g, 'Frz Rn');
+  condition = condition.replace(/Freezing/g, 'Frz');
+  condition = condition.replace(/Unknown Precip/g, '');
+  condition = condition.replace(/L Snow Fog/g, 'L Snw/Fog');
+  condition = condition.replace(/ with /g, '/');
   return condition;
 };
 
 // format the received data
-const parseData = (data) => {
+const parseData = data => {
   // get the unit converter
   const windConverter = windSpeed();
   const temperatureConverter = temperature();
@@ -244,20 +233,22 @@ const parseData = (data) => {
   data.WindUnit = windConverter.units;
   data.Humidity = Math.round(observations.relativeHumidity.value);
   data.Icon = getLargeIcon(observations.icon);
-  data.PressureDirection = "";
+  data.PressureDirection = '';
   data.TextConditions = observations.textDescription;
 
   // difference since last measurement (pascals, looking for difference of more than 150)
-  const pressureDiff =
-    observations.barometricPressure.value -
-    data.features[1].properties.barometricPressure.value;
-  if (pressureDiff > 150) {data.PressureDirection = "R";}
-  if (pressureDiff < -150) {data.PressureDirection = "F";}
+  const pressureDiff = observations.barometricPressure.value - data.features[1].properties.barometricPressure.value;
+  if (pressureDiff > 150) {
+    data.PressureDirection = 'R';
+  }
+  if (pressureDiff < -150) {
+    data.PressureDirection = 'F';
+  }
 
   return data;
 };
 
-const display = new CurrentWeather(1, "current-weather");
+const display = new CurrentWeather(1, 'current-weather');
 registerDisplay(display);
 
 export default display.getCurrentWeather.bind(display);
