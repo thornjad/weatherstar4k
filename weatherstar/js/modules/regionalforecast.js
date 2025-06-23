@@ -12,6 +12,7 @@ import { fromISO, getDayName, now } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 import * as utils from './regionalforecast-utils.js';
+import { getRegionalCities, getStationInfo } from '../data/json-loader.js';
 
 // map offset
 const mapOffsetXY = {
@@ -68,17 +69,20 @@ class RegionalForecast extends WeatherDisplay {
       targetDistance = 1;
     }
 
+    // Get data from async getters
+    const [regionalCities, stationInfo] = await Promise.all([getRegionalCities(), getStationInfo()]);
+
     // make station info into an array
-    const stationInfoArray = Object.values(StationInfo).map(station => ({
+    const stationInfoArray = Object.values(stationInfo).map(station => ({
       ...station,
       targetDistance,
     }));
     // combine regional cities with station info for additional stations
     // stations are intentionally after cities to allow cities priority when drawing the map
-    const combinedCities = [...RegionalCities, ...stationInfoArray];
+    const combinedCities = [...regionalCities, ...stationInfoArray];
 
     // Determine which cities are within the max/min latitude/longitude.
-    const regionalCities = [];
+    const regionalCitiesFiltered = [];
     combinedCities.forEach(city => {
       if (
         city.lat > minMaxLatLon.minLat &&
@@ -89,12 +93,12 @@ class RegionalForecast extends WeatherDisplay {
         // default to 1 for cities loaded from RegionalCities, use value calculate above for remaining stations
         const targetDist = city.targetDistance || 1;
         // Only add the city as long as it isn't within set distance degree of any other city already in the array.
-        const okToAddCity = regionalCities.reduce((acc, testCity) => {
+        const okToAddCity = regionalCitiesFiltered.reduce((acc, testCity) => {
           const cityDistance = distance(city.lon, city.lat, testCity.lon, testCity.lat);
           return acc && cityDistance >= targetDist;
         }, true);
         if (okToAddCity) {
-          regionalCities.push(city);
+          regionalCitiesFiltered.push(city);
         }
       }
     });
@@ -107,7 +111,7 @@ class RegionalForecast extends WeatherDisplay {
 
     // get regional forecasts and observations (the two are intertwined due to the design of api.weather.gov)
     const regionalDataAll = await Promise.all(
-      regionalCities.map(async city => {
+      regionalCitiesFiltered.map(async city => {
         try {
           const point = city?.point ?? (await getAndFormatPoint(city.lat, city.lon));
           if (!point) {

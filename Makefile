@@ -1,7 +1,9 @@
-.PHONY: dev check
+.PHONY: dev clean reclean
 
 dev:
 	npx http-server weatherstar -c-1
 
-check:
+clean:
 	npm run clean
+
+reclean: clean dev

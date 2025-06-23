@@ -6,6 +6,7 @@ import { locationCleanup } from './utils/string.js';
 import { temperature, windSpeed } from './utils/units.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
+import { getStationInfo } from '../data/json-loader.js';
 
 class LatestObservations extends WeatherDisplay {
   constructor(navId, elemId) {
@@ -22,8 +23,11 @@ class LatestObservations extends WeatherDisplay {
     // latest observations does a silent refresh but will not fall back to previously fetched data
     // this is intentional because up to 30 stations are available to pull data from
 
+    // Get station info data
+    const stationInfo = await getStationInfo();
+
     // calculate distance to each station
-    const stationsByDistance = Object.values(StationInfo).map(station => {
+    const stationsByDistance = Object.values(stationInfo).map(station => {
       const distance = calcDistance(
         station.lat,
         station.lon,

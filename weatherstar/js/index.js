@@ -297,8 +297,20 @@ const postMessage = (type, myMessage = {}) => {
 };
 
 const getPosition = async () =>
-  new Promise(resolve => {
-    navigator.geolocation.getCurrentPosition(resolve);
+  new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve(position);
+      },
+      (error) => {
+        reject(error);
+      },
+      {
+        timeout: 10000,
+        enableHighAccuracy: false,
+        maximumAge: 60000
+      }
+    );
   });
 
 const getForecastFromLatLon = (latitude, longitude) => {

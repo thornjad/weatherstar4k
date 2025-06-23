@@ -5,16 +5,37 @@ import { getSmallIcon } from './icons.js';
 import { getDayName, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
+import { getTravelCities } from '../data/json-loader.js';
 
 class TravelForecast extends WeatherDisplay {
   constructor(navId, elemId) {
     // special height and width for scrolling
     super(navId, elemId, 'Travel Forecast');
 
-    // set up the timing
+    // set up the timing - will be updated when data is loaded
     this.timing.baseDelay = 30;
-    // page sizes are 4 cities, calculate the number of pages necessary plus overflow
-    const pagesFloat = TravelCities.length / 4;
+    this.timing.delay = [150];
+
+    // add previous data cache
+    this.previousData = [];
+  }
+
+  async getData(weatherParameters, refresh) {
+    // super checks for enabled
+    if (!super.getData(weatherParameters, refresh)) {
+      return;
+    }
+
+    // Get travel cities data
+    const travelCities = await getTravelCities();
+
+    if (!travelCities || travelCities.length === 0) {
+      this.setStatus(STATUS.noData);
+      return;
+    }
+
+    // Update timing based on actual data
+    const pagesFloat = travelCities.length / 4;
     const pages = Math.floor(pagesFloat) - 2; // first page is already displayed, last page doesn't happen
     const extra = pages % 1;
     const timingStep = 75 * 4;
@@ -30,22 +51,12 @@ class TravelForecast extends WeatherDisplay {
     // add the final 3 second delay
     this.timing.delay.push(150);
 
-    // add previous data cache
-    this.previousData = [];
-  }
-
-  async getData(weatherParameters, refresh) {
-    // super checks for enabled
-    if (!super.getData(weatherParameters, refresh)) {
-      return;
-    }
-
     // clear stored data if not refresh
     if (!refresh) {
       this.previousData = [];
     }
 
-    const forecastPromises = TravelCities.map(async (city, index) => {
+    const forecastPromises = travelCities.map(async (city, index) => {
       try {
         // get point then forecast
         if (!city.point) {

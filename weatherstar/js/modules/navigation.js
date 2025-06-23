@@ -4,6 +4,7 @@ import { fetchAsync } from './utils/fetch.js';
 import { getPoint } from './utils/weather.js';
 import noSleep from './utils/nosleep.js';
 import { wrap } from './utils/calc.js';
+import { getStationInfo } from '../data/json-loader.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   init();
@@ -32,54 +33,68 @@ const message = data => {
 };
 
 const getWeather = async (latLon, haveDataCallback) => {
-  // get initial weather data
-  const point = await getPoint(latLon.lat, latLon.lon);
+  try {
+    // get initial weather data
+    const point = await getPoint(latLon.lat, latLon.lon);
 
-  if (typeof haveDataCallback === 'function') {
-    haveDataCallback(point);
+    if (typeof haveDataCallback === 'function') {
+      haveDataCallback(point);
+    }
+
+    // get stations
+    const stations = await fetchAsync(point.properties.observationStations, 'json');
+
+    const StationId = stations.features[0].properties.stationIdentifier;
+
+    let { city } = point.properties.relativeLocation.properties;
+    const { state } = point.properties.relativeLocation.properties;
+
+    // Get station info data
+    const stationInfo = await getStationInfo();
+    if (StationId in stationInfo) {
+      city = stationInfo[StationId].city;
+      [city] = city.split('/');
+      city = city.replace(/\s+$/, '');
+    }
+
+    // populate the weather parameters
+    weatherParameters.latitude = latLon.lat;
+    weatherParameters.longitude = latLon.lon;
+    weatherParameters.zoneId = point.properties.forecastZone.substr(-6);
+    weatherParameters.radarId = point.properties.radarStation.substr(-3);
+    weatherParameters.stationId = StationId;
+    weatherParameters.weatherOffice = point.properties.cwa;
+    weatherParameters.city = city;
+    weatherParameters.state = state;
+    weatherParameters.timeZone = point.properties.timeZone;
+    weatherParameters.forecast = point.properties.forecast;
+    weatherParameters.forecastGridData = point.properties.forecastGridData;
+    weatherParameters.stations = stations.features;
+
+    // reset the scroll
+    postMessage({ type: 'current-weather-scroll', method: 'reload' });
+
+    // draw the progress canvas and hide others
+    hideAllCanvases();
+    document.querySelector('#loading').style.display = 'none';
+    if (progress) {
+      await progress.drawCanvas();
+      progress.showCanvas();
+    }
+
+    // call for new data on each display
+    displays.forEach(display => display.getData(weatherParameters));
+  } catch (error) {
+    console.error('Error in getWeather:', error);
+    // Show error to user
+    const loadingDiv = document.querySelector('#loading');
+    if (loadingDiv) {
+      const instructionsDiv = loadingDiv.querySelector('.instructions');
+      if (instructionsDiv) {
+        instructionsDiv.textContent = `Error loading weather data: ${error.message}`;
+      }
+    }
   }
-
-  // get stations
-  const stations = await fetchAsync(point.properties.observationStations, 'json');
-
-  const StationId = stations.features[0].properties.stationIdentifier;
-
-  let { city } = point.properties.relativeLocation.properties;
-  const { state } = point.properties.relativeLocation.properties;
-
-  if (StationId in StationInfo) {
-    city = StationInfo[StationId].city;
-    [city] = city.split('/');
-    city = city.replace(/\s+$/, '');
-  }
-
-  // populate the weather parameters
-  weatherParameters.latitude = latLon.lat;
-  weatherParameters.longitude = latLon.lon;
-  weatherParameters.zoneId = point.properties.forecastZone.substr(-6);
-  weatherParameters.radarId = point.properties.radarStation.substr(-3);
-  weatherParameters.stationId = StationId;
-  weatherParameters.weatherOffice = point.properties.cwa;
-  weatherParameters.city = city;
-  weatherParameters.state = state;
-  weatherParameters.timeZone = point.properties.timeZone;
-  weatherParameters.forecast = point.properties.forecast;
-  weatherParameters.forecastGridData = point.properties.forecastGridData;
-  weatherParameters.stations = stations.features;
-
-  // reset the scroll
-  postMessage({ type: 'current-weather-scroll', method: 'reload' });
-
-  // draw the progress canvas and hide others
-  hideAllCanvases();
-  document.querySelector('#loading').style.display = 'none';
-  if (progress) {
-    await progress.drawCanvas();
-    progress.showCanvas();
-  }
-
-  // call for new data on each display
-  displays.forEach(display => display.getData(weatherParameters));
 };
 
 // receive a status update from a module {id, value}
