@@ -67,22 +67,30 @@ loadData().catch(error => {
 
 // Export getters that ensure data is loaded
 export const getRegionalCities = async () => {
-  if (!isLoaded) {await loadData();}
+  if (!isLoaded) {
+    await loadData();
+  }
   return regionalCitiesData;
 };
 
 export const getTravelCities = async () => {
-  if (!isLoaded) {await loadData();}
+  if (!isLoaded) {
+    await loadData();
+  }
   return travelCitiesData;
 };
 
 export const getStationInfo = async () => {
-  if (!isLoaded) {await loadData();}
+  if (!isLoaded) {
+    await loadData();
+  }
   return stationsData;
 };
 
 export const getCities = async () => {
-  if (!isLoaded) {await loadData();}
+  if (!isLoaded) {
+    await loadData();
+  }
   return citiesData;
 };
 
