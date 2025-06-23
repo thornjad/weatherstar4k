@@ -1,0 +1,1234 @@
+[
+  {
+    "city": "Albany",
+    "lat": 42.6526,
+    "lon": -73.7562,
+    "point": {
+      "x": 72,
+      "y": 63,
+      "wfo": "ALY"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Albuquerque",
+    "lat": 35.0845,
+    "lon": -106.6511,
+    "point": {
+      "x": 98,
+      "y": 121,
+      "wfo": "ABQ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Amarillo",
+    "lat": 35.222,
+    "lon": -101.8313,
+    "point": {
+      "x": 48,
+      "y": 26,
+      "wfo": "AMA"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Anchorage",
+    "lat": 61.2181,
+    "lon": -149.9003,
+    "point": {
+      "x": 125,
+      "y": 236,
+      "wfo": "AER"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Atlanta",
+    "lat": 33.749,
+    "lon": -84.388,
+    "point": {
+      "x": 51,
+      "y": 87,
+      "wfo": "FFC"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Austin",
+    "lat": 30.2671,
+    "lon": -97.7431,
+    "point": {
+      "x": 156,
+      "y": 91,
+      "wfo": "EWX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Baker",
+    "lat": 44.7502,
+    "lon": -117.6677,
+    "point": {
+      "x": 94,
+      "y": 146,
+      "wfo": "BOI"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Baltimore",
+    "lat": 39.2904,
+    "lon": -76.6122,
+    "point": {
+      "x": 109,
+      "y": 91,
+      "wfo": "LWX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Bangor",
+    "lat": 44.8012,
+    "lon": -68.7778,
+    "point": {
+      "x": 66,
+      "y": 62,
+      "wfo": "CAR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Birmingham",
+    "lat": 33.5207,
+    "lon": -86.8025,
+    "point": {
+      "x": 59,
+      "y": 84,
+      "wfo": "BMX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Bismarck",
+    "lat": 46.8083,
+    "lon": -100.7837,
+    "point": {
+      "x": 110,
+      "y": 47,
+      "wfo": "BIS"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Boise",
+    "lat": 43.6135,
+    "lon": -116.2034,
+    "point": {
+      "x": 133,
+      "y": 86,
+      "wfo": "BOI"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Boston",
+    "lat": 42.3584,
+    "lon": -71.0598,
+    "point": {
+      "x": 71,
+      "y": 90,
+      "wfo": "BOX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Buffalo",
+    "lat": 42.8864,
+    "lon": -78.8784,
+    "point": {
+      "x": 36,
+      "y": 47,
+      "wfo": "BUF"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Carlsbad",
+    "lat": 32.4207,
+    "lon": -104.2288,
+    "point": {
+      "x": 44,
+      "y": 156,
+      "wfo": "MAF"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Charleston",
+    "lat": 38.3498,
+    "lon": -81.6326,
+    "point": {
+      "x": 63,
+      "y": 67,
+      "wfo": "RLX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Charlotte",
+    "lat": 35.2271,
+    "lon": -80.8431,
+    "point": {
+      "x": 119,
+      "y": 65,
+      "wfo": "GSP"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Cheyenne",
+    "lat": 41.14,
+    "lon": -104.8202,
+    "point": {
+      "x": 110,
+      "y": 14,
+      "wfo": "CYS"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Chicago",
+    "lat": 41.9796,
+    "lon": -87.9045,
+    "point": {
+      "x": 66,
+      "y": 77,
+      "wfo": "LOT"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Cincinnati",
+    "lat": 39.162,
+    "lon": -84.4569,
+    "point": {
+      "x": 37,
+      "y": 41,
+      "wfo": "ILN"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Cleveland",
+    "lat": 41.4995,
+    "lon": -81.6954,
+    "point": {
+      "x": 83,
+      "y": 65,
+      "wfo": "CLE"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Columbia",
+    "lat": 34.0007,
+    "lon": -81.0348,
+    "point": {
+      "x": 65,
+      "y": 61,
+      "wfo": "CAE"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Columbus",
+    "lat": 39.9612,
+    "lon": -82.9988,
+    "point": {
+      "x": 85,
+      "y": 81,
+      "wfo": "ILN"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Dallas",
+    "lat": 32.8959,
+    "lon": -97.0372,
+    "point": {
+      "x": 80,
+      "y": 109,
+      "wfo": "FWD"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Denver",
+    "lat": 39.7391,
+    "lon": -104.9847,
+    "point": {
+      "x": 63,
+      "y": 61,
+      "wfo": "BOU"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Des Moines",
+    "lat": 41.6005,
+    "lon": -93.6091,
+    "point": {
+      "x": 74,
+      "y": 50,
+      "wfo": "DMX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Detroit",
+    "lat": 42.3314,
+    "lon": -83.0457,
+    "point": {
+      "x": 66,
+      "y": 34,
+      "wfo": "DTX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Dubuque",
+    "lat": 42.5006,
+    "lon": -90.6646,
+    "point": {
+      "x": 63,
+      "y": 111,
+      "wfo": "DVN"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Duluth",
+    "lat": 46.7833,
+    "lon": -92.1066,
+    "point": {
+      "x": 91,
+      "y": 69,
+      "wfo": "DLH"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Eastport",
+    "lat": 44.9062,
+    "lon": -66.99,
+    "point": {
+      "x": 123,
+      "y": 79,
+      "wfo": "CAR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "El Centro",
+    "lat": 32.792,
+    "lon": -115.563,
+    "point": {
+      "x": 27,
+      "y": 47,
+      "wfo": "PSR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "El Paso",
+    "lat": 31.7587,
+    "lon": -106.4869,
+    "point": {
+      "x": 100,
+      "y": 56,
+      "wfo": "EPZ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Eugene",
+    "lat": 44.0521,
+    "lon": -123.0867,
+    "point": {
+      "x": 85,
+      "y": 39,
+      "wfo": "PQR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Fargo",
+    "lat": 46.8772,
+    "lon": -96.7898,
+    "point": {
+      "x": 100,
+      "y": 57,
+      "wfo": "FGF"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Flagstaff",
+    "lat": 35.1981,
+    "lon": -111.6513,
+    "point": {
+      "x": 74,
+      "y": 89,
+      "wfo": "FGZ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Fresno",
+    "lat": 36.7477,
+    "lon": -119.7724,
+    "point": {
+      "x": 53,
+      "y": 100,
+      "wfo": "HNX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Grand Junction",
+    "lat": 39.0639,
+    "lon": -108.5506,
+    "point": {
+      "x": 95,
+      "y": 102,
+      "wfo": "GJT"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Grand Rapids",
+    "lat": 42.9634,
+    "lon": -85.6681,
+    "point": {
+      "x": 41,
+      "y": 47,
+      "wfo": "GRR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Hartford",
+    "lat": 41.7637,
+    "lon": -72.6851,
+    "point": {
+      "x": 21,
+      "y": 54,
+      "wfo": "BOX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Havre",
+    "lat": 48.55,
+    "lon": -109.6841,
+    "point": {
+      "x": 155,
+      "y": 188,
+      "wfo": "TFX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Helena",
+    "lat": 46.5927,
+    "lon": -112.0361,
+    "point": {
+      "x": 69,
+      "y": 104,
+      "wfo": "TFX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Honolulu",
+    "lat": 21.3069,
+    "lon": -157.8583,
+    "point": {
+      "x": 154,
+      "y": 145,
+      "wfo": "HFO"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Hot Springs",
+    "lat": 34.5037,
+    "lon": -93.0552,
+    "point": {
+      "x": 54,
+      "y": 61,
+      "wfo": "LZK"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Houston",
+    "lat": 29.7633,
+    "lon": -95.3633,
+    "point": {
+      "x": 65,
+      "y": 97,
+      "wfo": "HGX"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Idaho Falls",
+    "lat": 43.4666,
+    "lon": -112.0341,
+    "point": {
+      "x": 124,
+      "y": 73,
+      "wfo": "PIH"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Indianapolis",
+    "lat": 39.7684,
+    "lon": -86.158,
+    "point": {
+      "x": 58,
+      "y": 69,
+      "wfo": "IND"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Jackson",
+    "lat": 32.2988,
+    "lon": -90.1848,
+    "point": {
+      "x": 76,
+      "y": 63,
+      "wfo": "JAN"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Jacksonville",
+    "lat": 30.3322,
+    "lon": -81.6556,
+    "point": {
+      "x": 66,
+      "y": 65,
+      "wfo": "JAX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Juneau",
+    "lat": 58.3019,
+    "lon": -134.4197,
+    "point": {
+      "x": 194,
+      "y": 163,
+      "wfo": "AJK"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Kansas City",
+    "lat": 39.1142,
+    "lon": -94.6275,
+    "point": {
+      "x": 42,
+      "y": 51,
+      "wfo": "EAX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Key West",
+    "lat": 24.5557,
+    "lon": -81.7826,
+    "point": {
+      "x": 62,
+      "y": 48,
+      "wfo": "KEY"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Klamath Falls",
+    "lat": 42.2249,
+    "lon": -121.7817,
+    "point": {
+      "x": 141,
+      "y": 61,
+      "wfo": "MFR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Knoxville",
+    "lat": 35.9606,
+    "lon": -83.9207,
+    "point": {
+      "x": 71,
+      "y": 51,
+      "wfo": "MRX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Las Vegas",
+    "lat": 36.175,
+    "lon": -115.1372,
+    "point": {
+      "x": 123,
+      "y": 98,
+      "wfo": "VEF"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Lewiston",
+    "lat": 46.4165,
+    "lon": -117.0177,
+    "point": {
+      "x": 144,
+      "y": 30,
+      "wfo": "OTX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Lincoln",
+    "lat": 40.8,
+    "lon": -96.667,
+    "point": {
+      "x": 57,
+      "y": 39,
+      "wfo": "OAX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Long Beach",
+    "lat": 33.767,
+    "lon": -118.1892,
+    "point": {
+      "x": 155,
+      "y": 32,
+      "wfo": "LOX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Los Angeles",
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "point": {
+      "x": 155,
+      "y": 45,
+      "wfo": "LOX"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Louisville",
+    "lat": 38.2542,
+    "lon": -85.7594,
+    "point": {
+      "x": 50,
+      "y": 78,
+      "wfo": "LMK"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Manchester",
+    "lat": 42.9956,
+    "lon": -71.4548,
+    "point": {
+      "x": 42,
+      "y": 21,
+      "wfo": "GYX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Memphis",
+    "lat": 35.1495,
+    "lon": -90.049,
+    "point": {
+      "x": 42,
+      "y": 67,
+      "wfo": "MEG"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Miami",
+    "lat": 25.7743,
+    "lon": -80.1937,
+    "point": {
+      "x": 110,
+      "y": 51,
+      "wfo": "MFL"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Milwaukee",
+    "lat": 43.0389,
+    "lon": -87.9065,
+    "point": {
+      "x": 88,
+      "y": 65,
+      "wfo": "MKX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Minneapolis",
+    "lat": 44.98,
+    "lon": -93.2638,
+    "point": {
+      "x": 108,
+      "y": 72,
+      "wfo": "MPX"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Mobile",
+    "lat": 30.6944,
+    "lon": -88.043,
+    "point": {
+      "x": 52,
+      "y": 67,
+      "wfo": "MOB"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Montgomery",
+    "lat": 32.3668,
+    "lon": -86.3,
+    "point": {
+      "x": 81,
+      "y": 35,
+      "wfo": "BMX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Montpelier",
+    "lat": 44.2601,
+    "lon": -72.5754,
+    "point": {
+      "x": 111,
+      "y": 50,
+      "wfo": "BTV"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Nashville",
+    "lat": 36.1659,
+    "lon": -86.7844,
+    "point": {
+      "x": 50,
+      "y": 57,
+      "wfo": "OHX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "New Haven",
+    "lat": 41.3081,
+    "lon": -72.9282,
+    "point": {
+      "x": 66,
+      "y": 68,
+      "wfo": "OKX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "New Orleans",
+    "lat": 29.9546,
+    "lon": -90.0751,
+    "point": {
+      "x": 68,
+      "y": 88,
+      "wfo": "LIX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "New York",
+    "lat": 40.78,
+    "lon": -73.88,
+    "point": {
+      "x": 37,
+      "y": 39,
+      "wfo": "OKX"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Newark",
+    "lat": 40.7357,
+    "lon": -74.1724,
+    "point": {
+      "x": 27,
+      "y": 35,
+      "wfo": "OKX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Nome",
+    "lat": 64.5011,
+    "lon": -165.4064,
+    "point": {
+      "x": 217,
+      "y": 139,
+      "wfo": "AFG"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Norfolk",
+    "lat": 36.8468,
+    "lon": -76.2852,
+    "point": {
+      "x": 90,
+      "y": 52,
+      "wfo": "AKQ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Oklahoma City",
+    "lat": 35.4676,
+    "lon": -97.5164,
+    "point": {
+      "x": 97,
+      "y": 94,
+      "wfo": "OUN"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Omaha",
+    "lat": 41.2586,
+    "lon": -95.9378,
+    "point": {
+      "x": 83,
+      "y": 60,
+      "wfo": "OAX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Orlando",
+    "lat": 28.5383,
+    "lon": -81.3792,
+    "point": {
+      "x": 26,
+      "y": 68,
+      "wfo": "MLB"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Philadelphia",
+    "lat": 39.9523,
+    "lon": -75.1638,
+    "point": {
+      "x": 50,
+      "y": 76,
+      "wfo": "PHI"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Phoenix",
+    "lat": 33.4484,
+    "lon": -112.074,
+    "point": {
+      "x": 159,
+      "y": 58,
+      "wfo": "PSR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Pierre",
+    "lat": 44.3683,
+    "lon": -100.351,
+    "point": {
+      "x": 55,
+      "y": 44,
+      "wfo": "ABR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Pittsburgh",
+    "lat": 40.4406,
+    "lon": -79.9959,
+    "point": {
+      "x": 78,
+      "y": 66,
+      "wfo": "PBZ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Portland",
+    "lat": 45.5234,
+    "lon": -122.6762,
+    "point": {
+      "x": 113,
+      "y": 104,
+      "wfo": "PQR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Providence",
+    "lat": 41.824,
+    "lon": -71.4128,
+    "point": {
+      "x": 64,
+      "y": 64,
+      "wfo": "BOX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Raleigh",
+    "lat": 35.7721,
+    "lon": -78.6386,
+    "point": {
+      "x": 75,
+      "y": 57,
+      "wfo": "RAH"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Reno",
+    "lat": 39.4986,
+    "lon": -119.7681,
+    "point": {
+      "x": 46,
+      "y": 105,
+      "wfo": "REV"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Richfield",
+    "lat": 38.7725,
+    "lon": -112.0841,
+    "point": {
+      "x": 82,
+      "y": 87,
+      "wfo": "SLC"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Richmond",
+    "lat": 37.5538,
+    "lon": -77.4603,
+    "point": {
+      "x": 45,
+      "y": 77,
+      "wfo": "AKQ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Roanoke",
+    "lat": 37.271,
+    "lon": -79.9414,
+    "point": {
+      "x": 74,
+      "y": 69,
+      "wfo": "RNK"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Sacramento",
+    "lat": 38.5816,
+    "lon": -121.4944,
+    "point": {
+      "x": 41,
+      "y": 68,
+      "wfo": "STO"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Salt Lake City",
+    "lat": 40.7608,
+    "lon": -111.891,
+    "point": {
+      "x": 100,
+      "y": 175,
+      "wfo": "SLC"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "San Antonio",
+    "lat": 29.4241,
+    "lon": -98.4936,
+    "point": {
+      "x": 126,
+      "y": 54,
+      "wfo": "EWX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "San Diego",
+    "lat": 32.7153,
+    "lon": -117.1573,
+    "point": {
+      "x": 57,
+      "y": 14,
+      "wfo": "SGX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "San Francisco",
+    "lat": 37.6148,
+    "lon": -122.3918,
+    "point": {
+      "x": 84,
+      "y": 98,
+      "wfo": "MTR"
+    },
+    "type": "both"
+  },
+  {
+    "city": "San Jose",
+    "lat": 37.3394,
+    "lon": -121.895,
+    "point": {
+      "x": 99,
+      "y": 82,
+      "wfo": "MTR"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Santa Fe",
+    "lat": 35.687,
+    "lon": -105.9378,
+    "point": {
+      "x": 126,
+      "y": 146,
+      "wfo": "ABQ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Savannah",
+    "lat": 32.0835,
+    "lon": -81.0998,
+    "point": {
+      "x": 47,
+      "y": 41,
+      "wfo": "CHS"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Seattle",
+    "lat": 47.6062,
+    "lon": -122.3321,
+    "point": {
+      "x": 125,
+      "y": 68,
+      "wfo": "SEW"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Shreveport",
+    "lat": 32.5251,
+    "lon": -93.7502,
+    "point": {
+      "x": 74,
+      "y": 69,
+      "wfo": "SHV"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Sioux Falls",
+    "lat": 43.55,
+    "lon": -96.7003,
+    "point": {
+      "x": 99,
+      "y": 65,
+      "wfo": "FSD"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Sitka",
+    "lat": 57.0531,
+    "lon": -135.33,
+    "point": {
+      "x": 188,
+      "y": 112,
+      "wfo": "AJK"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Spokane",
+    "lat": 47.6597,
+    "lon": -117.4291,
+    "point": {
+      "x": 140,
+      "y": 90,
+      "wfo": "OTX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Springfield",
+    "lat": 37.2153,
+    "lon": -93.2982,
+    "point": {
+      "x": 67,
+      "y": 35,
+      "wfo": "SGF"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "St. Louis",
+    "lat": 38.6273,
+    "lon": -90.1979,
+    "point": {
+      "x": 95,
+      "y": 74,
+      "wfo": "LSX"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Syracuse",
+    "lat": 43.0481,
+    "lon": -76.1474,
+    "point": {
+      "x": 52,
+      "y": 99,
+      "wfo": "BGM"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Tampa",
+    "lat": 27.9756,
+    "lon": -82.5329,
+    "point": {
+      "x": 68,
+      "y": 98,
+      "wfo": "TBW"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Toledo",
+    "lat": 41.6639,
+    "lon": -83.5552,
+    "point": {
+      "x": 19,
+      "y": 67,
+      "wfo": "CLE"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Tucson",
+    "lat": 32.2216,
+    "lon": -110.9698,
+    "point": {
+      "x": 91,
+      "y": 49,
+      "wfo": "TWC"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Tulsa",
+    "lat": 36.154,
+    "lon": -95.9928,
+    "point": {
+      "x": 41,
+      "y": 105,
+      "wfo": "TSA"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Virginia Beach",
+    "lat": 36.8529,
+    "lon": -75.978,
+    "point": {
+      "x": 101,
+      "y": 53,
+      "wfo": "AKQ"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Washington DC",
+    "lat": 38.8951,
+    "lon": -77.0364,
+    "point": {
+      "x": 97,
+      "y": 71,
+      "wfo": "LWX"
+    },
+    "type": "both"
+  },
+  {
+    "city": "Wichita",
+    "lat": 37.6922,
+    "lon": -97.3375,
+    "point": {
+      "x": 62,
+      "y": 34,
+      "wfo": "ICT"
+    },
+    "type": "regional"
+  },
+  {
+    "city": "Wilmington",
+    "lat": 34.2257,
+    "lon": -77.9447,
+    "point": {
+      "x": 89,
+      "y": 68,
+      "wfo": "ILM"
+    },
+    "type": "regional"
+  }
+]
