@@ -1,6 +1,7 @@
 import { getSmallIcon } from './icons.js';
 import { fetchAsync } from './utils/fetch.js';
 import { imagePreloader } from './utils/image-preloader.js';
+import { deriveIconFromObservation } from './utils/icon-derivation.js';
 
 const buildForecast = (forecast, city, cityXY) => {
   return {
@@ -26,10 +27,18 @@ const getRegionalObservation = async (point, city) => {
     const station = stations.features[0].id;
     // get the observation data
     const observation = await fetchAsync(`${station}/observations/latest`, 'json');
-    // preload the image using the new caching system
+
+    // Handle missing icon by deriving it from other data
     if (!observation.properties.icon) {
-      return false;
+      const derivedIcon = deriveIconFromObservation(observation.properties);
+      if (derivedIcon) {
+        observation.properties.icon = derivedIcon;
+        console.log(`Derived icon "${derivedIcon}" for regional station ${station} (${city.Name ?? city.city})`);
+      } else {
+        return false;
+      }
     }
+
     const icon = getSmallIcon(observation.properties.icon, !observation.properties.daytime);
     if (!icon) {
       return false;

@@ -8,6 +8,7 @@ import { getLargeIcon } from './icons.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 import { distanceKilometers, distanceMeters, pressure, temperature, windSpeed } from './utils/units.js';
+import { deriveIconFromObservation } from './utils/icon-derivation.js';
 
 // some stations prefixed do not provide all the necessary data
 const skipStations = [
@@ -55,6 +56,8 @@ class CurrentWeather extends WeatherDisplay {
     // Load the observations
     let observations;
     let station;
+    let usedDerivedIcon = false;
+    let originalIcon = null;
 
     // station number counter
     let stationNum = 0;
@@ -82,10 +85,32 @@ class CurrentWeather extends WeatherDisplay {
         const missingFields = [];
         const obs = observations.features[0].properties;
 
-        if (obs.temperature.value === null) missingFields.push('temperature');
-        if (obs.icon === null) missingFields.push('icon');
-        if (obs.dewpoint.value === null) missingFields.push('dewpoint');
-        if (obs.barometricPressure.value === null) missingFields.push('barometricPressure');
+        if (obs.temperature.value === null) {
+          missingFields.push('temperature');
+        }
+        if (obs.dewpoint.value === null) {
+          missingFields.push('dewpoint');
+        }
+        if (obs.barometricPressure.value === null) {
+          missingFields.push('barometricPressure');
+        }
+
+        // Handle missing icon by deriving it from other data
+        if (obs.icon === null) {
+          const derivedIcon = deriveIconFromObservation(obs);
+          if (derivedIcon) {
+            originalIcon = null; // No original icon since it was null
+            obs.icon = derivedIcon;
+            usedDerivedIcon = true;
+            console.log(
+              `Derived icon "${derivedIcon}" for station ${station.properties.stationIdentifier} (${station.properties.name})`
+            );
+          } else {
+            missingFields.push('icon');
+          }
+        } else {
+          originalIcon = obs.icon;
+        }
 
         if (missingFields.length > 0) {
           observations = undefined;
@@ -121,6 +146,65 @@ class CurrentWeather extends WeatherDisplay {
     // preload the icon
     preloadImg(getLargeIcon(observations.features[0].properties.icon));
     this.setStatus(STATUS.loaded);
+
+    // Background task: check other stations for better icons
+    this.checkOtherStationsForIcons(filteredStations, station, usedDerivedIcon, originalIcon);
+  }
+
+  // Background method to check other stations for icons
+  async checkOtherStationsForIcons(allStations, currentStation, usedDerivedIcon, originalIcon) {
+    // Skip if we already have a real icon from the closest station
+    if (!usedDerivedIcon && originalIcon) {
+      return;
+    }
+
+    // Check remaining stations in background
+    const otherStations = allStations.filter(s => s.id !== currentStation.id);
+
+    for (const station of otherStations) {
+      try {
+        const stationObservations = await fetchAsync(`${station.id}/observations`, 'json', {
+          data: {
+            limit: 1,
+          },
+          retryCount: 1,
+        });
+
+        if (stationObservations.features.length > 0) {
+          const obs = stationObservations.features[0].properties;
+
+          // Check if this station has a real icon
+          if (obs.icon && obs.icon !== null) {
+            const currentIcon = this.data.observations.icon;
+            const newIcon = obs.icon;
+
+            // Update the icon if we found a real one
+            this.data.observations.icon = newIcon;
+            this.data.Icon = getLargeIcon(newIcon);
+
+            // Log the icon change
+            const iconSource = usedDerivedIcon ? 'derived' : 'original';
+            console.log(
+              `Icon updated from ${iconSource} "${currentIcon}" to real icon "${newIcon}" from station ${station.properties.stationIdentifier} (${station.properties.name})`
+            );
+
+            // Preload the new icon
+            preloadImg(this.data.Icon);
+
+            // Trigger a redraw to show the new icon
+            if (this.isEnabled) {
+              this.drawCanvas();
+            }
+
+            // Stop checking once we find a real icon
+            break;
+          }
+        }
+      } catch {
+        // Silently continue checking other stations
+        continue;
+      }
+    }
   }
 
   async drawCanvas() {
