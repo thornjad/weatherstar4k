@@ -3,7 +3,7 @@ import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
 import { formatTimeSimple, fromObject, minusDays, plusDays, startOfDay } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay } from './navigation.js';
+import { msg, registerDisplay } from './navigation.js';
 import * as utils from './radar-utils.js';
 import { version } from './progress.js';
 import setTiles from './radar-tiles.js';
@@ -194,6 +194,27 @@ class Radar extends WeatherDisplay {
     this.elem.querySelector('.scroll-area').style.top = `${-this.screenIndex * actualFrameHeight}px`;
 
     this.finishDraw();
+  }
+
+  // Override navigation methods to skip to next/previous display instead of moving between radar frames
+  navNext(command) {
+    // If no command is provided, this is manual navigation - skip to next display
+    if (!command) {
+      this.sendNavDisplayMessage(msg.response.next);
+      return;
+    }
+    // Otherwise, use the parent class navigation for automatic progression
+    super.navNext(command);
+  }
+
+  navPrev(command) {
+    // If no command is provided, this is manual navigation - skip to previous display
+    if (!command) {
+      this.sendNavDisplayMessage(msg.response.previous);
+      return;
+    }
+    // Otherwise, use the parent class navigation for automatic progression
+    super.navPrev(command);
   }
 }
 
