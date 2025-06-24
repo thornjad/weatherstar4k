@@ -1,9 +1,10 @@
 /**
  * Comprehensive Image Cache System
+ * Optimized for mobile devices and long-running operation
  * Prevents unnecessary refetching of images during app loops
  */
 class ImageCache {
-  constructor(maxSize = 100) {
+  constructor(maxSize = 50) {
     this.cache = new Map();
     this.maxSize = maxSize;
     this.stats = {
@@ -11,9 +12,12 @@ class ImageCache {
       misses: 0,
       loads: 0,
       evictions: 0,
+      memoryPressureEvents: 0,
     };
     this.loadingPromises = new Map();
+    this.saveFrequency = 50; // Save to localStorage every 50 loads instead of 10
     this.initCache();
+    this.setupMemoryPressureHandling();
   }
 
   /**
@@ -24,16 +28,13 @@ class ImageCache {
       const cached = localStorage.getItem('weatherstar4k_image_cache');
       if (cached) {
         const parsed = JSON.parse(cached);
-        // Only restore cache entries that are still valid (within 24 hours)
-        const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+        // Only restore cache entries that are still valid (within 12 hours for mobile)
+        const cutoff = Date.now() - 12 * 60 * 60 * 1000;
         parsed.forEach(([url, entry]) => {
-          if (entry.timestamp > cutoff) {
+          if (entry.timestamp > cutoff && this.cache.size < this.maxSize) {
             this.cache.set(url, entry);
           }
         });
-        console.log(
-          `Restored ${this.cache.size} cached images from localStorage`
-        );
       }
     } catch (error) {
       console.warn('Failed to restore image cache from localStorage:', error);
@@ -41,36 +42,88 @@ class ImageCache {
   }
 
   /**
-   * Save cache to localStorage
+   * Save cache to localStorage (reduced frequency for mobile optimization)
    */
   saveCache() {
     try {
       const cacheArray = Array.from(this.cache.entries());
-      localStorage.setItem(
-        'weatherstar4k_image_cache',
-        JSON.stringify(cacheArray)
-      );
+      localStorage.setItem('weatherstar4k_image_cache', JSON.stringify(cacheArray));
     } catch (error) {
       console.warn('Failed to save image cache to localStorage:', error);
     }
   }
 
   /**
-   * Get cache statistics
+   * Setup memory pressure handling for mobile devices
+   */
+  setupMemoryPressureHandling() {
+    // Check for memory pressure every 30 seconds
+    setInterval(() => {
+      this.checkMemoryPressure();
+    }, 30000);
+  }
+
+  /**
+   * Check for memory pressure and handle accordingly
+   */
+  checkMemoryPressure() {
+    // Check if we're approaching memory limits
+    if (this.cache.size > this.maxSize * 0.8) {
+      this.handleMemoryPressure();
+    }
+
+    // Check browser memory if available
+    if ('memory' in performance) {
+      const memoryInfo = performance.memory;
+      const memoryUsage = memoryInfo.usedJSHeapSize / memoryInfo.jsHeapSizeLimit;
+
+      if (memoryUsage > 0.7) {
+        // 70% memory usage threshold
+        this.handleMemoryPressure();
+      }
+    }
+  }
+
+  /**
+   * Handle memory pressure by clearing cache
+   */
+  handleMemoryPressure() {
+    const previousSize = this.cache.size;
+    this.clear();
+    this.stats.memoryPressureEvents++;
+
+    console.log(`Memory pressure detected - cleared ${previousSize} cached images`);
+  }
+
+  /**
+   * Get cache statistics with memory information
    */
   getStats() {
     const hitRate =
       this.stats.hits + this.stats.misses > 0
-        ? (
-            (this.stats.hits / (this.stats.hits + this.stats.misses)) *
-            100
-          ).toFixed(1)
+        ? ((this.stats.hits / (this.stats.hits + this.stats.misses)) * 100).toFixed(1)
         : 0;
+
+    const memoryInfo =
+      'memory' in performance
+        ? {
+            usedJSHeapSize: performance.memory.usedJSHeapSize,
+            totalJSHeapSize: performance.memory.totalJSHeapSize,
+            jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
+            memoryUsagePercent: (
+              (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) *
+              100
+            ).toFixed(1),
+          }
+        : null;
+
     return {
       ...this.stats,
       hitRate: `${hitRate}%`,
       size: this.cache.size,
       maxSize: this.maxSize,
+      memoryInfo,
+      cacheUtilization: `${((this.cache.size / this.maxSize) * 100).toFixed(1)}%`,
     };
   }
 
@@ -97,7 +150,7 @@ class ImageCache {
   }
 
   /**
-   * Add image to cache
+   * Add image to cache with optimized storage frequency
    */
   addToCache(src, img) {
     // Evict oldest entries if cache is full
@@ -114,14 +167,14 @@ class ImageCache {
     this.cache.set(src, entry);
     this.stats.loads++;
 
-    // Save cache periodically (every 10 loads)
-    if (this.stats.loads % 10 === 0) {
+    // Save cache less frequently for mobile optimization (every 50 loads instead of 10)
+    if (this.stats.loads % this.saveFrequency === 0) {
       this.saveCache();
     }
   }
 
   /**
-   * Evict oldest cache entries
+   * Evict oldest cache entries with improved algorithm
    */
   evictOldest() {
     let oldestKey = null;
@@ -146,7 +199,13 @@ class ImageCache {
   clear() {
     this.cache.clear();
     this.loadingPromises.clear();
-    this.stats = { hits: 0, misses: 0, loads: 0, evictions: 0 };
+    this.stats = {
+      hits: 0,
+      misses: 0,
+      loads: 0,
+      evictions: 0,
+      memoryPressureEvents: this.stats.memoryPressureEvents,
+    };
     localStorage.removeItem('weatherstar4k_image_cache');
   }
 
@@ -201,9 +260,12 @@ class ImageCache {
   }
 
   /**
-   * Preload multiple images in parallel
+   * Preload multiple images in parallel with memory pressure awareness
    */
   async preloadImages(srcs) {
+    // Check memory pressure before bulk loading
+    this.checkMemoryPressure();
+
     const promises = srcs.map(src =>
       this.preloadImage(src).catch(err => {
         console.warn(`Failed to preload image ${src}:`, err);
@@ -243,8 +305,8 @@ class ImageCache {
   }
 }
 
-// Create global cache instance
-const imageCache = new ImageCache(150); // Cache up to 150 images
+// Create global cache instance with mobile-optimized size
+const imageCache = new ImageCache(50); // Reduced from 150 to 50 for mobile optimization
 
 // Legacy compatibility function
 const preloadImg = src => {

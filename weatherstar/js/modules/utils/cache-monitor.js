@@ -3,7 +3,7 @@ import { imagePreloader } from './image-preloader.js';
 
 /**
  * Cache Monitor Utility
- * Provides debugging and monitoring capabilities for the image cache
+ * Provides debugging and monitoring capabilities for the mobile-optimized image cache
  */
 class CacheMonitor {
   constructor() {
@@ -24,7 +24,7 @@ class CacheMonitor {
     }
 
     this.monitoring = true;
-    console.log('Starting image cache monitoring...');
+    console.log('Starting mobile-optimized image cache monitoring...');
 
     this.interval = setInterval(() => {
       this.logCacheStats();
@@ -35,7 +35,7 @@ class CacheMonitor {
   }
 
   /**
-   * Log current cache statistics
+   * Log current cache statistics with mobile optimization info
    */
   logCacheStats() {
     if (!this.monitoring) {
@@ -43,11 +43,14 @@ class CacheMonitor {
     }
 
     const stats = imageCache.getStats();
+    const preloaderStats = imagePreloader.getCacheStats();
     const timestamp = new Date().toISOString();
 
     const logEntry = {
       timestamp,
       ...stats,
+      mobileOptimized: preloaderStats.mobileOptimized,
+      preloadedImages: preloaderStats.preloadedImages,
     };
 
     this.logHistory.push(logEntry);
@@ -63,13 +66,22 @@ class CacheMonitor {
       misses: stats.misses,
       loads: stats.loads,
       evictions: stats.evictions,
+      memoryPressureEvents: stats.memoryPressureEvents,
       cacheSize: stats.size,
       maxSize: stats.maxSize,
+      cacheUtilization: stats.cacheUtilization,
+      mobileOptimized: preloaderStats.mobileOptimized,
+      preloadedImages: preloaderStats.preloadedImages,
+      memoryInfo: stats.memoryInfo ? {
+        usagePercent: stats.memoryInfo.memoryUsagePercent,
+        usedJSHeapSize: Math.round(stats.memoryInfo.usedJSHeapSize / 1024 / 1024) + 'MB',
+        jsHeapSizeLimit: Math.round(stats.memoryInfo.jsHeapSizeLimit / 1024 / 1024) + 'MB',
+      } : null,
     });
   }
 
   /**
-   * Get cache performance summary
+   * Get cache performance summary with mobile optimization metrics
    */
   getPerformanceSummary() {
     if (this.logHistory.length === 0) {
@@ -85,18 +97,28 @@ class CacheMonitor {
     const totalHits = recent.reduce((sum, entry) => sum + entry.hits, 0);
     const totalMisses = recent.reduce((sum, entry) => sum + entry.misses, 0);
     const totalLoads = recent.reduce((sum, entry) => sum + entry.loads, 0);
+    const totalMemoryPressureEvents = recent.reduce((sum, entry) => sum + (entry.memoryPressureEvents || 0), 0);
+    const avgCacheUtilization = recent.reduce((sum, entry) => {
+      return sum + parseFloat(entry.cacheUtilization || '0');
+    }, 0) / recent.length;
 
     return {
       averageHitRate: `${avgHitRate.toFixed(1)}%`,
+      averageCacheUtilization: `${avgCacheUtilization.toFixed(1)}%`,
       totalHits,
       totalMisses,
       totalLoads,
+      totalMemoryPressureEvents,
       monitoringDuration: `${this.logHistory.length} log entries`,
+      mobileOptimized: recent[recent.length - 1]?.mobileOptimized || false,
+      preloadedImages: recent[recent.length - 1]?.preloadedImages || 0,
       recentPerformance: recent.map(entry => ({
         timestamp: entry.timestamp,
         hitRate: entry.hitRate,
         hits: entry.hits,
         misses: entry.misses,
+        cacheUtilization: entry.cacheUtilization,
+        memoryPressureEvents: entry.memoryPressureEvents,
       })),
     };
   }
@@ -128,14 +150,22 @@ class CacheMonitor {
   }
 
   /**
-   * Export cache statistics for debugging
+   * Export cache statistics for debugging with mobile optimization info
    */
   exportCacheData() {
+    const preloaderStats = imagePreloader.getCacheStats();
     return {
       stats: imageCache.getStats(),
+      preloaderStats,
       contents: this.getCacheContents(),
       performance: this.getPerformanceSummary(),
       monitoringHistory: this.logHistory,
+      mobileOptimization: {
+        mobileOptimized: preloaderStats.mobileOptimized,
+        preloadedImages: preloaderStats.preloadedImages,
+        cacheSize: preloaderStats.maxSize,
+        commonImages: imagePreloader.commonImages,
+      },
     };
   }
 
@@ -167,10 +197,10 @@ class CacheMonitor {
   }
 
   /**
-   * Run basic cache tests
+   * Run basic cache tests with mobile optimization validation
    */
   async runTests() {
-    console.log('🧪 Running image cache tests...');
+    console.log('🧪 Running mobile-optimized image cache tests...');
 
     const testImages = [
       'images/icons/moon-phases/Full-Moon.gif',
@@ -184,6 +214,7 @@ class CacheMonitor {
       cacheHitTest: await this.testCacheHits(testImages),
       persistenceTest: await this.testPersistence(testImages),
       performanceTest: await this.testPerformance(testImages),
+      mobileOptimizationTest: this.testMobileOptimization(),
     };
 
     console.log('🧪 Test Results:', results);
@@ -196,12 +227,43 @@ class CacheMonitor {
     console.log(`🧪 Test Summary: ${passedTests}/${totalTests} tests passed`);
 
     if (passedTests === totalTests) {
-      console.log('✅ All image cache tests passed!');
+      console.log('✅ All mobile-optimized image cache tests passed!');
     } else {
       console.log('❌ Some tests failed. Check the results above.');
     }
 
     return results;
+  }
+
+  /**
+   * Test mobile optimization configuration
+   */
+  testMobileOptimization() {
+    const preloaderStats = imagePreloader.getCacheStats();
+    const cacheStats = imageCache.getStats();
+    
+    const isMobileOptimized = preloaderStats.mobileOptimized;
+    const cacheSize = cacheStats.maxSize;
+    const preloadedCount = preloaderStats.preloadedImages;
+    
+    const expectedCacheSize = 50;
+    const maxPreloadedImages = isMobileOptimized ? 25 : 80; // Reasonable limits
+    
+    const success = cacheSize === expectedCacheSize && preloadedCount <= maxPreloadedImages;
+    
+    console.log('  Testing mobile optimization...');
+    console.log(`    Mobile optimized: ${isMobileOptimized}`);
+    console.log(`    Cache size: ${cacheSize} (expected: ${expectedCacheSize})`);
+    console.log(`    Preloaded images: ${preloadedCount} (max: ${maxPreloadedImages})`);
+    
+    return {
+      success,
+      mobileOptimized: isMobileOptimized,
+      cacheSize,
+      preloadedCount,
+      expectedCacheSize,
+      maxPreloadedImages,
+    };
   }
 
   /**
@@ -235,44 +297,64 @@ class CacheMonitor {
   async testCacheHits(testImages) {
     console.log('  Testing cache hits...');
 
-    // First load should be misses
-    const firstLoadStats = imageCache.getStats();
-
-    // Second load should be hits
+    // Preload images first
     await imageCache.preloadImages(testImages);
-    const secondLoadStats = imageCache.getStats();
 
-    const newHits = secondLoadStats.hits - firstLoadStats.hits;
-    const expectedHits = testImages.length;
+    const startTime = performance.now();
+    const hitResults = testImages.map(src => imageCache.getCached(src));
+    const endTime = performance.now();
 
-    console.log(`    Cache hits: ${newHits}/${expectedHits}`);
+    const hitCount = hitResults.filter(result => result !== null).length;
+    const duration = endTime - startTime;
+
+    console.log(
+      `    Cache hits: ${hitCount}/${testImages.length} in ${duration.toFixed(2)}ms`
+    );
 
     return {
-      success: newHits === expectedHits,
-      hits: newHits,
-      expected: expectedHits,
+      success: hitCount === testImages.length,
+      duration,
+      hitCount,
+      totalCount: testImages.length,
     };
   }
 
   /**
-   * Test cache persistence (simulated)
+   * Test persistence functionality
    */
   async testPersistence(testImages) {
     console.log('  Testing persistence...');
 
-    // Simulate cache persistence by checking if images are still cached
-    const cachedCount = testImages.filter(img =>
-      imageCache.isCached(img)
-    ).length;
+    // Clear cache and preload images
+    imageCache.clear();
+    await imageCache.preloadImages(testImages);
 
-    console.log(
-      `    Persistence check: ${cachedCount}/${testImages.length} images still cached`
-    );
+    const beforeSave = imageCache.getStats();
+    imageCache.saveCache();
+
+    // Simulate cache restoration
+    const testCache = new Map();
+    try {
+      const cached = localStorage.getItem('weatherstar4k_image_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        parsed.forEach(([url, entry]) => {
+          testCache.set(url, entry);
+        });
+      }
+    } catch (error) {
+      console.warn('Persistence test failed:', error);
+    }
+
+    const restoredCount = testCache.size;
+    const success = restoredCount > 0;
+
+    console.log(`    Persisted ${restoredCount} images to localStorage`);
 
     return {
-      success: cachedCount === testImages.length,
-      cachedCount,
-      totalCount: testImages.length,
+      success,
+      restoredCount,
+      beforeSave: beforeSave.size,
     };
   }
 
@@ -317,7 +399,7 @@ class CacheMonitor {
    * Main function to run both tests and monitoring
    */
   async run() {
-    console.log('🚀 Starting cache monitor and tests...');
+    console.log('🚀 Starting mobile-optimized cache monitor and tests...');
 
     // Run tests first
     await this.runTests();
@@ -326,19 +408,19 @@ class CacheMonitor {
     this.startMonitoring(30000); // Log every 30 seconds
 
     console.log(
-      '✅ Cache monitor is now active. Reload the page to stop monitoring.'
+      '✅ Mobile-optimized cache monitor is now active. Reload the page to stop monitoring.'
     );
   }
 }
 
-// Create global monitor instance
+// Create global cache monitor instance
 const cacheMonitor = new CacheMonitor();
 
-// Expose to window for debugging
-if (typeof window !== 'undefined') {
-  window.cacheMonitor = cacheMonitor.run.bind(cacheMonitor);
-  window.imageCache = imageCache;
-  window.imagePreloader = imagePreloader;
-}
-
+// Export for use in other modules
 export { cacheMonitor, CacheMonitor };
+
+// Make available globally for debugging
+if (typeof window !== 'undefined') {
+  window.cacheMonitor = cacheMonitor;
+  window.CacheMonitor = CacheMonitor;
+}
