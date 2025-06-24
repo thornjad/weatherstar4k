@@ -1,11 +1,5 @@
 import noSleep from './modules/utils/nosleep.js';
-import {
-  isPlaying,
-  latLonReceived,
-  message as navMessage,
-  resetStatuses,
-  resize,
-} from './modules/navigation.js';
+import { isPlaying, latLonReceived, message as navMessage, resetStatuses, resize } from './modules/navigation.js';
 import { round2 } from './modules/utils/units.js';
 import { imagePreloader } from './modules/utils/image-preloader.js';
 
@@ -31,24 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const init = () => {
-  document
-    .querySelector('#NavigateMenu')
-    .addEventListener('click', btnNavigateMenuClick);
-  document
-    .querySelector('#NavigateRefresh')
-    .addEventListener('click', btnNavigateRefreshClick);
-  document
-    .querySelector('#NavigateNext')
-    .addEventListener('click', btnNavigateNextClick);
-  document
-    .querySelector('#NavigatePrevious')
-    .addEventListener('click', btnNavigatePreviousClick);
-  document
-    .querySelector('#NavigatePlay')
-    .addEventListener('click', btnNavigatePlayClick);
-  document
-    .querySelector('#ToggleFullScreen')
-    .addEventListener('click', btnFullScreenClick);
+  document.querySelector('#NavigateMenu').addEventListener('click', btnNavigateMenuClick);
+  document.querySelector('#NavigateRefresh').addEventListener('click', btnNavigateRefreshClick);
+  document.querySelector('#NavigateNext').addEventListener('click', btnNavigateNextClick);
+  document.querySelector('#NavigatePrevious').addEventListener('click', btnNavigatePreviousClick);
+  document.querySelector('#NavigatePlay').addEventListener('click', btnNavigatePlayClick);
+  document.querySelector('#ToggleFullScreen').addEventListener('click', btnFullScreenClick);
 
   document.querySelector('#divTwc').addEventListener('mousemove', () => {
     if (document.fullscreenElement) {
@@ -58,17 +40,12 @@ const init = () => {
   // local change detection when exiting full screen via ESC key (or other non button click methods)
   window.addEventListener('resize', fullScreenResizeCheck);
   fullScreenResizeCheck.wasFull = false;
-
   document.addEventListener('keydown', documentKeydown);
-
-  // Start with play state enabled by default
   postMessage('navButton', 'play');
-
-  // Initialize image preloader to prevent unnecessary refetching
   initImagePreloader();
-
-  // Automatically geolocate user on page load
   autoGeolocate();
+  window.addEventListener('beforeunload', cleanup);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 };
 
 const autoGeolocate = async () => {
@@ -131,7 +108,7 @@ const enterFullScreen = async () => {
   } catch (error) {
     console.error('Failed to enter fullscreen:', error);
   }
-  
+
   resize();
   updateFullScreenNavigate();
 
@@ -286,16 +263,16 @@ const postMessage = (type, myMessage = {}) => {
 const getPosition = async () =>
   new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         resolve(position);
       },
-      (error) => {
+      error => {
         reject(error);
       },
       {
         timeout: 10000,
         enableHighAccuracy: false,
-        maximumAge: 60000
+        maximumAge: 60000,
       }
     );
   });
@@ -333,14 +310,55 @@ const initImagePreloader = async () => {
     imagePreloader.preloadCommonImages();
 
     // Also preload critical categories immediately
-    await Promise.all([
-      imagePreloader.preloadCategory('moon'),
-      imagePreloader.preloadCategory('weather'),
-    ]);
+    await Promise.all([imagePreloader.preloadCategory('moon'), imagePreloader.preloadCategory('weather')]);
 
     // Cache monitoring and tests are now only available via window.cacheMonitor()
     // No automatic execution - must be called explicitly
   } catch (error) {
     console.warn('Failed to initialize image preloader:', error);
+  }
+};
+
+// Cleanup function to clear all intervals and timeouts
+const cleanup = () => {
+  // Clear navigate fade timeout
+  if (navigateFadeIntervalId) {
+    clearTimeout(navigateFadeIntervalId);
+    navigateFadeIntervalId = null;
+  }
+
+  // Clear current weather scroll interval if available
+  if (window.CurrentWeatherScroll?.clearScrollInterval) {
+    window.CurrentWeatherScroll.clearScrollInterval();
+  }
+
+  // Clear all display intervals through navigation module
+  if (window.navigationModule?.clearAllDisplayIntervals) {
+    window.navigationModule.clearAllDisplayIntervals();
+  }
+};
+
+// Handle page visibility changes for battery optimization
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    // Page is hidden - pause intervals to save battery
+    if (navigateFadeIntervalId) {
+      clearTimeout(navigateFadeIntervalId);
+      navigateFadeIntervalId = null;
+    }
+
+    // Clear current weather scroll interval
+    if (window.CurrentWeatherScroll?.clearScrollInterval) {
+      window.CurrentWeatherScroll.clearScrollInterval();
+    }
+
+    // Pause all display intervals
+    if (window.navigationModule?.clearAllDisplayIntervals) {
+      window.navigationModule.clearAllDisplayIntervals();
+    }
+  } else {
+    // Page is visible - resume intervals
+    // The displays will restart their intervals when they become active again
+    // through the normal showCanvas/hideCanvas cycle
   }
 };

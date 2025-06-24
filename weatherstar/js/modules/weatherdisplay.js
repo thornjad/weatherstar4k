@@ -2,7 +2,7 @@
 
 import STATUS from './status.js';
 import { displayNavMessage, isPlaying, msg, updateStatus } from './navigation.js';
-import { formatDate, formatTimeWithSeconds, formatTimeWithSeconds24Hour } from './utils/date-utils.js';
+import { formatDate, formatTimeWithSeconds24Hour } from './utils/date-utils.js';
 
 class WeatherDisplay {
   constructor(navId, elemId, name) {
@@ -121,10 +121,18 @@ class WeatherDisplay {
     // draw date and time
     if (this.okToDrawCurrentDateTime) {
       this.drawCurrentDateTime();
-      // auto clock refresh
-      if (!this.dateTimeInterval) {
+      // auto clock refresh - only start if not already running and display is active
+      if (!this.dateTimeInterval && this.active) {
         // only draw if canvas is active to conserve battery
-        this.dateTimeInterval = setInterval(() => this.active && this.drawCurrentDateTime(), 100);
+        this.dateTimeInterval = setInterval(() => {
+          if (this.active) {
+            this.drawCurrentDateTime();
+          } else {
+            // Clear interval if display becomes inactive
+            clearInterval(this.dateTimeInterval);
+            this.dateTimeInterval = null;
+          }
+        }, 100);
       }
     }
   }
@@ -166,12 +174,27 @@ class WeatherDisplay {
 
     this.elem.classList.add('show');
     document.querySelector('#divTwc').classList.add(this.elemId);
+
+    // Restart date/time interval if needed
+    if (this.okToDrawCurrentDateTime && !this.dateTimeInterval) {
+      this.drawCurrentDateTime();
+      this.dateTimeInterval = setInterval(() => {
+        if (this.active) {
+          this.drawCurrentDateTime();
+        } else {
+          // Clear interval if display becomes inactive
+          clearInterval(this.dateTimeInterval);
+          this.dateTimeInterval = null;
+        }
+      }, 100);
+    }
   }
 
   hideCanvas() {
     this.resetNavBaseCount();
     this.elem.classList.remove('show');
     document.querySelector('#divTwc').classList.remove(this.elemId);
+    this.clearAllIntervals();
   }
 
   get active() {
@@ -422,8 +445,27 @@ class WeatherDisplay {
   }
 
   clearAutoReload() {
-    clearInterval(this.autoRefreshHandle);
-    this.autoRefreshHandle = null;
+    if (this.autoRefreshHandle) {
+      clearInterval(this.autoRefreshHandle);
+      this.autoRefreshHandle = null;
+    }
+  }
+
+  clearAllIntervals() {
+    // Clear date/time interval
+    if (this.dateTimeInterval) {
+      clearInterval(this.dateTimeInterval);
+      this.dateTimeInterval = null;
+    }
+
+    // Clear navigation interval
+    if (this.navInterval) {
+      clearInterval(this.navInterval);
+      this.navInterval = null;
+    }
+
+    // Clear auto refresh interval
+    this.clearAutoReload();
   }
 
   setAutoReload() {

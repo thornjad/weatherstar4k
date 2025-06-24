@@ -42,6 +42,20 @@ const stop = reset => {
     screenIndex = 0;
     resetFlag = true;
   }
+
+  // Clear the interval to prevent memory leaks
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+};
+
+// Clear interval function for external use
+const clearScrollInterval = () => {
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
 };
 
 // increment interval, roll over
@@ -262,6 +276,7 @@ window.CurrentWeatherScroll = {
   addScreen,
   reset,
   start,
+  clearScrollInterval,
 };
 
-export { addScreen, reset, start };
+export { addScreen, reset, start, clearScrollInterval };
