@@ -1,29 +1,29 @@
 @font-face {
-  font-family: "Star4000";
-  src: url("../fonts/Star4000.woff") format("woff");
+  font-family: 'Star4000';
+  src: url('../fonts/Star4000.woff') format('woff');
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Star4000 Extended";
-  src: url("../fonts/Star4000 Extended.woff") format("woff");
+  font-family: 'Star4000 Extended';
+  src: url('../fonts/Star4000 Extended.woff') format('woff');
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Star4000 Large";
-  src: url("../fonts/Star4000 Large.woff") format("woff");
+  font-family: 'Star4000 Large';
+  src: url('../fonts/Star4000 Large.woff') format('woff');
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Star4000 Small";
-  src: url("../fonts/Star4000 Small.woff") format("woff");
+  font-family: 'Star4000 Small';
+  src: url('../fonts/Star4000 Small.woff') format('woff');
   font-display: swap;
 }
 
 body {
-  font-family: "Star4000";
+  font-family: 'Star4000';
 
   @media (prefers-color-scheme: dark) {
     background-color: #000;
@@ -156,7 +156,6 @@ body {
 }
 
 #divTwcBottomLeft {
-  flex: 1;
   text-align: left;
 }
 
@@ -217,7 +216,7 @@ body {
 }
 
 #display {
-  font-family: "Star4000";
+  font-family: 'Star4000';
   margin: 0 0 0 0;
   width: 100%;
 }
@@ -368,9 +367,7 @@ body {
     .widget {
       display: inline-block;
       overflow: hidden;
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-        sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
       font-size: 0;
       line-height: 0;
       white-space: nowrap;
@@ -650,7 +647,7 @@ body {
         0 1.5px 0 #000,
         -1.5px 1.5px 0 #000,
         -1.5px 0 0 #000;
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 24pt;
       position: absolute;
       width: 400px;
@@ -699,7 +696,7 @@ body {
     .date-time {
       white-space: pre;
       color: #fff;
-      font-family: "Star4000 Small";
+      font-family: 'Star4000 Small';
       font-size: 24pt;
       text-shadow:
         3px 3px 0 #000,
@@ -771,13 +768,13 @@ body {
 
     .scroll-header {
       height: 26px;
-      font-family: "Star4000 Small";
+      font-family: 'Star4000 Small';
       font-size: 20pt;
       margin-top: -10px;
     }
 
     .fixed {
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 24pt;
 
       .scroll-area {
@@ -789,7 +786,7 @@ body {
 }
 
 #extended-forecast-html.weather-display {
-  background-image: url("../images/backgrounds/2.png");
+  background-image: url('../images/backgrounds/2.png');
 }
 
 .weather-display .main.extended-forecast {
@@ -814,7 +811,7 @@ body {
     width: 155px;
     display: inline-block;
     margin: 0px 15px;
-    font-family: "Star4000";
+    font-family: 'Star4000';
     font-size: 24pt;
 
     .date {
@@ -851,7 +848,7 @@ body {
         }
 
         .value {
-          font-family: "Star4000 Large";
+          font-family: 'Star4000 Large';
           margin-top: 4px;
         }
 
@@ -881,7 +878,7 @@ body {
 
     div {
       display: inline-block;
-      font-family: "Star4000 Small";
+      font-family: 'Star4000 Small';
       font-size: 24pt;
       color: #ff0;
       position: absolute;
@@ -917,16 +914,10 @@ body {
   .travel-lines {
     min-height: 338px;
     padding-top: 10px;
-    background: repeating-linear-gradient(
-      0deg,
-      #001040 0px,
-      #102080 136px,
-      #102080 202px,
-      #001040 338px
-    );
+    background: repeating-linear-gradient(0deg, #001040 0px, #102080 136px, #102080 202px, #001040 338px);
 
     .travel-row {
-      font-family: "Star4000 Large";
+      font-family: 'Star4000 Large';
       font-size: 24pt;
       height: 72px;
       color: #ff0;
@@ -991,7 +982,7 @@ body {
 
     div {
       display: inline-block;
-      font-family: "Star4000 Small";
+      font-family: 'Star4000 Small';
       font-size: 24pt;
       position: absolute;
       top: -14px;
@@ -1033,7 +1024,7 @@ body {
     padding-top: 10px;
 
     .observation-row {
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 24pt;
       text-shadow:
         3px 3px 0 #000,
@@ -1076,7 +1067,7 @@ body {
   }
 
   .forecast {
-    font-family: "Star4000";
+    font-family: 'Star4000';
     font-size: 24pt;
     text-transform: uppercase;
     text-shadow:
@@ -1105,7 +1096,7 @@ body {
     0 1.5px 0 #000,
     -1.5px 1.5px 0 #000,
     -1.5px 0 0 #000;
-  font-family: "Star4000 Extended";
+  font-family: 'Star4000 Extended';
   font-size: 19pt;
 
   .container {
@@ -1123,7 +1114,7 @@ body {
         white-space: nowrap;
 
         &::after {
-          content: "........................................................................";
+          content: '........................................................................';
         }
       }
 
@@ -1237,14 +1228,14 @@ body {
 }
 
 #radar-html.weather-display {
-  background-image: url("../images/backgrounds/4.png");
+  background-image: url('../images/backgrounds/4.png');
 
   .header {
     height: 83px;
 
     .title.dual {
       color: #fff;
-      font-family: "Arial", sans-serif;
+      font-family: 'Arial', sans-serif;
       font-weight: bold;
       font-size: 28pt;
       left: 50px;
@@ -1263,7 +1254,7 @@ body {
       right: 0px;
       width: 360px;
       margin-top: 2px;
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 18pt;
       font-weight: bold;
       text-shadow:
@@ -1339,7 +1330,7 @@ body {
         position: relative;
         font-weight: normal;
         top: -14px;
-        font-family: "Star4000 Small";
+        font-family: 'Star4000 Small';
         font-size: 24pt;
       }
     }
@@ -1373,7 +1364,7 @@ body {
 }
 
 #regional-forecast-html.weather-display {
-  background-image: url("../images/backgrounds/5.png");
+  background-image: url('../images/backgrounds/5.png');
 }
 
 .weather-display .main.regional-forecast {
@@ -1414,7 +1405,7 @@ body {
     }
 
     .temp {
-      font-family: "Star4000 Large";
+      font-family: 'Star4000 Large';
       font-size: 28px;
       padding-top: 2px;
       color: #ff0;
@@ -1431,7 +1422,7 @@ body {
 }
 
 #almanac-html.weather-display {
-  background-image: url("../images/backgrounds/3.png");
+  background-image: url('../images/backgrounds/3.png');
 
   .header {
     .title.single {
@@ -1444,7 +1435,7 @@ body {
 }
 
 .weather-display .main.almanac {
-  font-family: "Star4000";
+  font-family: 'Star4000';
   font-size: 24pt;
   text-shadow:
     3px 3px 0 #000,
@@ -1534,7 +1525,7 @@ body {
     background-color: #702323;
 
     .hazard {
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 24pt;
       color: #fff;
       text-shadow:
@@ -1588,7 +1579,7 @@ body {
 }
 
 #spc-outlook-html.weather-display {
-  background-image: url("../images/backgrounds/6.png");
+  background-image: url('../images/backgrounds/6.png');
 }
 
 .weather-display .spc-outlook {
@@ -1604,7 +1595,7 @@ body {
   .risk-levels {
     position: absolute;
     left: 206px;
-    font-family: "Star4000 Small";
+    font-family: 'Star4000 Small';
     font-size: 32px;
     text-shadow:
       3px 3px 0 #000,
@@ -1657,7 +1648,7 @@ body {
 
       .day-name {
         position: absolute;
-        font-family: "Star4000";
+        font-family: 'Star4000';
         font-size: 24pt;
         width: 200px;
         text-align: right;
@@ -1681,19 +1672,14 @@ body {
         left: 210px;
         margin-top: 20px;
         border: 3px outset hsl(0, 0%, 70%);
-        background: linear-gradient(
-          0deg,
-          hsl(0, 0%, 40%) 0%,
-          hsl(0, 0%, 60%) 50%,
-          hsl(0, 0%, 40%) 100%
-        );
+        background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
       }
     }
   }
 }
 
 #current-weather-html.weather-display {
-  background-image: url("../images/backgrounds/1.png");
+  background-image: url('../images/backgrounds/1.png');
 
   .main.current-weather {
     .col {
@@ -1715,13 +1701,13 @@ body {
         -1.5px 0 0 #000;
 
       &.left {
-        font-family: "Star4000 Extended";
+        font-family: 'Star4000 Extended';
         font-size: 24pt;
       }
 
       &.right {
         right: 0px;
-        font-family: "Star4000 Large";
+        font-family: 'Star4000 Large';
         font-size: 20px;
         font-weight: bold;
         line-height: 24px;
@@ -1751,7 +1737,7 @@ body {
     }
 
     .temp {
-      font-family: "Star4000 Large";
+      font-family: 'Star4000 Large';
       font-size: 24pt;
     }
 
@@ -1797,14 +1783,14 @@ body {
 }
 
 #location-info-html.weather-display {
-  background-image: url("../images/backgrounds/1.png");
+  background-image: url('../images/backgrounds/1.png');
 
   .header {
     .version {
       position: absolute;
       right: 20px;
       top: 20px;
-      font-family: "Star4000";
+      font-family: 'Star4000';
       font-size: 16px;
       color: #fff;
       text-shadow:
@@ -1829,7 +1815,7 @@ body {
     .location-details {
       display: inline-block;
       text-align: left;
-      font-family: "Star4000 Large";
+      font-family: 'Star4000 Large';
       font-size: 20px;
       color: #fff;
       text-shadow:
