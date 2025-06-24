@@ -3,6 +3,9 @@ import { isPlaying, latLonReceived, message as navMessage, resetStatuses, resize
 import { round2 } from './modules/utils/units.js';
 import { imagePreloader } from './modules/utils/image-preloader.js';
 
+// Import cache monitor to make window.cacheMonitor() available
+import './modules/utils/cache-monitor.js';
+
 // Import all display modules to ensure they register themselves
 import './modules/hazards.js';
 import './modules/currentweatherscroll.js';

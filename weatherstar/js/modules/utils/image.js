@@ -57,42 +57,58 @@ class ImageCache {
    * Setup memory pressure handling for mobile devices
    */
   setupMemoryPressureHandling() {
-    // Check for memory pressure every 30 seconds
+    // Check for memory pressure every 2 minutes (less frequent since we're more conservative)
     setInterval(() => {
       this.checkMemoryPressure();
-    }, 30000);
+    }, 120000);
   }
 
   /**
    * Check for memory pressure and handle accordingly
    */
   checkMemoryPressure() {
-    // Check if we're approaching memory limits
-    if (this.cache.size > this.maxSize * 0.8) {
-      this.handleMemoryPressure();
-    }
+    let shouldEvict = false;
+    let evictionCount = 0;
 
-    // Check browser memory if available
+    // Only check browser memory - cache size is handled by normal LRU eviction
     if ('memory' in performance) {
       const memoryInfo = performance.memory;
       const memoryUsage = memoryInfo.usedJSHeapSize / memoryInfo.jsHeapSizeLimit;
 
-      if (memoryUsage > 0.7) {
-        // 70% memory usage threshold
-        this.handleMemoryPressure();
+      if (memoryUsage > 0.9) {
+        // 90% memory usage threshold - only evict under severe pressure
+        shouldEvict = true;
+        evictionCount = Math.floor(this.cache.size * 0.2); // Evict only 20% of cache
       }
+
+      if (memoryUsage > 0.95) {
+        // 95% memory usage threshold - critical memory pressure
+        shouldEvict = true;
+        evictionCount = Math.max(evictionCount, Math.floor(this.cache.size * 0.5)); // Evict 50% of cache
+      }
+    }
+
+    if (shouldEvict) {
+      this.handleMemoryPressure(evictionCount);
     }
   }
 
   /**
-   * Handle memory pressure by clearing cache
+   * Handle memory pressure by evicting least recently used items
    */
-  handleMemoryPressure() {
-    const previousSize = this.cache.size;
-    this.clear();
+  handleMemoryPressure(evictionCount = 0) {
+    if (evictionCount === 0 || this.cache.size === 0) {
+      return;
+    }
+
+    const itemsToEvict = Math.min(evictionCount, this.cache.size);
+
+    // Evict the specified number of least recently used items efficiently
+    const actualEvicted = this.evictMultipleOldest(itemsToEvict);
+
     this.stats.memoryPressureEvents++;
 
-    console.log(`Memory pressure detected - cleared ${previousSize} cached images`);
+    console.log(`Memory pressure detected - evicted ${actualEvicted} cached images`);
   }
 
   /**
@@ -191,6 +207,33 @@ class ImageCache {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
     }
+  }
+
+  /**
+   * Evict multiple oldest cache entries efficiently
+   */
+  evictMultipleOldest(count) {
+    if (count <= 0 || this.cache.size === 0) {
+      return 0;
+    }
+
+    // Create array of entries with their keys for sorting
+    const entries = Array.from(this.cache.entries()).map(([key, entry]) => ({
+      key,
+      lastAccessed: entry.lastAccessed,
+    }));
+
+    // Sort by last accessed time (oldest first)
+    entries.sort((a, b) => a.lastAccessed - b.lastAccessed);
+
+    // Evict the specified number of oldest entries
+    const evictCount = Math.min(count, entries.length);
+    for (let i = 0; i < evictCount; i++) {
+      this.cache.delete(entries[i].key);
+      this.stats.evictions++;
+    }
+
+    return evictCount;
   }
 
   /**
