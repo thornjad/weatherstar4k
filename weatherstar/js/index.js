@@ -123,20 +123,15 @@ const btnFullScreenClick = () => {
   return false;
 };
 
-const enterFullScreen = () => {
+const enterFullScreen = async () => {
   const element = document.querySelector('#divTwc');
 
-  // Supports most browsers and their versions.
-  const requestMethod =
-    element.requestFullScreen ||
-    element.webkitRequestFullScreen ||
-    element.mozRequestFullScreen ||
-    element.msRequestFullscreen;
-
-  if (requestMethod) {
-    // Native full screen.
-    requestMethod.call(element, { navigationUI: 'hide' });
+  try {
+    await element.requestFullscreen({ navigationUI: 'hide' });
+  } catch (error) {
+    console.error('Failed to enter fullscreen:', error);
   }
+  
   resize();
   updateFullScreenNavigate();
 
@@ -148,16 +143,8 @@ const enterFullScreen = () => {
 
 const exitFullscreen = () => {
   // exit full-screen
-
   if (document.exitFullscreen) {
-    // Chrome 71 broke this if the user pressed F11 to enter full screen mode.
     document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen();
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen();
   }
   resize();
   exitFullScreenVisibilityChanges();
