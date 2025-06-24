@@ -159,16 +159,31 @@ const isPlaying = () => playing;
 const msg = {
   response: {
     // display to navigation
-    previous: Symbol('previous'), // already at first frame, calling function should switch to previous canvas
-    inProgress: Symbol('inProgress'), // have data to display, calling function should do nothing
-    next: Symbol('next'), // end of frames reached, calling function should switch to next canvas
+    previous: 'previous', // already at first frame, calling function should switch to previous canvas
+    inProgress: 'inProgress', // have data to display, calling function should do nothing
+    next: 'next', // end of frames reached, calling function should switch to next canvas
   },
   command: {
     // navigation to display
-    firstFrame: Symbol('firstFrame'),
-    previousFrame: Symbol('previousFrame'),
-    nextFrame: Symbol('nextFrame'),
-    lastFrame: Symbol('lastFrame'), // used when navigating backwards from the begining of the next canvas
+    firstFrame: 'firstFrame',
+    previousFrame: 'previousFrame',
+    nextFrame: 'nextFrame',
+    lastFrame: 'lastFrame', // used when navigating backwards from the begining of the next canvas
+  },
+};
+
+// Navigation enum for TypeScript-like validation
+const NavigationEnum = {
+  RESPONSE: {
+    PREVIOUS: 'previous',
+    IN_PROGRESS: 'inProgress',
+    NEXT: 'next',
+  },
+  COMMAND: {
+    FIRST_FRAME: 'firstFrame',
+    PREVIOUS_FRAME: 'previousFrame',
+    NEXT_FRAME: 'nextFrame',
+    LAST_FRAME: 'lastFrame',
   },
 };
 
@@ -356,6 +371,7 @@ export {
   currentDisplay,
   getDisplay,
   msg,
+  NavigationEnum,
   message,
   latLonReceived,
   timeZone,

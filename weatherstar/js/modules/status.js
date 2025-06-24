@@ -1,10 +1,21 @@
+// Status enum-like constants
 const STATUS = {
-  loading: Symbol('loading'),
-  loaded: Symbol('loaded'),
-  failed: Symbol('failed'),
-  noData: Symbol('noData'),
-  disabled: Symbol('disabled'),
-  retrying: Symbol('retrying'),
+  loading: 'loading',
+  loaded: 'loaded',
+  failed: 'failed',
+  noData: 'noData',
+  disabled: 'disabled',
+  retrying: 'retrying',
+};
+
+// Status enum for TypeScript-like validation
+const StatusEnum = {
+  LOADING: 'loading',
+  LOADED: 'loaded',
+  FAILED: 'failed',
+  NO_DATA: 'noData',
+  DISABLED: 'disabled',
+  RETRYING: 'retrying',
 };
 
 const calcStatusClass = statusCode => {
@@ -29,4 +40,4 @@ const calcStatusClass = statusCode => {
 const statusClasses = ['loading', 'press-here', 'failed', 'no-data', 'disabled', 'retrying'];
 
 export default STATUS;
-export { calcStatusClass, statusClasses };
+export { calcStatusClass, statusClasses, StatusEnum };
