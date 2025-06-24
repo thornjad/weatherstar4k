@@ -1,7 +1,7 @@
 // current weather conditions display
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
-import { formatTimeSimple, fromObject, minusDays, plusDays, startOfDay } from './utils/date-utils.js';
+import { formatTimeSimple24Hour, fromUTCObject, minusDays, plusDays, startOfDay } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
 import { msg, registerDisplay } from './navigation.js';
 import * as utils from './radar-utils.js';
@@ -142,7 +142,7 @@ class Radar extends WeatherDisplay {
         const timeMatch = url.match(/_(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)\./);
 
         const [, year, month, day, hour, minute] = timeMatch;
-        const time = fromObject({
+        const time = fromUTCObject({
           year: parseInt(year),
           month: parseInt(month),
           day: parseInt(day),
@@ -182,8 +182,8 @@ class Radar extends WeatherDisplay {
 
   async drawCanvas() {
     super.drawCanvas();
-    const time = formatTimeSimple(this.times[this.screenIndex]);
-    const timePadded = time.length >= 8 ? time : `&nbsp;${time}`;
+    const time = formatTimeSimple24Hour(this.times[this.screenIndex]);
+    const timePadded = time.length >= 5 ? time : `&nbsp;${time}`;
     this.elem.querySelector('.header .right .time').innerHTML = timePadded;
 
     // get image offset calculation

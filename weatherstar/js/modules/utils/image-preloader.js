@@ -118,10 +118,8 @@ class ImagePreloader {
     }
 
     try {
-      console.log(`Preloading ${this.commonImages.length} images (mobile optimized: ${this.mobileOptimized})`);
       await imageCache.preloadImages(this.commonImages);
       this.preloaded = true;
-      console.log('Common images preloaded successfully');
     } catch (error) {
       console.warn('Failed to preload some common images:', error);
     }

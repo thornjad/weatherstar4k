@@ -25,6 +25,13 @@ export const formatTimeSimple = date => {
   return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 };
 
+// Format time simple in 24-hour format (e.g., "23:35")
+export const formatTimeSimple24Hour = date => {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
+
 // Format date (e.g., " MON JAN 15")
 export const formatDate = date => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -115,6 +122,27 @@ export const fromObject = obj => {
   }
   if (obj.minute) {
     date.setMinutes(obj.minute);
+  }
+  return date;
+};
+
+// Create date from UTC object (for radar timestamps which are in UTC)
+export const fromUTCObject = obj => {
+  const date = new Date();
+  if (obj.year) {
+    date.setUTCFullYear(obj.year);
+  }
+  if (obj.month) {
+    date.setUTCMonth(obj.month - 1);
+  } // JS months are 0-indexed
+  if (obj.day) {
+    date.setUTCDate(obj.day);
+  }
+  if (obj.hour) {
+    date.setUTCHours(obj.hour);
+  }
+  if (obj.minute) {
+    date.setUTCMinutes(obj.minute);
   }
   return date;
 };
