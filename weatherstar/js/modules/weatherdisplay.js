@@ -2,7 +2,7 @@
 
 import STATUS from './status.js';
 import { displayNavMessage, isPlaying, msg, updateStatus } from './navigation.js';
-import { formatDate, formatTimeWithSeconds } from './utils/date-utils.js';
+import { formatDate, formatTimeWithSeconds, formatTimeWithSeconds24Hour } from './utils/date-utils.js';
 
 class WeatherDisplay {
   constructor(navId, elemId, name) {
@@ -133,8 +133,8 @@ class WeatherDisplay {
     // Get the current date and time.
     const now = new Date();
 
-    // time = "11:35:08 PM";
-    const time = formatTimeWithSeconds(now);
+    // time = "23:35:08" (24-hour format for header clock)
+    const time = formatTimeWithSeconds24Hour(now);
     const date = formatDate(now);
 
     const dateElem = this.elem.querySelector('.date-time.date');

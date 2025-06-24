@@ -8,6 +8,14 @@ export const formatTimeWithSeconds = date => {
   return `${displayHours.toString().padStart(2, ' ')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
 };
 
+// Format time with seconds in 24-hour format (e.g., "23:35:08")
+export const formatTimeWithSeconds24Hour = date => {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
 // Format time simple (e.g., "11:35 PM")
 export const formatTimeSimple = date => {
   const hours = date.getHours();
