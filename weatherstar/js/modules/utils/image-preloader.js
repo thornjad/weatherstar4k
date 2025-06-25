@@ -49,6 +49,14 @@ class ImagePreloader {
       'images/icons/current-conditions/Thunderstorm.gif',
       'images/icons/current-conditions/Mostly-Cloudy.gif',
 
+      // Background images (static assets that never change)
+      'images/backgrounds/1.png',
+      'images/backgrounds/2.png',
+      'images/backgrounds/3.png',
+      'images/backgrounds/4.png',
+      'images/backgrounds/5.png',
+      'images/backgrounds/6.png',
+
       // Map backgrounds
       'images/maps/basemap.webp',
     ];
@@ -89,6 +97,11 @@ class ImagePreloader {
       'images/icons/regional-maps/Snow-Wind.gif',
       'images/icons/regional-maps/Thunder.gif',
       'images/icons/regional-maps/Wintry-Mix-1992.gif',
+
+      // Additional background images for desktop
+      'images/backgrounds/1-wide.png',
+      'images/backgrounds/4-wide.png',
+      'images/backgrounds/1-chart.png',
 
       // Additional map backgrounds
       'images/maps/radar-hawaii.png',
@@ -159,6 +172,28 @@ class ImagePreloader {
               'images/icons/current-conditions/Wintry-Mix.gif',
             ]),
       ],
+      backgrounds: this.mobileOptimized
+        ? [
+            // Core background images for mobile
+            'images/backgrounds/1.png',
+            'images/backgrounds/2.png',
+            'images/backgrounds/3.png',
+            'images/backgrounds/4.png',
+            'images/backgrounds/5.png',
+            'images/backgrounds/6.png',
+          ]
+        : [
+            // All background images for desktop
+            'images/backgrounds/1.png',
+            'images/backgrounds/2.png',
+            'images/backgrounds/3.png',
+            'images/backgrounds/4.png',
+            'images/backgrounds/5.png',
+            'images/backgrounds/6.png',
+            'images/backgrounds/1-wide.png',
+            'images/backgrounds/4-wide.png',
+            'images/backgrounds/1-chart.png',
+          ],
       regional: this.mobileOptimized
         ? [
             // Core regional icons for mobile
@@ -219,7 +254,13 @@ class ImagePreloader {
       console.warn(`Unknown image category: ${category}`);
       return;
     }
-    await imageCache.preloadImages(images);
+
+    // Use specialized method for background images
+    if (category === 'backgrounds') {
+      await imageCache.preloadBackgroundImages(images);
+    } else {
+      await imageCache.preloadImages(images);
+    }
   }
 
   /**
@@ -265,16 +306,16 @@ class ImagePreloader {
   }
 
   /**
-   * Force clear all icon caches (memory, localStorage, and browser cache)
+   * Force clear all icon caches (memory and browser cache)
    */
   static async forceClearAllIconCaches() {
-    // Clear in-memory and localStorage cache
+    // Clear in-memory cache
     imageCache.clear();
     // Also clear preloader state
     if (window.imagePreloader) {
       window.imagePreloader.preloaded = false;
     }
-    console.log('Force-cleared all icon caches (memory and localStorage)');
+    console.log('Force-cleared all icon caches (memory)');
   }
 }
 

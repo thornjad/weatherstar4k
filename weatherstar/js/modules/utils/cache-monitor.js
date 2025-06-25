@@ -3,7 +3,7 @@ import { imagePreloader } from './image-preloader.js';
 
 /**
  * Cache Monitor Utility
- * Provides debugging and monitoring capabilities for the mobile-optimized image cache
+ * Provides debugging and monitoring capabilities for the optimized image cache
  */
 class CacheMonitor {
   constructor() {
@@ -24,7 +24,7 @@ class CacheMonitor {
     }
 
     this.monitoring = true;
-    console.log('Starting mobile-optimized image cache monitoring...');
+    console.log('Starting optimized image cache monitoring...');
 
     this.interval = setInterval(() => {
       this.logCacheStats();
@@ -35,7 +35,7 @@ class CacheMonitor {
   }
 
   /**
-   * Log current cache statistics with mobile optimization info
+   * Log current cache statistics
    */
   logCacheStats() {
     if (!this.monitoring) {
@@ -66,9 +66,10 @@ class CacheMonitor {
       misses: stats.misses,
       loads: stats.loads,
       evictions: stats.evictions,
-      memoryPressureEvents: stats.memoryPressureEvents,
       cacheSize: stats.size,
       maxSize: stats.maxSize,
+      backgroundImages: stats.backgroundImages,
+      expiredBackgroundImages: stats.expiredBackgroundImages,
       cacheUtilization: stats.cacheUtilization,
       mobileOptimized: preloaderStats.mobileOptimized,
       preloadedImages: preloaderStats.preloadedImages,
@@ -83,7 +84,7 @@ class CacheMonitor {
   }
 
   /**
-   * Get cache performance summary with mobile optimization metrics
+   * Get cache performance summary
    */
   getPerformanceSummary() {
     if (this.logHistory.length === 0) {
@@ -99,7 +100,6 @@ class CacheMonitor {
     const totalHits = recent.reduce((sum, entry) => sum + entry.hits, 0);
     const totalMisses = recent.reduce((sum, entry) => sum + entry.misses, 0);
     const totalLoads = recent.reduce((sum, entry) => sum + entry.loads, 0);
-    const totalMemoryPressureEvents = recent.reduce((sum, entry) => sum + (entry.memoryPressureEvents || 0), 0);
     const avgCacheUtilization =
       recent.reduce((sum, entry) => {
         return sum + parseFloat(entry.cacheUtilization || '0');
@@ -111,7 +111,6 @@ class CacheMonitor {
       totalHits,
       totalMisses,
       totalLoads,
-      totalMemoryPressureEvents,
       monitoringDuration: `${this.logHistory.length} log entries`,
       mobileOptimized: recent[recent.length - 1]?.mobileOptimized || false,
       preloadedImages: recent[recent.length - 1]?.preloadedImages || 0,
@@ -121,7 +120,6 @@ class CacheMonitor {
         hits: entry.hits,
         misses: entry.misses,
         cacheUtilization: entry.cacheUtilization,
-        memoryPressureEvents: entry.memoryPressureEvents,
       })),
     };
   }
@@ -153,7 +151,7 @@ class CacheMonitor {
   }
 
   /**
-   * Export cache statistics for debugging with mobile optimization info
+   * Export cache statistics for debugging
    */
   exportCacheData() {
     const preloaderStats = imagePreloader.getCacheStats();
@@ -198,10 +196,10 @@ class CacheMonitor {
   }
 
   /**
-   * Run basic cache tests with mobile optimization validation
+   * Run basic cache tests
    */
   async runTests() {
-    console.log('🧪 Running mobile-optimized image cache tests...');
+    console.log('🧪 Running optimized image cache tests...');
 
     const testImages = [
       'images/icons/moon-phases/Full-Moon.gif',
@@ -213,7 +211,6 @@ class CacheMonitor {
     const results = {
       preloadTest: await this.testPreloading(testImages),
       cacheHitTest: await this.testCacheHits(testImages),
-      persistenceTest: await this.testPersistence(testImages),
       performanceTest: await this.testPerformance(testImages),
       mobileOptimizationTest: this.testMobileOptimization(),
     };
@@ -226,7 +223,7 @@ class CacheMonitor {
     console.log(`🧪 Test Summary: ${passedTests}/${totalTests} tests passed`);
 
     if (passedTests === totalTests) {
-      console.log('✅ All mobile-optimized image cache tests passed!');
+      console.log('✅ All optimized image cache tests passed!');
     } else {
       console.log('❌ Some tests failed. Check the results above.');
     }
@@ -245,9 +242,8 @@ class CacheMonitor {
     const cacheSize = cacheStats.maxSize;
     const preloadedCount = preloaderStats.preloadedImages;
     const expectedCacheSize = 50;
-    // Count the actual core images for mobile (19 items in coreImages array)
     const expectedCoreImages = 19;
-    const maxPreloadedImages = isMobileOptimized ? expectedCoreImages : 80; // Use actual count
+    const maxPreloadedImages = isMobileOptimized ? expectedCoreImages : 80;
 
     const success = cacheSize === expectedCacheSize && preloadedCount <= maxPreloadedImages;
 
@@ -267,7 +263,7 @@ class CacheMonitor {
   }
 
   /**
-   * Test image preloading functionality
+   * Test preloading functionality
    */
   async testPreloading(testImages) {
     console.log('  Testing preloading...');
@@ -276,13 +272,14 @@ class CacheMonitor {
     const results = await imageCache.preloadImages(testImages);
     const endTime = performance.now();
 
-    const successCount = results.filter(result => result !== null).length;
     const duration = endTime - startTime;
+    const successCount = results.filter(result => result !== null).length;
+    const success = successCount === testImages.length;
 
     console.log(`    Preloaded ${successCount}/${testImages.length} images in ${duration.toFixed(2)}ms`);
 
     return {
-      success: successCount === testImages.length,
+      success,
       duration,
       successCount,
       totalCount: testImages.length,
@@ -295,62 +292,22 @@ class CacheMonitor {
   async testCacheHits(testImages) {
     console.log('  Testing cache hits...');
 
-    // Preload images first
+    // First load should be misses
+    const firstLoadStats = imageCache.getStats();
+
+    // Second load should be hits
     await imageCache.preloadImages(testImages);
+    const secondLoadStats = imageCache.getStats();
 
-    const startTime = performance.now();
-    const hitResults = testImages.map(src => imageCache.getCached(src));
-    const endTime = performance.now();
+    const newHits = secondLoadStats.hits - firstLoadStats.hits;
+    const expectedHits = testImages.length;
 
-    const hitCount = hitResults.filter(result => result !== null).length;
-    const duration = endTime - startTime;
-
-    console.log(`    Cache hits: ${hitCount}/${testImages.length} in ${duration.toFixed(2)}ms`);
+    console.log(`    Cache hits: ${newHits}/${expectedHits}`);
 
     return {
-      success: hitCount === testImages.length,
-      duration,
-      hitCount,
-      totalCount: testImages.length,
-    };
-  }
-
-  /**
-   * Test persistence functionality
-   */
-  async testPersistence(testImages) {
-    console.log('  Testing persistence...');
-
-    // Clear cache and preload images
-    imageCache.clear();
-    await imageCache.preloadImages(testImages);
-
-    const beforeSave = imageCache.getStats();
-    imageCache.saveCache();
-
-    // Simulate cache restoration
-    const testCache = new Map();
-    try {
-      const cached = localStorage.getItem('weatherstar4k_image_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        parsed.forEach(([url, entry]) => {
-          testCache.set(url, entry);
-        });
-      }
-    } catch (error) {
-      console.warn('Persistence test failed:', error);
-    }
-
-    const restoredCount = testCache.size;
-    const success = restoredCount > 0;
-
-    console.log(`    Persisted ${restoredCount} images to localStorage`);
-
-    return {
-      success,
-      restoredCount,
-      beforeSave: beforeSave.size,
+      success: newHits === expectedHits,
+      hits: newHits,
+      expected: expectedHits,
     };
   }
 
@@ -398,18 +355,30 @@ class CacheMonitor {
   }
 
   /**
-   * Main function to run both tests and monitoring
+   * Stop monitoring
+   */
+  stopMonitoring() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+    this.monitoring = false;
+    console.log('Cache monitoring stopped');
+  }
+
+  /**
+   * Run the cache monitor with default settings
    */
   async run() {
-    console.log('🚀 Starting mobile-optimized cache monitor and tests...');
-
-    // Run tests first
-    await this.runTests();
+    console.log('🚀 Starting optimized image cache monitor...');
 
     // Start monitoring
     this.startMonitoring(30000); // Log every 30 seconds
 
-    console.log('✅ Mobile-optimized cache monitor is now active. Reload the page to stop monitoring.');
+    // Run tests
+    await this.runTests();
+
+    console.log('✅ Cache monitor ready. Use window.cacheMonitorStats() to get current stats.');
   }
 }
 
@@ -419,25 +388,17 @@ const cacheMonitor = new CacheMonitor();
 // Export for use in other modules
 export { cacheMonitor, CacheMonitor };
 
-// Make available globally for debugging
-if (typeof window !== 'undefined') {
-  // Main function as documented in README
-  window.cacheMonitor = cacheMonitor.run.bind(cacheMonitor);
-
-  // Also expose the instance and class for more detailed access
-  window.cacheMonitorInstance = cacheMonitor;
-  window.CacheMonitor = CacheMonitor;
-
-  // Expose individual methods for debugging
-  window.cacheMonitorStats = () => cacheMonitor.logCacheStats();
-  window.cacheMonitorStart = interval => cacheMonitor.startMonitoring(interval);
-  window.cacheMonitorStop = () => {
-    if (cacheMonitor.interval) {
-      clearInterval(cacheMonitor.interval);
-      cacheMonitor.monitoring = false;
-      console.log('Cache monitoring stopped');
-    }
-  };
-  window.cacheMonitorTests = () => cacheMonitor.runTests();
-  window.cacheMonitorExport = () => cacheMonitor.exportCacheData();
-}
+// Expose to window for debugging
+window.cacheMonitor = cacheMonitor.run.bind(cacheMonitor);
+window.cacheMonitorInstance = cacheMonitor;
+window.CacheMonitor = CacheMonitor;
+window.cacheMonitorStats = () => cacheMonitor.logCacheStats();
+window.cacheMonitorStart = interval => cacheMonitor.startMonitoring(interval);
+window.cacheMonitorStop = () => {
+  if (cacheMonitor.interval) {
+    clearInterval(cacheMonitor.interval);
+    cacheMonitor.monitoring = false;
+  }
+};
+window.cacheMonitorTests = () => cacheMonitor.runTests();
+window.cacheMonitorExport = () => cacheMonitor.exportCacheData();

@@ -4,7 +4,7 @@ This project brings back the weather of the 90's, based on the Weather Channel's
 
 This project is based on the WS4000+ project by Matt Walsh, which you can find [here](https://github.com/netbymatt/ws4kp). My version has diverged significantly, as I find that project to be unbelievably overengineered. The primary difference is that this version doesn't require a complicated build system with random libraries loading in. I've also added some missing icons, and an icon derivation algorithm to compensate for the NOAA API having deprecated its icon response field. Initial loading time is also improved by about 10x versus the original fork.
 
-I've also added an improved LRU caching system, since the ws4kp image preloading doesn't really work. The cache is automatic, but for debugging you can enable monitoring and a basic set of tests with `window.cacheMonitor()`.
+I've also added an in-memory caching system for images, since the ws4kp image preloading doesn't really work when running for hours or days at a time. The cache provides immediate access to frequently used images during app loops and relies on browser caching for persistence. For debugging you can enable monitoring and a basic set of tests with `window.cacheMonitor()`.
 
 ## Acknowledgments
 

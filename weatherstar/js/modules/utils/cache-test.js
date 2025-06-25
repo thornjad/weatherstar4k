@@ -2,7 +2,8 @@ import { imageCache } from './image.js';
 import { imagePreloader } from './image-preloader.js';
 
 /**
- * Simple test utility for the image caching system
+ * Cache Test Utility
+ * Provides testing capabilities for the optimized image cache
  */
 class CacheTest {
   constructor() {
@@ -23,8 +24,8 @@ class CacheTest {
     const results = {
       preloadTest: await this.testPreloading(),
       cacheHitTest: await this.testCacheHits(),
-      persistenceTest: await this.testPersistence(),
       performanceTest: await this.testPerformance(),
+      backgroundImageTest: await this.testBackgroundImages(),
     };
 
     console.log('🧪 Test Results:', results);
@@ -41,8 +42,8 @@ class CacheTest {
     const results = await imageCache.preloadImages(this.testImages);
     const endTime = performance.now();
 
-    const successCount = results.filter(result => result !== null).length;
     const duration = endTime - startTime;
+    const successCount = results.filter(result => result !== null).length;
 
     console.log(
       `    Preloaded ${successCount}/${this.testImages.length} images in ${duration.toFixed(2)}ms`
@@ -78,28 +79,6 @@ class CacheTest {
       success: newHits === expectedHits,
       hits: newHits,
       expected: expectedHits,
-    };
-  }
-
-  /**
-   * Test cache persistence (simulated)
-   */
-  async testPersistence() {
-    console.log('  Testing persistence...');
-
-    // Simulate cache persistence by checking if images are still cached
-    const cachedCount = this.testImages.filter(img =>
-      imageCache.isCached(img)
-    ).length;
-
-    console.log(
-      `    Persistence check: ${cachedCount}/${this.testImages.length} images still cached`
-    );
-
-    return {
-      success: cachedCount === this.testImages.length,
-      cachedCount,
-      totalCount: this.testImages.length,
     };
   }
 
@@ -141,6 +120,56 @@ class CacheTest {
   }
 
   /**
+   * Test background image caching and prioritization
+   */
+  async testBackgroundImages() {
+    console.log('  Testing background image caching...');
+
+    const backgroundImages = [
+      'images/backgrounds/1.png',
+      'images/backgrounds/2.png',
+      'images/backgrounds/3.png',
+    ];
+
+    // Clear cache and preload background images
+    imageCache.clear();
+    await imageCache.preloadBackgroundImages(backgroundImages);
+
+    // Check that background images are marked correctly
+    const stats = imageCache.getStats();
+    const backgroundCount = stats.backgroundImages;
+
+    console.log(`    Background images cached: ${backgroundCount}/${backgroundImages.length}`);
+
+    // Test that background images are prioritized during eviction
+    // Fill cache with non-background images to trigger eviction
+    const nonBackgroundImages = [
+      'images/icons/moon-phases/Full-Moon.gif',
+      'images/icons/moon-phases/Last-Quarter.gif',
+      'images/icons/moon-phases/New-Moon.gif',
+      'images/icons/moon-phases/First-Quarter.gif',
+    ];
+
+    // Preload additional images to fill cache
+    await imageCache.preloadImages(nonBackgroundImages);
+
+    const finalStats = imageCache.getStats();
+    const finalBackgroundCount = finalStats.backgroundImages;
+    const expiredBackgroundCount = finalStats.expiredBackgroundImages;
+
+    console.log(`    Background images after cache fill: ${finalBackgroundCount}`);
+    console.log(`    Expired background images: ${expiredBackgroundCount}`);
+
+    return {
+      success: finalBackgroundCount >= backgroundCount && expiredBackgroundCount === 0,
+      initialBackgroundCount: backgroundCount,
+      finalBackgroundCount,
+      expiredBackgroundCount,
+      totalImages: finalStats.size,
+    };
+  }
+
+  /**
    * Test preloader functionality
    */
   async testPreloader() {
@@ -164,23 +193,28 @@ class CacheTest {
   }
 
   /**
-   * Run all tests and provide summary
+   * Run all tests including preloader
    */
   async runAllTests() {
-    const results = await this.runTests();
+    console.log('🧪 Running comprehensive cache tests...');
+
+    const basicResults = await this.runTests();
     const preloaderResults = await this.testPreloader();
 
-    const allResults = { ...results, preloaderTest: preloaderResults };
+    const allResults = {
+      ...basicResults,
+      preloaderTest: preloaderResults,
+    };
 
-    const passedTests = Object.values(allResults).filter(
-      result => result.success
-    ).length;
+    console.log('🧪 All Test Results:', allResults);
+
+    const passedTests = Object.values(allResults).filter(result => result.success).length;
     const totalTests = Object.keys(allResults).length;
 
     console.log(`🧪 Test Summary: ${passedTests}/${totalTests} tests passed`);
 
     if (passedTests === totalTests) {
-      console.log('✅ All image cache tests passed!');
+      console.log('✅ All cache tests passed!');
     } else {
       console.log('❌ Some tests failed. Check the results above.');
     }
@@ -192,9 +226,10 @@ class CacheTest {
 // Create global test instance
 const cacheTest = new CacheTest();
 
-// Expose to window for manual testing
-if (typeof window !== 'undefined') {
-  window.cacheTest = cacheTest;
-}
-
+// Export for use in other modules
 export { cacheTest, CacheTest };
+
+// Expose to window for debugging
+window.cacheTest = cacheTest.runAllTests.bind(cacheTest);
+window.cacheTestInstance = cacheTest;
+window.CacheTest = CacheTest;

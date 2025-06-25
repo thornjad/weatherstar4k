@@ -1,7 +1,7 @@
 /**
- * Comprehensive Image Cache System
- * Optimized for mobile devices and long-running operation
- * Prevents unnecessary refetching of images during app loops
+ * Optimized Image Cache System
+ * In-memory caching for immediate access during app loops
+ * Removes localStorage persistence for better performance
  */
 class ImageCache {
   constructor(maxSize = 50) {
@@ -12,107 +12,12 @@ class ImageCache {
       misses: 0,
       loads: 0,
       evictions: 0,
-      memoryPressureEvents: 0,
     };
     this.loadingPromises = new Map();
-    this.saveFrequency = 50; // Save to localStorage every 50 loads instead of 10
-    this.initCache();
-    this.setupMemoryPressureHandling();
   }
 
   /**
-   * Initialize cache from localStorage if available
-   */
-  initCache() {
-    try {
-      const cached = localStorage.getItem('weatherstar4k_image_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        // Only restore cache entries that are still valid (within 12 hours for mobile)
-        const cutoff = Date.now() - 12 * 60 * 60 * 1000;
-        parsed.forEach(([url, entry]) => {
-          if (entry.timestamp > cutoff && this.cache.size < this.maxSize) {
-            this.cache.set(url, entry);
-          }
-        });
-      }
-    } catch (error) {
-      console.warn('Failed to restore image cache from localStorage:', error);
-    }
-  }
-
-  /**
-   * Save cache to localStorage (reduced frequency for mobile optimization)
-   */
-  saveCache() {
-    try {
-      const cacheArray = Array.from(this.cache.entries());
-      localStorage.setItem('weatherstar4k_image_cache', JSON.stringify(cacheArray));
-    } catch (error) {
-      console.warn('Failed to save image cache to localStorage:', error);
-    }
-  }
-
-  /**
-   * Setup memory pressure handling for mobile devices
-   */
-  setupMemoryPressureHandling() {
-    // Check for memory pressure every 2 minutes (less frequent since we're more conservative)
-    setInterval(() => {
-      this.checkMemoryPressure();
-    }, 120000);
-  }
-
-  /**
-   * Check for memory pressure and handle accordingly
-   */
-  checkMemoryPressure() {
-    let shouldEvict = false;
-    let evictionCount = 0;
-
-    // Only check browser memory - cache size is handled by normal LRU eviction
-    if ('memory' in performance) {
-      const memoryInfo = performance.memory;
-      const memoryUsage = memoryInfo.usedJSHeapSize / memoryInfo.jsHeapSizeLimit;
-
-      if (memoryUsage > 0.9) {
-        // 90% memory usage threshold - only evict under severe pressure
-        shouldEvict = true;
-        evictionCount = Math.floor(this.cache.size * 0.2); // Evict only 20% of cache
-      }
-
-      if (memoryUsage > 0.95) {
-        // 95% memory usage threshold - critical memory pressure
-        shouldEvict = true;
-        evictionCount = Math.max(evictionCount, Math.floor(this.cache.size * 0.5)); // Evict 50% of cache
-      }
-    }
-
-    if (shouldEvict) {
-      this.handleMemoryPressure(evictionCount);
-    }
-  }
-
-  /**
-   * Handle memory pressure by evicting least recently used items
-   */
-  handleMemoryPressure(evictionCount = 0) {
-    if (evictionCount === 0 || this.cache.size === 0) {
-      return;
-    }
-
-    const itemsToEvict = Math.min(evictionCount, this.cache.size);
-
-    // Evict the specified number of least recently used items efficiently
-    const actualEvicted = this.evictMultipleOldest(itemsToEvict);
-
-    this.stats.memoryPressureEvents++;
-
-    console.log(`Memory pressure detected - evicted ${actualEvicted} cached images`);
-  }
-
-  /**
-   * Get cache statistics with memory information
+   * Get cache statistics
    */
   getStats() {
     const hitRate =
@@ -133,11 +38,25 @@ class ImageCache {
           }
         : null;
 
+    // Count background images
+    let backgroundCount = 0;
+    let expiredBackgroundCount = 0;
+    for (const entry of this.cache.values()) {
+      if (entry.isBackground) {
+        backgroundCount++;
+        if (entry.ttl && (Date.now() - entry.timestamp) > entry.ttl) {
+          expiredBackgroundCount++;
+        }
+      }
+    }
+
     return {
       ...this.stats,
       hitRate: `${hitRate}%`,
       size: this.cache.size,
       maxSize: this.maxSize,
+      backgroundImages: backgroundCount,
+      expiredBackgroundImages: expiredBackgroundCount,
       memoryInfo,
       cacheUtilization: `${((this.cache.size / this.maxSize) * 100).toFixed(1)}%`,
     };
@@ -166,7 +85,7 @@ class ImageCache {
   }
 
   /**
-   * Add image to cache with optimized storage frequency
+   * Add image to cache
    */
   addToCache(src, img) {
     // Evict oldest entries if cache is full
@@ -174,19 +93,19 @@ class ImageCache {
       this.evictOldest();
     }
 
+    const isBackground = src.includes('backgrounds/');
+    const ttl = isBackground ? 7 * 24 * 60 * 60 * 1000 : null; // 1 week for backgrounds, no TTL for others
+
     const entry = {
       img,
       timestamp: Date.now(),
       lastAccessed: Date.now(),
+      isBackground,
+      ttl,
     };
 
     this.cache.set(src, entry);
     this.stats.loads++;
-
-    // Save cache less frequently for mobile optimization (every 50 loads instead of 10)
-    if (this.stats.loads % this.saveFrequency === 0) {
-      this.saveCache();
-    }
   }
 
   /**
@@ -195,11 +114,43 @@ class ImageCache {
   evictOldest() {
     let oldestKey = null;
     let oldestTime = Date.now();
+    let expiredBackgroundKey = null;
 
     for (const [key, entry] of this.cache.entries()) {
+      // Check if background image has expired
+      if (entry.isBackground && entry.ttl) {
+        const age = Date.now() - entry.timestamp;
+        if (age > entry.ttl) {
+          expiredBackgroundKey = key;
+          break; // Evict expired background image immediately
+        }
+      }
+      
+      // Skip non-expired background images unless absolutely necessary
+      if (entry.isBackground) {
+        continue;
+      }
+      
       if (entry.lastAccessed < oldestTime) {
         oldestTime = entry.lastAccessed;
         oldestKey = key;
+      }
+    }
+
+    // If we found an expired background image, evict it
+    if (expiredBackgroundKey) {
+      this.cache.delete(expiredBackgroundKey);
+      this.stats.evictions++;
+      return;
+    }
+
+    // If no non-background images found, then evict background images
+    if (!oldestKey) {
+      for (const [key, entry] of this.cache.entries()) {
+        if (entry.lastAccessed < oldestTime) {
+          oldestTime = entry.lastAccessed;
+          oldestKey = key;
+        }
       }
     }
 
@@ -207,33 +158,6 @@ class ImageCache {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
     }
-  }
-
-  /**
-   * Evict multiple oldest cache entries efficiently
-   */
-  evictMultipleOldest(count) {
-    if (count <= 0 || this.cache.size === 0) {
-      return 0;
-    }
-
-    // Create array of entries with their keys for sorting
-    const entries = Array.from(this.cache.entries()).map(([key, entry]) => ({
-      key,
-      lastAccessed: entry.lastAccessed,
-    }));
-
-    // Sort by last accessed time (oldest first)
-    entries.sort((a, b) => a.lastAccessed - b.lastAccessed);
-
-    // Evict the specified number of oldest entries
-    const evictCount = Math.min(count, entries.length);
-    for (let i = 0; i < evictCount; i++) {
-      this.cache.delete(entries[i].key);
-      this.stats.evictions++;
-    }
-
-    return evictCount;
   }
 
   /**
@@ -247,9 +171,7 @@ class ImageCache {
       misses: 0,
       loads: 0,
       evictions: 0,
-      memoryPressureEvents: this.stats.memoryPressureEvents,
     };
-    localStorage.removeItem('weatherstar4k_image_cache');
   }
 
   /**
@@ -303,15 +225,30 @@ class ImageCache {
   }
 
   /**
-   * Preload multiple images in parallel with memory pressure awareness
+   * Preload multiple images in parallel
    */
   async preloadImages(srcs) {
-    // Check memory pressure before bulk loading
-    this.checkMemoryPressure();
-
     const promises = srcs.map(src =>
       this.preloadImage(src).catch(err => {
         console.warn(`Failed to preload image ${src}:`, err);
+        return null;
+      })
+    );
+
+    return Promise.all(promises);
+  }
+
+  /**
+   * Preload background images with 1-week TTL
+   * Background images are static assets that change very rarely
+   */
+  async preloadBackgroundImages(srcs) {
+    // Background images get priority and have a 1-week TTL
+    // They should rarely be evicted since they change very infrequently
+    
+    const promises = srcs.map(src =>
+      this.preloadImage(src).catch(err => {
+        console.warn(`Failed to preload background image ${src}:`, err);
         return null;
       })
     );
@@ -348,8 +285,8 @@ class ImageCache {
   }
 }
 
-// Create global cache instance with mobile-optimized size
-const imageCache = new ImageCache(50); // Reduced from 150 to 50 for mobile optimization
+// Create global cache instance
+const imageCache = new ImageCache(50);
 
 // Legacy compatibility function
 const preloadImg = src => {

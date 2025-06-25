@@ -313,7 +313,11 @@ const initImagePreloader = async () => {
     imagePreloader.preloadCommonImages();
 
     // Also preload critical categories immediately
-    await Promise.all([imagePreloader.preloadCategory('moon'), imagePreloader.preloadCategory('weather')]);
+    await Promise.all([
+      imagePreloader.preloadCategory('moon'),
+      imagePreloader.preloadCategory('weather'),
+      imagePreloader.preloadCategory('backgrounds'),
+    ]);
 
     // Cache monitoring and tests are now only available via window.cacheMonitor()
     // No automatic execution - must be called explicitly
