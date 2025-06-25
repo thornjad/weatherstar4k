@@ -13,7 +13,6 @@ class ExtendedForecast extends WeatherDisplay {
   constructor(navId, elemId) {
     super(navId, elemId, 'Extended Forecast');
 
-    // set timings
     this.timing.totalScreens = 2;
   }
 
@@ -22,7 +21,6 @@ class ExtendedForecast extends WeatherDisplay {
       return;
     }
 
-    // request us or si units
     try {
       this.data = await fetchAsync(this.weatherParameters.forecast, 'json', {
         data: {
@@ -40,7 +38,6 @@ class ExtendedForecast extends WeatherDisplay {
         return;
       }
     }
-    // we only get here if there was no error above
     this.screenIndex = 0;
     this.setStatus(STATUS.loaded);
   }
@@ -48,11 +45,9 @@ class ExtendedForecast extends WeatherDisplay {
   async drawCanvas() {
     super.drawCanvas();
 
-    // determine bounds
     // grab the first three or second set of three array elements
     const forecast = parse(this.data.properties.periods).slice(0 + 3 * this.screenIndex, 3 + this.screenIndex * 3);
 
-    // create each day template
     const days = forecast.map(Day => {
       const fill = {
         icon: { type: 'img', src: Day.icon },
@@ -66,11 +61,9 @@ class ExtendedForecast extends WeatherDisplay {
       }
       fill['value-hi'] = Math.round(high);
 
-      // return the filled template
       return this.fillTemplate('day', fill);
     });
 
-    // empty and update the container
     const dayContainer = this.elem.querySelector('.day-container');
     dayContainer.innerHTML = '';
     dayContainer.append(...days);
@@ -80,7 +73,6 @@ class ExtendedForecast extends WeatherDisplay {
 
 // the api provides the forecast in 12 hour increments, flatten to day increments with high and low temperatures
 const parse = fullForecast => {
-  // create a list of days starting with today
   const Days = [0, 1, 2, 3, 4, 5, 6];
 
   const dates = Days.map(shift => {
@@ -88,11 +80,9 @@ const parse = fullForecast => {
     return getShortDayName(date);
   });
 
-  // track the destination forecast index
   let destIndex = 0;
   const forecast = [];
   fullForecast.forEach(period => {
-    // create the destination object if necessary
     if (!forecast[destIndex]) {
       forecast.push({
         dayName: '',
@@ -102,22 +92,18 @@ const parse = fullForecast => {
         icon: undefined,
       });
     }
-    // get the object to modify/populate
     const fDay = forecast[destIndex];
     // high temperature will always be last in the source array so it will overwrite the low values assigned below
     fDay.icon = getLargeIcon(period.icon);
     fDay.text = shortenExtendedForecastText(period.shortForecast);
     fDay.dayName = dates[destIndex];
 
-    // preload the icon
     preloadImg(fDay.icon);
 
     if (period.isDaytime) {
-      // day time is the high temperature
       fDay.high = period.temperature;
       destIndex += 1;
     } else {
-      // low temperature
       fDay.low = period.temperature;
     }
   });
@@ -137,7 +123,6 @@ const regexList = [
   [/Thunderstorm/g, "T'Storm"],
 ];
 const shortenExtendedForecastText = long => {
-  // run all regexes
   const short = regexList.reduce((working, [regex, replace]) => working.replace(regex, replace), long);
 
   let conditions = short.split(' ');
@@ -167,5 +152,4 @@ const shortenExtendedForecastText = long => {
   return result;
 };
 
-// register display
 registerDisplay(new ExtendedForecast(8, 'extended-forecast'));

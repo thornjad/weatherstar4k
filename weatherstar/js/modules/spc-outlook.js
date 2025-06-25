@@ -14,15 +14,11 @@ const testAllPoints = (point, data) => {
   // returns all points where the data matches as an array of days and then matches of the properties of the data
 
   const result = [];
-  // start with a loop of days
   data.forEach((day, index) => {
-    // initialize the result
     result[index] = false;
-    // if there's no data (file didn't load), exit early
     if (day === undefined) {
       return;
     }
-    // loop through each category
     day.features.forEach(feature => {
       if (!feature.geometry.coordinates) {
         return;
@@ -52,10 +48,8 @@ class SpcOutlook extends WeatherDisplay {
     // don't display on progress/navigation screen
     this.showOnProgress = false;
 
-    // calculate file names
     this.files = [null, null, null].map((v, i) => urlPattern(i + 1));
 
-    // set timings
     this.timing.totalScreens = 1;
   }
 
@@ -67,9 +61,7 @@ class SpcOutlook extends WeatherDisplay {
     // initial data does not need to be reloaded on a location change, only during silent refresh
     if (!this.initialData || refresh) {
       try {
-        // get the three categorical files to get started
         const filePromises = await Promise.allSettled(this.files.map(file => fetchAsync(file, 'json')));
-        // store the data, promise will always be fulfilled
         this.initialData = filePromises.map(outlookDay => outlookDay.value);
       } catch (error) {
         console.error('Unable to get spc outlook');
@@ -81,7 +73,6 @@ class SpcOutlook extends WeatherDisplay {
         }
       }
     }
-    // do the initial parsing of the data
     this.data = testAllPoints([weatherParameters.longitude, weatherParameters.latitude], this.initialData);
 
     // if all the data returns false the there's nothing to do, skip this screen
@@ -91,7 +82,6 @@ class SpcOutlook extends WeatherDisplay {
       this.timing.totalScreens = 0;
     }
 
-    // we only get here if there was no error above
     this.screenIndex = 0;
     this.setStatus(STATUS.loaded);
   }
@@ -99,19 +89,14 @@ class SpcOutlook extends WeatherDisplay {
   async drawCanvas() {
     super.drawCanvas();
 
-    // analyze each day
     const days = this.data.map((day, index) => {
-      // get the day name
       const dayName = getDayName(plusDays(new Date(), index));
 
-      // fill the name
       const fill = {};
       fill['day-name'] = dayName;
 
-      // create the element
       const elem = this.fillTemplate('day', fill);
 
-      // update the bar length
       const bar = elem.querySelector('.risk-bar');
       if (day.LABEL) {
         bar.style.width = `${barSizes[day.LABEL]}px`;
@@ -122,7 +107,6 @@ class SpcOutlook extends WeatherDisplay {
       return elem;
     });
 
-    // add the days to the display
     const dayContainer = this.elem.querySelector('.days');
     dayContainer.innerHTML = '';
     dayContainer.append(...days);

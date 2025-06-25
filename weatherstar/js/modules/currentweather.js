@@ -41,7 +41,6 @@ class CurrentWeather extends WeatherDisplay {
   }
 
   async getData(weatherParameters, refresh) {
-    // always load the data for use in the lower scroll
     const superResult = super.getData(weatherParameters, refresh);
     // note: current weather does not use old data on a silent refresh
     // this is deliberate because it can pull data from more than one station in sequence
@@ -53,18 +52,14 @@ class CurrentWeather extends WeatherDisplay {
         !skipStations.includes(station.properties.stationIdentifier.slice(0, 1))
     );
 
-    // Load the observations
     let observations;
     let station;
 
-    // station number counter
     let stationNum = 0;
     while (!observations && stationNum < filteredStations.length) {
-      // get the station
       station = filteredStations[stationNum];
       stationNum += 1;
       try {
-        // station observations
         observations = await fetchAsync(`${station.id}/observations`, 'json', {
           data: {
             limit: 2,
@@ -79,7 +74,6 @@ class CurrentWeather extends WeatherDisplay {
           );
         }
 
-        // test data quality
         const missingFields = [];
         const obs = observations.features[0].properties;
 
@@ -117,27 +111,22 @@ class CurrentWeather extends WeatherDisplay {
         observations = undefined;
       }
     }
-    // test for data received
     if (!observations) {
       console.error('All current weather stations exhausted');
       if (this.isEnabled) {
         this.setStatus(STATUS.failed);
       }
-      // send failed to subscribers
       this.getDataCallback(undefined);
       return;
     }
 
-    // we only get here if there was no error above
     this.data = parseData({ ...observations, station });
     this.getDataCallback();
 
-    // stop here if we're disabled
     if (!superResult) {
       return;
     }
 
-    // preload the icon
     preloadImg(getLargeIcon(observations.features[0].properties.icon));
     this.setStatus(STATUS.loaded);
   }

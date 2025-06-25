@@ -7,7 +7,6 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
     headers['user-agent'] =
       'Jmthornton WeatherStar; michael+weatherstar@jmthornton.net';
   }
-  // combine default and provided parameters
   const params = {
     method: 'GET',
     mode: 'cors',
@@ -17,34 +16,26 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
     headers,
   };
 
-  // build a url, including the rewrite for cors if necessary
   let corsUrl = _url;
   if (params.cors === true) {
     corsUrl = rewriteUrl(_url);
   }
   const url = new URL(corsUrl, `${window.location.origin}/`);
-  // match the security protocol when not on localhost
   // url.protocol = window.location.hostname === 'localhost' ? url.protocol : window.location.protocol;
-  // add parameters if necessary
   if (params.data) {
     Object.keys(params.data).forEach(key => {
-      // get the value
       const value = params.data[key];
-      // add to the url
       url.searchParams.append(key, value);
     });
   }
 
-  // make the request
   const response = await fetchWithRetry(url, params, params.retryCount);
 
-  // check for ok response
   if (!response.ok) {
     throw new Error(
       `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`
     );
   }
-  // return the requested response
   switch (responseType) {
     case 'json':
       return response.json();
