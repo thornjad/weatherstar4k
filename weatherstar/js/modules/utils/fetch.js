@@ -61,18 +61,18 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
 const fetchWithRetry = async (url, params, retries = 0) => {
   try {
     const response = await fetch(url, params);
-    
+
     // Retry on 5xx errors if retries remain
     if (response.status >= 500 && response.status <= 599 && retries > 0) {
       // Call stillWaiting function on first retry
       if (typeof params.stillWaiting === 'function' && retries === params.retryCount) {
         params.stillWaiting();
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, getRetryDelay(params.retryCount - retries + 1)));
       return fetchWithRetry(url, params, retries - 1);
     }
-    
+
     return response;
   } catch (error) {
     if (retries > 0) {

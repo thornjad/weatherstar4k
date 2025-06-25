@@ -4,7 +4,7 @@ class NoSleep {
   constructor() {
     this.enabled = false;
     this._wakeLock = null;
-    
+
     const handleVisibilityChange = () => {
       if (this._wakeLock !== null && document.visibilityState === 'visible') {
         this.enable();

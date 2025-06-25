@@ -125,12 +125,12 @@ class ImageCache {
           break; // Evict expired background image immediately
         }
       }
-      
+
       // Skip non-expired background images unless absolutely necessary
       if (entry.isBackground) {
         continue;
       }
-      
+
       if (entry.lastAccessed < oldestTime) {
         oldestTime = entry.lastAccessed;
         oldestKey = key;
@@ -245,7 +245,7 @@ class ImageCache {
   async preloadBackgroundImages(srcs) {
     // Background images get priority and have a 1-week TTL
     // They should rarely be evicted since they change very infrequently
-    
+
     const promises = srcs.map(src =>
       this.preloadImage(src).catch(err => {
         console.warn(`Failed to preload background image ${src}:`, err);
