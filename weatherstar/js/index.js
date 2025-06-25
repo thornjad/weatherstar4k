@@ -2,6 +2,7 @@ import noSleep from './modules/utils/nosleep.js';
 import { isPlaying, latLonReceived, message as navMessage, resetStatuses, resize } from './modules/navigation.js';
 import { round2 } from './modules/utils/units.js';
 import { imagePreloader } from './modules/utils/image-preloader.js';
+import { timingManager } from './modules/timing-manager.js';
 
 // Import cache monitor to make window.cacheMonitor() available
 import './modules/utils/cache-monitor.js';
@@ -81,7 +82,6 @@ const showGeolocationError = () => {
 
 const doRedirectToGeometry = (geom, haveDataCallback) => {
   const latLon = { lat: round2(geom.y, 4), lon: round2(geom.x, 4) };
-  // Load the data
   loadData(latLon, haveDataCallback);
 };
 
@@ -328,6 +328,8 @@ const initImagePreloader = async () => {
 
 // Cleanup function to clear all intervals and timeouts
 const cleanup = () => {
+  timingManager.clear();
+
   // Clear navigate fade timeout
   if (navigateFadeIntervalId) {
     clearTimeout(navigateFadeIntervalId);
@@ -347,25 +349,8 @@ const cleanup = () => {
 
 // Handle page visibility changes for battery optimization
 const handleVisibilityChange = () => {
-  if (document.hidden) {
-    // Page is hidden - pause intervals to save battery
-    if (navigateFadeIntervalId) {
-      clearTimeout(navigateFadeIntervalId);
-      navigateFadeIntervalId = null;
-    }
-
-    // Clear current weather scroll interval
-    if (window.CurrentWeatherScroll?.clearScrollInterval) {
-      window.CurrentWeatherScroll.clearScrollInterval();
-    }
-
-    // Pause all display intervals
-    if (window.navigationModule?.clearAllDisplayIntervals) {
-      window.navigationModule.clearAllDisplayIntervals();
-    }
-  } else {
-    // Page is visible - resume intervals
-    // The displays will restart their intervals when they become active again
-    // through the normal showCanvas/hideCanvas cycle
+  if (document.hidden && navigateFadeIntervalId) {
+    clearTimeout(navigateFadeIntervalId);
+    navigateFadeIntervalId = null;
   }
 };

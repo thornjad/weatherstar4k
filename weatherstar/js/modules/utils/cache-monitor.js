@@ -1,5 +1,6 @@
 import { imageCache } from './image.js';
 import { imagePreloader } from './image-preloader.js';
+import { timingManager } from '../timing-manager.js';
 
 /**
  * Cache Monitor Utility
@@ -8,7 +9,6 @@ import { imagePreloader } from './image-preloader.js';
 class CacheMonitor {
   constructor() {
     this.monitoring = false;
-    this.interval = null;
     this.logHistory = [];
     this.maxLogEntries = 100;
   }
@@ -26,7 +26,8 @@ class CacheMonitor {
     this.monitoring = true;
     console.log('Starting optimized image cache monitoring...');
 
-    this.interval = setInterval(() => {
+    // Use timing manager instead of setInterval
+    timingManager.addCallback('cache-monitor', () => {
       this.logCacheStats();
     }, intervalMs);
 
@@ -358,11 +359,12 @@ class CacheMonitor {
    * Stop monitoring
    */
   stopMonitoring() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    if (!this.monitoring) {
+      return;
     }
+
     this.monitoring = false;
+    timingManager.removeCallback('cache-monitor');
     console.log('Cache monitoring stopped');
   }
 
@@ -395,9 +397,8 @@ window.CacheMonitor = CacheMonitor;
 window.cacheMonitorStats = () => cacheMonitor.logCacheStats();
 window.cacheMonitorStart = interval => cacheMonitor.startMonitoring(interval);
 window.cacheMonitorStop = () => {
-  if (cacheMonitor.interval) {
-    clearInterval(cacheMonitor.interval);
-    cacheMonitor.monitoring = false;
+  if (cacheMonitor.monitoring) {
+    cacheMonitor.stopMonitoring();
   }
 };
 window.cacheMonitorTests = () => cacheMonitor.runTests();

@@ -3,6 +3,7 @@
 import STATUS from './status.js';
 import { displayNavMessage, isPlaying, msg, updateStatus } from './navigation.js';
 import { formatDate, formatTimeWithSeconds24Hour } from './utils/date-utils.js';
+import { clockManager, timingManager } from './timing-manager.js';
 
 class WeatherDisplay {
   constructor(navId, elemId, name) {
@@ -20,6 +21,11 @@ class WeatherDisplay {
     this.showOnProgress = true;
     this.autoRefreshHandle = null;
 
+    // Simplified timing properties
+    this.displayDuration = 13500; // 13.5 seconds default
+    this.startTime = 0;
+    this.isActive = false;
+
     // default navigation timing
     this.timing = {
       totalScreens: 1,
@@ -33,7 +39,6 @@ class WeatherDisplay {
     this.storeElemId(elemId);
 
     this.setStatus(STATUS.loading);
-    this.startNavCount();
 
     // get any templates
     document.addEventListener('DOMContentLoaded', () => {
@@ -91,8 +96,6 @@ class WeatherDisplay {
     // set up auto reload if necessary
     this.setAutoReload();
 
-    // recalculate navigation timing (in case it was modified in the constructor)
-    this.calcNavTiming();
     return true;
   }
 
@@ -118,30 +121,15 @@ class WeatherDisplay {
   }
 
   finishDraw() {
-    // draw date and time
+    // Simplified clock handling - no interval management needed
     if (this.okToDrawCurrentDateTime) {
       this.drawCurrentDateTime();
-      // auto clock refresh - only start if not already running and display is active
-      if (!this.dateTimeInterval && this.active) {
-        // only draw if canvas is active to conserve battery
-        this.dateTimeInterval = setInterval(() => {
-          if (this.active) {
-            this.drawCurrentDateTime();
-          } else {
-            // Clear interval if display becomes inactive
-            clearInterval(this.dateTimeInterval);
-            this.dateTimeInterval = null;
-          }
-        }, 100);
-      }
     }
   }
 
   drawCurrentDateTime() {
-    // Get the current date and time.
+    // Get the current date and time
     const now = new Date();
-
-    // time = "23:35:08" (24-hour format for header clock)
     const time = formatTimeWithSeconds24Hour(now);
     const date = formatDate(now);
 
@@ -161,8 +149,7 @@ class WeatherDisplay {
 
   // show/hide the canvas and start/stop the navigation timer
   showCanvas(navCmd) {
-    // reset timing if enabled
-    // if a nav command is present call it to set the screen index
+    // Reset timing if enabled
     if (navCmd === msg.command.firstFrame) {
       this.navNext(navCmd);
     }
@@ -170,31 +157,32 @@ class WeatherDisplay {
       this.navPrev(navCmd);
     }
 
-    this.startNavCount();
+    this.isActive = true;
+    this.startTime = performance.now();
+
+    // Register with timing manager for navigation
+    if (this.timing && this.timing.totalScreens > 0) {
+      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay || 1000);
+    }
+
+    // Register with clock manager if needed
+    if (this.okToDrawCurrentDateTime) {
+      clockManager.addElement(this.elem);
+    }
 
     this.elem.classList.add('show');
     document.querySelector('#divTwc').classList.add(this.elemId);
-
-    // Restart date/time interval if needed
-    if (this.okToDrawCurrentDateTime && !this.dateTimeInterval) {
-      this.drawCurrentDateTime();
-      this.dateTimeInterval = setInterval(() => {
-        if (this.active) {
-          this.drawCurrentDateTime();
-        } else {
-          // Clear interval if display becomes inactive
-          clearInterval(this.dateTimeInterval);
-          this.dateTimeInterval = null;
-        }
-      }, 100);
-    }
   }
 
   hideCanvas() {
-    this.resetNavBaseCount();
+    this.isActive = false;
+
+    // Remove from timing managers
+    timingManager.removeCallback(`nav-${this.navId}`);
+    clockManager.removeElement(this.elem);
+
     this.elem.classList.remove('show');
     document.querySelector('#divTwc').classList.remove(this.elemId);
-    this.clearAllIntervals();
   }
 
   get active() {
@@ -205,178 +193,50 @@ class WeatherDisplay {
     return this.isEnabled;
   }
 
-  // navigation timings
-  // totalScreens = total number of screens that are available
-  // baseDelay = ms to delay before re-evaluating screenIndex
-  // delay: three options
-  //	integer = each screen will display for this number of baseDelays
-  //	[integer, integer, ...] = screenIndex 0 displays for integer[0]*baseDelay, etc.
-  //	[{time, si}, ...] = time as above, si is specific screen index to display during this interval
-  //	if the array forms are used totalScreens is overwritten by the size of the array
-  navBaseTime() {
-    // see if play is active and screen is active
-    if (!isPlaying() || !this.active) {
-      return;
-    }
-    // increment the base count
-    this.navBaseCount += 1;
-
-    // call base count change if available for this function
-    if (this.baseCountChange) {
-      this.baseCountChange(this.navBaseCount);
-    }
-
-    // handle base count/screen index changes
-    this.updateScreenFromBaseCount();
-  }
-
-  async updateScreenFromBaseCount() {
-    // get the next screen index
-    const nextScreenIndex = this.screenIndexFromBaseCount();
-
-    // special cases for first and last frame
-    // must compare with false as nextScreenIndex could be 0 which is valid
-    if (nextScreenIndex === false) {
+  // Simplified navigation methods
+  navNext(command) {
+    // If no command is provided, this is manual navigation - skip to next display
+    if (!command) {
       this.sendNavDisplayMessage(msg.response.next);
       return;
     }
 
-    // test for no change and exit early
-    if (nextScreenIndex === this.screenIndex) {
+    if (command === msg.command.firstFrame) {
+      this.startTime = performance.now();
+      this.screenIndex = 0;
+    } else {
+      // Handle next screen logic based on your specific needs
+      this.screenIndex = (this.screenIndex + 1) % (this.timing?.totalScreens || 1);
+    }
+    this.updateScreenFromBaseCount();
+  }
+
+  navPrev(command) {
+    // If no command is provided, this is manual navigation - skip to previous display
+    if (!command) {
+      this.sendNavDisplayMessage(msg.response.previous);
       return;
     }
 
-    // test for -1 (no screen displayed yet)
-    this.screenIndex = nextScreenIndex === -1 ? 0 : nextScreenIndex;
+    if (command === msg.command.lastFrame) {
+      this.screenIndex = (this.timing?.totalScreens || 1) - 1;
+    } else {
+      // Handle previous screen logic
+      if (this.screenIndex <= 0) {
+        this.sendNavDisplayMessage(msg.response.previous);
+        return;
+      }
+      this.screenIndex--;
+    }
+    this.updateScreenFromBaseCount();
+  }
 
-    // call the appropriate screen index change method
+  async updateScreenFromBaseCount() {
+    // Simplified screen update logic
     if (this.screenIndexChange) {
       this.screenIndexChange(this.screenIndex);
     } else {
       await this.drawCanvas();
-    }
-    this.showCanvas();
-  }
-
-  // take the three timing formats shown above and break them into arrays for consistent usage in navigation functions
-  // this.timing.fullDelay = [end of screen index 0 in base counts, end of screen index 1...]
-  // this.timing.screenIndexes = [screen index to use during this.timing.fullDelay[0], screen index to use during this.timing.fullDelay[1], ...]
-  calcNavTiming() {
-    if (this.timing === false) {
-      return;
-    }
-    // update total screens
-    if (Array.isArray(this.timing.delay)) {
-      this.timing.totalScreens = this.timing.delay.length;
-    }
-
-    // if the delay is provided as a single value, expand it to a series of the same value
-    let intermediateDelay = [];
-    if (typeof this.timing.delay === 'number') {
-      for (let i = 0; i < this.timing.totalScreens; i += 1) {
-        intermediateDelay.push(this.timing.delay);
-      }
-    } else {
-      // map just the delays to the intermediate block
-      intermediateDelay = this.timing.delay.map(delay => {
-        if (typeof delay === 'object') {
-          return delay.time;
-        }
-        return delay;
-      });
-    }
-
-    // calculate the cumulative end point of each delay
-    let sum = 0;
-    this.timing.fullDelay = intermediateDelay.map(val => {
-      const calc = sum + val;
-      sum += val;
-      return calc;
-    });
-
-    // generate a list of screen either sequentially if not provided in an object or from the object
-    if (Array.isArray(this.timing.delay) && typeof this.timing.delay[0] === 'object') {
-      // extract screen indexes from objects
-      this.timing.screenIndexes = this.timing.delay.map(delay => delay.si);
-    } else {
-      // generate sequential screen indexes
-      this.timing.screenIndexes = [];
-      for (let i = 0; i < this.timing.totalScreens; i += 1) {
-        this.timing.screenIndexes.push(i);
-      }
-    }
-  }
-
-  // navigate to next screen
-  navNext(command) {
-    // check for special 'first frame' command
-    if (command === msg.command.firstFrame) {
-      this.resetNavBaseCount();
-    } else {
-      // set the base count to the next available frame
-      const newBaseCount = this.timing.fullDelay.find(delay => delay > this.navBaseCount);
-      this.navBaseCount = newBaseCount;
-    }
-    this.updateScreenFromBaseCount();
-  }
-
-  // navigate to previous screen
-  navPrev(command) {
-    // check for special 'last frame' command
-    if (command === msg.command.lastFrame) {
-      this.navBaseCount = this.timing.fullDelay[this.timing.totalScreens - 1] - 1;
-    } else {
-      // find the highest fullDelay that is less than the current base count
-      const newBaseCount = this.timing.fullDelay.reduce((acc, delay) => {
-        if (delay < this.navBaseCount) {
-          return delay;
-        }
-        return acc;
-      }, 0);
-      // if the new base count is zero then we're already at the first screen
-      if (newBaseCount === 0 && this.navBaseCount === 0) {
-        this.sendNavDisplayMessage(msg.response.previous);
-        return;
-      }
-      this.navBaseCount = newBaseCount;
-    }
-    this.updateScreenFromBaseCount();
-  }
-
-  // get the screen index for the current base count, returns false if past end of timing array (go to next screen, stop timing)
-  screenIndexFromBaseCount() {
-    // test for timing enabled
-    if (!this.timing) {
-      return 0;
-    }
-    if (this.timing.totalScreens === 0) {
-      return false;
-    }
-    // find the first timing in the timing array that is greater than the base count
-    if (this.timing && !this.timing.fullDelay) {
-      this.calcNavTiming();
-    }
-    const timingIndex = this.timing.fullDelay.findIndex(delay => delay > this.navBaseCount);
-    if (timingIndex === -1) {
-      return false;
-    }
-    return this.timing.screenIndexes[timingIndex];
-  }
-
-  // start and stop base counter
-  startNavCount() {
-    if (!this.navInterval) {
-      this.navInterval = setInterval(() => this.navBaseTime(), this.timing.baseDelay * 1.0);
-    }
-  }
-
-  resetNavBaseCount() {
-    this.navBaseCount = 0;
-    this.screenIndex = -1;
-    // reset the timing so we don't short-change the first screen
-    if (this.navInterval) {
-      clearInterval(this.navInterval);
-      this.navInterval = undefined;
     }
   }
 
@@ -452,19 +312,11 @@ class WeatherDisplay {
   }
 
   clearAllIntervals() {
-    // Clear date/time interval
-    if (this.dateTimeInterval) {
-      clearInterval(this.dateTimeInterval);
-      this.dateTimeInterval = null;
-    }
+    // Remove from timing managers
+    timingManager.removeCallback(`nav-${this.navId}`);
+    clockManager.removeElement(this.elem);
 
-    // Clear navigation interval
-    if (this.navInterval) {
-      clearInterval(this.navInterval);
-      this.navInterval = null;
-    }
-
-    // Clear auto refresh interval
+    // Clear auto refresh interval (keep this as it's for data refresh)
     this.clearAutoReload();
   }
 
@@ -472,6 +324,20 @@ class WeatherDisplay {
     // refresh time can be forced by the user (for hazards)
     const refreshTime = this.refreshTime ?? 600_000;
     this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => this.getData(false, true), refreshTime);
+  }
+
+  // Replace complex navigation timing with simple duration-based timing
+  checkNavigation(timestamp) {
+    if (!this.isActive || !isPlaying()) {
+      return;
+    }
+
+    const elapsed = timestamp - this.startTime;
+    const shouldAdvance = elapsed >= this.displayDuration;
+
+    if (shouldAdvance) {
+      this.sendNavDisplayMessage(msg.response.next);
+    }
   }
 }
 

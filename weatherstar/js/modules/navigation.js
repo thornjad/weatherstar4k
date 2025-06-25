@@ -360,22 +360,6 @@ const latLonReceived = (data, haveDataCallback) => {
 
 const timeZone = () => weatherParameters.timeZone;
 
-// Clear all intervals from all displays
-const clearAllDisplayIntervals = () => {
-  displays.forEach(display => {
-    if (display && typeof display.clearAllIntervals === 'function') {
-      display.clearAllIntervals();
-    }
-  });
-};
-
-// Expose navigation module globally for cleanup
-if (typeof window !== 'undefined') {
-  window.navigationModule = {
-    clearAllDisplayIntervals,
-  };
-}
-
 export {
   updateStatus,
   displayNavMessage,
@@ -391,5 +375,4 @@ export {
   message,
   latLonReceived,
   timeZone,
-  clearAllDisplayIntervals,
 };

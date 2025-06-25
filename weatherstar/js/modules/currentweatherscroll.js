@@ -3,6 +3,7 @@ import { elemForEach } from './utils/elem.js';
 import getCurrentWeather from './currentweather.js';
 import { currentDisplay } from './navigation.js';
 import getHazards from './hazards.js';
+import { timingManager } from './timing-manager.js';
 
 // constants
 const degree = String.fromCharCode(176);
@@ -10,9 +11,8 @@ const SCROLL_SPEED = 75; // pixels/second
 const DEFAULT_UPDATE = 8; // 0.5s ticks
 
 // local variables
-let interval;
 let screenIndex = 0;
-let sinceLastUpdate = 0;
+let lastUpdateTime = 0;
 let nextUpdate = DEFAULT_UPDATE;
 let resetFlag;
 
@@ -20,7 +20,7 @@ let resetFlag;
 // reset starts from the first item in the text scroll list
 const start = () => {
   // if already started, draw the screen on a reset flag and return
-  if (interval) {
+  if (timingManager.callbacks.has('scroll')) {
     if (resetFlag) {
       drawScreen();
     }
@@ -28,12 +28,8 @@ const start = () => {
     return;
   }
   resetFlag = false;
-  // set up the interval if needed
-  if (!interval) {
-    interval = setInterval(incrementInterval, 500);
-  }
 
-  // draw the data
+  timingManager.addCallback('scroll', incrementInterval, 100);
   drawScreen();
 };
 
@@ -43,33 +39,26 @@ const stop = reset => {
     resetFlag = true;
   }
 
-  // Clear the interval to prevent memory leaks
-  if (interval) {
-    clearInterval(interval);
-    interval = null;
-  }
+  timingManager.removeCallback('scroll');
 };
 
-// Clear interval function for external use
 const clearScrollInterval = () => {
-  if (interval) {
-    clearInterval(interval);
-    interval = null;
-  }
+  timingManager.removeCallback('scroll');
 };
 
 // increment interval, roll over
 // forcing is used when drawScreen receives an invalid screen and needs to request the next one in line
-const incrementInterval = force => {
+const incrementInterval = (timestamp, force) => {
   if (!force) {
-    // test for elapsed time (0.5s ticks);
-    sinceLastUpdate += 1;
-    if (sinceLastUpdate < nextUpdate) {
+    // test for elapsed time using timestamps
+    const elapsed = timestamp - lastUpdateTime;
+    const requiredTime = nextUpdate * 500; // Convert intervals to milliseconds
+    if (elapsed < requiredTime) {
       return;
     }
   }
   // reset flags
-  sinceLastUpdate = 0;
+  lastUpdateTime = timestamp;
   nextUpdate = DEFAULT_UPDATE;
 
   // test current screen
@@ -134,7 +123,7 @@ const drawScreen = async () => {
     }
   } else {
     // can't identify screen, get another one
-    incrementInterval(true);
+    incrementInterval(Date.now(), true);
   }
 };
 

@@ -4,7 +4,7 @@ import { fetchAsync } from './utils/fetch.js';
 import { getSmallIcon } from './icons.js';
 import { getDayName, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay } from './navigation.js';
+import { isPlaying, msg, registerDisplay } from './navigation.js';
 import { getTravelCities } from '../data/json-loader.js';
 
 class TravelForecast extends WeatherDisplay {
@@ -12,9 +12,13 @@ class TravelForecast extends WeatherDisplay {
     // special height and width for scrolling
     super(navId, elemId, 'Travel Forecast');
 
-    // set up the timing - will be updated when data is loaded
-    this.timing.baseDelay = 30;
-    this.timing.delay = [150];
+    // Travel forecast specific timing properties
+    this.scrollStartTime = 0;
+    this.scrollDuration = 15000; // 15 seconds total for travel forecast
+    this.scrollStep = 30; // 30ms between scroll updates
+    this.scrollOffset = 0;
+    this.maxScrollOffset = 0;
+    this.isScrolling = false;
 
     // add previous data cache
     this.previousData = [];
@@ -33,23 +37,6 @@ class TravelForecast extends WeatherDisplay {
       this.setStatus(STATUS.noData);
       return;
     }
-
-    // Update timing based on actual data
-    const pagesFloat = travelCities.length / 4;
-    const pages = Math.floor(pagesFloat) - 2; // first page is already displayed, last page doesn't happen
-    const extra = pages % 1;
-    const timingStep = 75 * 4;
-    this.timing.delay = [150 + timingStep];
-    // add additional pages
-    for (let i = 0; i < pages; i += 1) {
-      this.timing.delay.push(timingStep);
-    }
-    // add the extra (not exactly 4 pages portion)
-    if (extra !== 0) {
-      this.timing.delay.push(Math.round(this.extra * this.cityHeight));
-    }
-    // add the final 3 second delay
-    this.timing.delay.push(150);
 
     // clear stored data if not refresh
     if (!refresh) {
@@ -155,6 +142,56 @@ class TravelForecast extends WeatherDisplay {
       })
       .filter(d => d);
     list.append(...lines);
+
+    // Calculate timing based on content height
+    this.calculateTravelTiming();
+  }
+
+  calculateTravelTiming() {
+    this.timing.baseDelay = 30;
+    const pagesFloat = this.data.length / 4;
+    const pages = Math.floor(pagesFloat) - 2;
+    const extra = pagesFloat % 1;
+    const timingStep = 75 * 4;
+    this.timing.delay = [150 + timingStep];
+    for (let i = 0; i < pages; i += 1) {
+      this.timing.delay.push(timingStep);
+    }
+    if (extra !== 0) {
+      this.timing.delay.push(Math.round(extra * 75));
+    }
+    this.timing.delay.push(150);
+    this.timing.totalScreens = 1;
+  }
+
+  // Override the checkNavigation method for travel forecast scrolling
+  checkNavigation(timestamp) {
+    if (!this.isActive || !isPlaying()) {
+      return;
+    }
+
+    const elapsed = timestamp - this.startTime;
+    const baseDelay = this.timing.baseDelay || 30;
+    const currentCount = Math.floor(elapsed / baseDelay);
+
+    this.updateScrollPosition(currentCount);
+
+    if (currentCount >= this.timing.delay.reduce((sum, delay) => sum + delay, 0)) {
+      this.sendNavDisplayMessage(msg.response.next);
+    }
+  }
+
+  updateScrollPosition(count) {
+    let offsetY = Math.min(this.elem.querySelector('.travel-lines').offsetHeight - 289, count - 150);
+
+    if (offsetY < 0) {
+      offsetY = 0;
+    }
+
+    const mainElement = this.elem.querySelector('.main');
+    if (mainElement) {
+      mainElement.scrollTo(0, offsetY);
+    }
   }
 
   async drawCanvas() {
@@ -171,28 +208,19 @@ class TravelForecast extends WeatherDisplay {
   }
 
   async showCanvas() {
+    // Reset scroll state when showing canvas
+    this.isScrolling = false;
+    this.scrollOffset = 0;
+
     // special to travel forecast to draw the remainder of the canvas
     await this.drawCanvas();
     super.showCanvas();
   }
 
-  // screen index change callback just runs the base count callback
-  screenIndexChange() {
-    this.baseCountChange(this.navBaseCount);
-  }
-
-  // base count change callback
-  baseCountChange(count) {
-    // calculate scroll offset and don't go past end
-    let offsetY = Math.min(this.elem.querySelector('.travel-lines').offsetHeight - 289, count - 150);
-
-    // don't let offset go negative
-    if (offsetY < 0) {
-      offsetY = 0;
-    }
-
-    // copy the scrolled portion of the canvas
-    this.elem.querySelector('.main').scrollTo(0, offsetY);
+  hideCanvas() {
+    // Clean up scroll callback when hiding
+    this.isScrolling = false;
+    super.hideCanvas();
   }
 
   // necessary to get the lastest long canvas when scrolling

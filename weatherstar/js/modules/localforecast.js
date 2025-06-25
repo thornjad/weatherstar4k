@@ -55,7 +55,6 @@ class LocalForecast extends WeatherDisplay {
     });
 
     this.timing.totalScreens = forecastsElem.scrollHeight / this.pageHeight;
-    this.calcNavTiming();
     this.setStatus(STATUS.loaded);
   }
 

@@ -90,7 +90,6 @@ class SpcOutlook extends WeatherDisplay {
     } else {
       this.timing.totalScreens = 0;
     }
-    this.calcNavTiming();
 
     // we only get here if there was no error above
     this.screenIndex = 0;

@@ -3,7 +3,7 @@
 import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay } from './navigation.js';
+import { isPlaying, msg, registerDisplay } from './navigation.js';
 
 const hazardLevels = {
   Extreme: 10,
@@ -26,8 +26,11 @@ class Hazards extends WeatherDisplay {
     // force a 1-minute refresh time for the most up-to-date hazards
     this.refreshTime = 60_000;
 
-    // 0 screens skips this during "play"
-    this.timing.totalScreens = 0;
+    // Hazard-specific timing properties for scrolling
+    this.scrollStartTime = 0;
+    this.scrollOffset = 0;
+    this.maxScrollOffset = 0;
+    this.isScrolling = false;
 
     // take note of the already-shown alert ids
     this.viewedAlerts = new Set();
@@ -140,25 +143,53 @@ class Hazards extends WeatherDisplay {
       return;
     }
 
-    // update timing
-    this.setTiming(list);
+    // Calculate timing based on content height (matching original behavior)
+    this.calculateHazardTiming(list);
     this.setStatus(STATUS.loaded);
   }
 
-  setTiming(list) {
-    // set up the timing
+  calculateHazardTiming(list) {
     this.timing.baseDelay = 30;
-    // 24 hours = 6 pages
-    const pages = Math.max(Math.ceil(list.scrollHeight / 480) - 4);
+    const pages = Math.max(Math.ceil(list.scrollHeight / 480) - 4, 0);
     const timingStep = 480;
     this.timing.delay = [150 + timingStep];
-    // add additional pages
     for (let i = 0; i < pages; i += 1) {
       this.timing.delay.push(timingStep);
     }
-    // add the final 3 second delay
     this.timing.delay.push(250);
-    this.calcNavTiming();
+    this.timing.totalScreens = 1;
+  }
+
+  // Override the checkNavigation method for hazard-specific scrolling
+  checkNavigation(timestamp) {
+    if (!this.isActive || !isPlaying()) {
+      return;
+    }
+
+    const elapsed = timestamp - this.startTime;
+    const baseDelay = this.timing.baseDelay || 30;
+    const currentCount = Math.floor(elapsed / baseDelay);
+
+    this.updateScrollPosition(currentCount);
+
+    if (currentCount >= this.timing.delay.reduce((sum, delay) => sum + delay, 0)) {
+      this?.data?.forEach(alert => this.viewedAlerts.add(alert.id));
+      this.sendNavDisplayMessage(msg.response.next);
+    }
+  }
+
+  // Update scroll position based on count (matching original baseCountChange)
+  updateScrollPosition(count) {
+    let offsetY = Math.min(this.elem.querySelector('.hazard-lines').offsetHeight - 390, count - 150);
+
+    if (offsetY < 0) {
+      offsetY = 0;
+    }
+
+    const mainElement = this.elem.querySelector('.main');
+    if (mainElement) {
+      mainElement.scrollTo(0, offsetY);
+    }
   }
 
   drawCanvas() {
@@ -167,28 +198,19 @@ class Hazards extends WeatherDisplay {
   }
 
   showCanvas() {
+    // Reset scroll state when showing canvas
+    this.isScrolling = false;
+    this.scrollOffset = 0;
+
     // special to hourly to draw the remainder of the canvas
     this.drawCanvas();
     super.showCanvas();
   }
 
-  // screen index change callback just runs the base count callback
-  screenIndexChange() {
-    this.baseCountChange(this.navBaseCount);
-  }
-
-  // base count change callback
-  baseCountChange(count) {
-    // calculate scroll offset and don't go past end
-    let offsetY = Math.min(this.elem.querySelector('.hazard-lines').offsetHeight - 390, count - 150);
-
-    // don't let offset go negative
-    if (offsetY < 0) {
-      offsetY = 0;
-    }
-
-    // move the element
-    this.elem.querySelector('.main').scrollTo(0, offsetY);
+  hideCanvas() {
+    // Clean up scroll callback when hiding
+    this.isScrolling = false;
+    super.hideCanvas();
   }
 
   // make data available outside this class
@@ -204,20 +226,6 @@ class Hazards extends WeatherDisplay {
       // data not available, put it into the data callback queue
       this.getDataCallbacks.push(() => resolve(this.data));
     });
-  }
-
-  // after we roll through the hazards once, don't display again until the next refresh (10 minutes)
-  screenIndexFromBaseCount() {
-    const superValue = super.screenIndexFromBaseCount();
-    // false is returned when we reach the end of the scroll
-    if (superValue === false) {
-      // set total screens to zero to take this out of the rotation
-      this.timing.totalScreens = 0;
-      // note the ids shown
-      this?.data?.forEach(alert => this.viewedAlerts.add(alert.id));
-    }
-    // return the value as expected
-    return superValue;
   }
 
   // make data available outside this class

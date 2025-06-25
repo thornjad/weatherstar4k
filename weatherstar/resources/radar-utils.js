@@ -5,7 +5,7 @@ const coerce = (low, value, high) => Math.max(Math.min(value, high), low);
 
 const getXYFromLatitudeLongitudeMap = (pos) => {
 	// source values for conversion
-	// px		py		lon						lat
+	// px		py		lon					lat
 	// 589	466		-122.3615246	47.63177832
 	// 5288	3638	-80.18297384	25.77018996
 
