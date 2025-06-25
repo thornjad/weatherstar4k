@@ -1,5 +1,3 @@
-import { rewriteUrl } from './cors.js';
-
 const fetchAsync = async (_url, responseType, _params = {}) => {
   // add user agent header to json request at api.weather.gov
   const headers = {};
@@ -16,12 +14,7 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
     headers,
   };
 
-  let corsUrl = _url;
-  if (params.cors === true) {
-    corsUrl = rewriteUrl(_url);
-  }
-  const url = new URL(corsUrl, `${window.location.origin}/`);
-  // url.protocol = window.location.hostname === 'localhost' ? url.protocol : window.location.protocol;
+  const url = new URL(_url, `${window.location.origin}/`);
   if (params.data) {
     Object.keys(params.data).forEach(key => {
       const value = params.data[key];
@@ -29,22 +22,30 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
     });
   }
 
-  const response = await fetchWithRetry(url, params, params.retryCount);
+  try {
+    const response = await fetchWithRetry(url, params, params.retryCount);
 
-  if (!response.ok) {
-    throw new Error(
-      `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`
-    );
-  }
-  switch (responseType) {
-    case 'json':
-      return response.json();
-    case 'text':
-      return response.text();
-    case 'blob':
-      return response.blob();
-    default:
-      return response;
+    if (!response.ok) {
+      throw new Error(
+        `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`
+      );
+    }
+    switch (responseType) {
+      case 'json':
+        return response.json();
+      case 'text':
+        return response.text();
+      case 'blob':
+        return response.blob();
+      default:
+        return response;
+    }
+  } catch (error) {
+    // handle CORS errors specifically
+    if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
+      throw new Error(`CORS error: Unable to fetch data from ${new URL(_url).hostname}`);
+    }
+    throw error;
   }
 };
 

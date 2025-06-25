@@ -61,12 +61,33 @@ class SpcOutlook extends WeatherDisplay {
     // initial data does not need to be reloaded on a location change, only during silent refresh
     if (!this.initialData || refresh) {
       try {
-        const filePromises = await Promise.allSettled(this.files.map(file => fetchAsync(file, 'json')));
-        this.initialData = filePromises.map(outlookDay => outlookDay.value);
+        const dayPromises = this.files.map(async (file, index) => {
+          try {
+            const data = await fetchAsync(file, 'json', {
+              retryCount: 2,
+              stillWaiting: () => this.stillWaiting(),
+            });
+            return { index, data, success: true };
+          } catch (error) {
+            return { index, data: undefined, success: false, error: error.message };
+          }
+        });
+
+        const results = await Promise.all(dayPromises);
+        this.initialData = [undefined, undefined, undefined];
+        results.forEach(result => {
+          if (result.success) {
+            this.initialData[result.index] = result.data;
+          }
+        });
+
+        const validData = this.initialData.filter(data => data !== undefined);
+        if (validData.length === 0) {
+          console.warn('No SPC outlook data could be retrieved');
+          this.initialData = [undefined, undefined, undefined];
+        }
       } catch (error) {
-        console.error('Unable to get spc outlook');
-        console.error(error.status, error.responseJSON);
-        // if there's no previous data, fail
+        console.error('Critical error getting spc outlook:', error.message);
         if (!this.initialData) {
           this.setStatus(STATUS.failed);
           return;
