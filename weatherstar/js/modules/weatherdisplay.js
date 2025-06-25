@@ -158,11 +158,12 @@ class WeatherDisplay {
     }
 
     this.isActive = true;
+    // reset start time to prevent accumulation over long periods
     this.startTime = performance.now();
 
     // Register with timing manager for navigation
     if (this.timing && this.timing.totalScreens > 0) {
-      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay || 1000);
+      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay);
     }
 
     // Register with clock manager if needed

@@ -87,6 +87,8 @@ class TimingManager {
           }
         } catch (error) {
           console.error(`Error in timing callback ${id}:`, error);
+          // remove problematic callback to prevent further errors
+          this.callbacks.delete(id);
         }
       }
     }

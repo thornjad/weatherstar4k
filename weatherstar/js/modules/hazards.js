@@ -158,6 +158,9 @@ class Hazards extends WeatherDisplay {
     }
     this.timing.delay.push(250);
     this.timing.totalScreens = 1;
+
+    // calculate total duration for completion check
+    this.timing.totalDuration = this.timing.delay.reduce((sum, delay) => sum + delay, 0);
   }
 
   // Override the checkNavigation method for hazard-specific scrolling
@@ -172,6 +175,7 @@ class Hazards extends WeatherDisplay {
 
     this.updateScrollPosition(currentCount);
 
+    // check if we've reached the total duration using count
     if (currentCount >= this.timing.delay.reduce((sum, delay) => sum + delay, 0)) {
       this?.data?.forEach(alert => this.viewedAlerts.add(alert.id));
       this.sendNavDisplayMessage(msg.response.next);

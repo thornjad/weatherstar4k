@@ -9,6 +9,10 @@ const rewriteUrl = _url => {
     'https://www.cpc.ncep.noaa.gov/',
     `${window.location.protocol}//${window.location.host}/`
   );
+  url = url.replace(
+    'https://www.spc.noaa.gov/',
+    `${window.location.protocol}//${window.location.host}/`
+  );
   return url;
 };
 
