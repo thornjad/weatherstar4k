@@ -10,11 +10,8 @@ class LocationInfo extends WeatherDisplay {
     this.okToDrawCurrentConditions = false;
     this.okToDrawCurrentDateTime = true;
 
-    // set timing - this screen should display for a shorter time
-    this.timing.baseDelay = 525;
-    this.timing.delay = [
-      { time: 8, si: 0 }, // 8 * 525ms = 4.2 seconds
-    ];
+    this.timing.baseDelay = 7000;
+    this.timing.delay = [{ time: 1, si: 0 }];
   }
 
   async getData(weatherParameters, refresh) {

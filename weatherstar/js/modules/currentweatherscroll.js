@@ -67,7 +67,11 @@ const incrementInterval = (timestamp, force) => {
     stop(display?.elemId === 'progress');
     return;
   }
-  screenIndex = (screenIndex + 1) % lastScreen;
+
+  // only increment screen index if not forcing (forcing is handled in drawScreen)
+  if (!force) {
+    screenIndex = (screenIndex + 1) % lastScreen;
+  }
 
   // draw new text
   drawScreen();
@@ -88,6 +92,13 @@ const drawScreen = async () => {
   }
 
   const thisScreen = screens[screenIndex](data);
+
+  // if the screen function returns false, skip to the next screen
+  if (thisScreen === false) {
+    screenIndex = (screenIndex + 1) % lastScreen;
+    drawScreen();
+    return;
+  }
 
   // update classes on the scroll area
   elemForEach('.weather-display .scroll', elem => {

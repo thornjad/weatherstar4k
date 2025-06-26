@@ -95,7 +95,7 @@ class Hazards extends WeatherDisplay {
       }, 0);
 
       // draw the canvas to calculate the new timings and activate hazards in the slide deck again
-      this.drawLongCanvas();
+      await this.drawLongCanvas();
     } catch (error) {
       console.error('Get hazards failed');
       console.error(error.status, error.responseJSON);
@@ -107,13 +107,15 @@ class Hazards extends WeatherDisplay {
       return;
     }
 
+    // only call getDataCallback after we've determined the final status
     this.getDataCallback();
 
     if (!superResult) {
-      this.setStatus(STATUS.loaded);
       return;
     }
-    this.drawLongCanvas();
+
+    // set status to loaded after we've determined the final state
+    this.setStatus(STATUS.loaded);
   }
 
   async drawLongCanvas() {
@@ -137,15 +139,12 @@ class Hazards extends WeatherDisplay {
 
     // no alerts, skip this display by setting timing to zero
     if (lines.length === 0) {
-      this.setStatus(STATUS.loaded);
       this.timing.totalScreens = 0;
-      this.setStatus(STATUS.loaded);
       return;
     }
 
     // Calculate timing based on content height (matching original behavior)
     this.calculateHazardTiming(list);
-    this.setStatus(STATUS.loaded);
   }
 
   calculateHazardTiming(list) {
@@ -158,9 +157,6 @@ class Hazards extends WeatherDisplay {
     }
     this.timing.delay.push(250);
     this.timing.totalScreens = 1;
-
-    // calculate total duration for completion check
-    this.timing.totalDuration = this.timing.delay.reduce((sum, delay) => sum + delay, 0);
   }
 
   // Override the checkNavigation method for hazard-specific scrolling
@@ -175,8 +171,8 @@ class Hazards extends WeatherDisplay {
 
     this.updateScrollPosition(currentCount);
 
-    // check if we've reached the total duration using count
-    if (currentCount >= this.timing.delay.reduce((sum, delay) => sum + delay, 0)) {
+    const delayArray = Array.isArray(this.timing.delay) ? this.timing.delay : [this.timing.delay];
+    if (currentCount >= delayArray.reduce((sum, delay) => sum + delay, 0)) {
       this?.data?.forEach(alert => this.viewedAlerts.add(alert.id));
       this.sendNavDisplayMessage(msg.response.next);
     }
@@ -202,6 +198,13 @@ class Hazards extends WeatherDisplay {
   }
 
   showCanvas() {
+    // don't show hazards display if it has no content
+    if (this.timing.totalScreens === 0) {
+      // send next message to skip to next display
+      this.sendNavDisplayMessage(msg.response.next);
+      return;
+    }
+
     // Reset scroll state when showing canvas
     this.isScrolling = false;
     this.scrollOffset = 0;

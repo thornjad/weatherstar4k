@@ -25,26 +25,26 @@ class Radar extends WeatherDisplay {
     // Restore original timing system
     this.timing.baseDelay = 525;
     this.timing.delay = [
-      { time: 12, si: 5 }, // Show latest frame for 6.3s initially (longer pause)
-      { time: 6, si: 5 }, // Show latest frame for 3.15s
-      { time: 2, si: 0 }, // Show oldest frame for 1.05s
-      { time: 2, si: 1 }, // Show older frame for 1.05s
-      { time: 2, si: 2 }, // Show older frame for 1.05s
-      { time: 2, si: 3 }, // Show older frame for 1.05s
-      { time: 2, si: 4 }, // Show newer frame for 1.05s
-      { time: 6, si: 5 }, // Show latest frame for 3.15s
-      { time: 2, si: 0 }, // Show oldest frame for 1.05s
-      { time: 2, si: 1 }, // Show older frame for 1.05s
-      { time: 2, si: 2 }, // Show older frame for 1.05s
-      { time: 2, si: 3 }, // Show older frame for 1.05s
-      { time: 2, si: 4 }, // Show newer frame for 1.05s
-      { time: 6, si: 5 }, // Show latest frame for 3.15s
-      { time: 2, si: 0 }, // Show oldest frame for 1.05s
-      { time: 2, si: 1 }, // Show older frame for 1.05s
-      { time: 2, si: 2 }, // Show older frame for 1.05s
-      { time: 2, si: 3 }, // Show older frame for 1.05s
-      { time: 2, si: 4 }, // Show newer frame for 1.05s
-      { time: 18, si: 5 }, // Show latest frame for 9.45s
+      { time: 10, si: 5 },
+      { time: 6, si: 5 },
+      { time: 2, si: 0 },
+      { time: 2, si: 1 },
+      { time: 2, si: 2 },
+      { time: 2, si: 3 },
+      { time: 2, si: 4 },
+      { time: 6, si: 5 },
+      { time: 2, si: 0 },
+      { time: 2, si: 1 },
+      { time: 2, si: 2 },
+      { time: 2, si: 3 },
+      { time: 2, si: 4 },
+      { time: 6, si: 5 },
+      { time: 2, si: 0 },
+      { time: 2, si: 1 },
+      { time: 2, si: 2 },
+      { time: 2, si: 3 },
+      { time: 2, si: 4 },
+      { time: 10, si: 5 },
     ];
   }
 
@@ -235,7 +235,8 @@ class Radar extends WeatherDisplay {
     this.updateScreenFromBaseCount(currentCount);
 
     // Check if we've reached the end
-    const totalDelay = this.timing.delay.reduce((sum, delay) => sum + delay.time, 0);
+    const delayArray = Array.isArray(this.timing.delay) ? this.timing.delay : [this.timing.delay];
+    const totalDelay = delayArray.reduce((sum, delay) => sum + delay.time, 0);
     if (currentCount >= totalDelay) {
       this.sendNavDisplayMessage(msg.response.next);
     }
@@ -246,8 +247,10 @@ class Radar extends WeatherDisplay {
     let accumulatedTime = 0;
     let newScreenIndex = 5; // Default to latest frame
 
-    for (let i = 0; i < this.timing.delay.length; i++) {
-      const delay = this.timing.delay[i];
+    // ensure delay is an array before iterating
+    const delayArray = Array.isArray(this.timing.delay) ? this.timing.delay : [this.timing.delay];
+    for (let i = 0; i < delayArray.length; i++) {
+      const delay = delayArray[i];
       if (count < accumulatedTime + delay.time) {
         newScreenIndex = delay.si;
         break;

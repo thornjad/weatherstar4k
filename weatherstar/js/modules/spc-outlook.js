@@ -4,7 +4,7 @@ import STATUS from './status.js';
 import { fetchAsync } from './utils/fetch.js';
 import { getDayName, plusDays } from './utils/date-utils.js';
 import WeatherDisplay from './weatherdisplay.js';
-import { registerDisplay } from './navigation.js';
+import { msg, registerDisplay } from './navigation.js';
 import testPolygon from './utils/polygon.js';
 
 // list of interesting files ordered [0] = today, [1] = tomorrow...
@@ -134,6 +134,14 @@ class SpcOutlook extends WeatherDisplay {
 
     // finish drawing
     this.finishDraw();
+  }
+
+  showCanvas() {
+    if (this.timing.totalScreens === 0) {
+      this.sendNavDisplayMessage(msg.response.next);
+      return;
+    }
+    super.showCanvas();
   }
 }
 

@@ -22,15 +22,15 @@ class WeatherDisplay {
     this.autoRefreshHandle = null;
 
     // Simplified timing properties
-    this.displayDuration = 13500; // 13.5 seconds default
+    this.displayDuration = 10000;
     this.startTime = 0;
     this.isActive = false;
 
     // default navigation timing
     this.timing = {
       totalScreens: 1,
-      baseDelay: 13500, // 13.5 seconds
-      delay: 1, // 1*13.5seconds = 13.5 seconds total display time
+      baseDelay: 10000,
+      delay: 1,
     };
     this.navBaseCount = 0;
     this.screenIndex = -1; // special starting condition
@@ -158,13 +158,11 @@ class WeatherDisplay {
     }
 
     this.isActive = true;
-    // reset start time to prevent accumulation over long periods
     this.startTime = performance.now();
 
     // Register with timing manager for navigation
     if (this.timing && this.timing.totalScreens > 0) {
-      const interval = this.timing.baseDelay || 13500; // default to 13.5 seconds
-      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), interval);
+      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay || 1000);
     }
 
     // Register with clock manager if needed
@@ -338,7 +336,13 @@ class WeatherDisplay {
     const shouldAdvance = elapsed >= this.displayDuration;
 
     if (shouldAdvance) {
-      this.sendNavDisplayMessage(msg.response.next);
+      if (this.screenIndex < (this.timing?.totalScreens || 1) - 1) {
+        this.screenIndex++;
+        this.startTime = timestamp;
+        this.updateScreenFromBaseCount();
+      } else {
+        this.sendNavDisplayMessage(msg.response.next);
+      }
     }
   }
 }

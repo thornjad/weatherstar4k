@@ -14,6 +14,7 @@ class ExtendedForecast extends WeatherDisplay {
     super(navId, elemId, 'Extended Forecast');
 
     this.timing.totalScreens = 2;
+    this.timing.baseDelay = 10000; // 10 seconds per screen
   }
 
   async getData(weatherParameters, refresh) {

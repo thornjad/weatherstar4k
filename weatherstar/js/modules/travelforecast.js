@@ -163,8 +163,8 @@ class TravelForecast extends WeatherDisplay {
     this.timing.delay.push(150);
     this.timing.totalScreens = 1;
 
-    // calculate total duration for completion check
-    this.timing.totalDuration = this.timing.delay.reduce((sum, delay) => sum + delay, 0);
+    const delayArray = Array.isArray(this.timing.delay) ? this.timing.delay : [this.timing.delay];
+    this.timing.totalDuration = delayArray.reduce((sum, delay) => sum + delay, 0);
   }
 
   // Override the checkNavigation method for travel forecast scrolling
@@ -179,8 +179,8 @@ class TravelForecast extends WeatherDisplay {
 
     this.updateScrollPosition(currentCount);
 
-    // check if we've reached the total duration using count
-    if (currentCount >= this.timing.delay.reduce((sum, delay) => sum + delay, 0)) {
+    const delayArray = Array.isArray(this.timing.delay) ? this.timing.delay : [this.timing.delay];
+    if (currentCount >= delayArray.reduce((sum, delay) => sum + delay, 0)) {
       this.sendNavDisplayMessage(msg.response.next);
     }
   }

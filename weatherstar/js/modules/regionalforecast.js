@@ -26,6 +26,7 @@ class RegionalForecast extends WeatherDisplay {
 
     // timings
     this.timing.totalScreens = 3;
+    this.timing.baseDelay = 10000; // 10 seconds per screen
   }
 
   async getData(weatherParameters, refresh) {
