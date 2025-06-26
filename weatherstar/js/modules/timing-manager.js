@@ -10,11 +10,18 @@ class TimingManager {
     this.callbacks = new Map();
     this.isRunning = false;
     this.isVisible = true;
+    this.lastFrameTime = 0;
+    this.frameCount = 0;
+    this.maxFrameGap = 2000; // maximum allowed gap between frames (2 seconds)
 
     // Handle visibility changes automatically
     document.addEventListener('visibilitychange', () => {
+      const wasVisible = this.isVisible;
       this.isVisible = !document.hidden;
-      if (this.isVisible && this.isRunning) {
+
+      // if becoming visible and was running, restart
+      if (this.isVisible && !wasVisible && this.callbacks.size > 0) {
+        this.stop();
         this.start();
       }
     });
@@ -53,6 +60,8 @@ class TimingManager {
     }
     this.isRunning = true;
     this.lastUpdate = performance.now();
+    this.lastFrameTime = this.lastUpdate;
+    this.frameCount = 0;
     this.animationId = requestAnimationFrame(this.update.bind(this));
   }
 
@@ -72,9 +81,21 @@ class TimingManager {
    * @param {number} timestamp - High-resolution timestamp
    */
   update(timestamp) {
-    if (!this.isRunning || !this.isVisible) {
+    if (!this.isRunning) {
       return;
     }
+
+    // check for stuck animation frame loop
+    const frameGap = timestamp - this.lastFrameTime;
+    if (frameGap > this.maxFrameGap && this.frameCount > 50) {
+      console.warn(`Timing manager detected stuck animation frame (gap: ${frameGap}ms), restarting...`);
+      this.stop();
+      this.start();
+      return;
+    }
+
+    this.lastFrameTime = timestamp;
+    this.frameCount++;
 
     // Update all callbacks
     for (const [id, { callback, interval, lastCall }] of this.callbacks) {
@@ -93,7 +114,10 @@ class TimingManager {
       }
     }
 
-    this.animationId = requestAnimationFrame(this.update.bind(this));
+    // ensure we continue the loop
+    if (this.isRunning) {
+      this.animationId = requestAnimationFrame(this.update.bind(this));
+    }
   }
 
   /**
@@ -113,6 +137,8 @@ class TimingManager {
       isVisible: this.isVisible,
       callbackCount: this.callbacks.size,
       callbacks: Array.from(this.callbacks.keys()),
+      frameCount: this.frameCount,
+      lastFrameTime: this.lastFrameTime,
     };
   }
 }
@@ -127,6 +153,23 @@ class ClockManager {
   constructor() {
     this.lastUpdate = '';
     this.elements = new Set();
+    this.backupTimer = null;
+    this.startBackupTimer();
+  }
+
+  /**
+   * Start backup timer to ensure clock updates
+   */
+  startBackupTimer() {
+    // clear existing backup timer
+    if (this.backupTimer) {
+      clearInterval(this.backupTimer);
+    }
+
+    // start backup timer that runs every 2 seconds
+    this.backupTimer = setInterval(() => {
+      this.update();
+    }, 2000);
   }
 
   /**
@@ -164,6 +207,16 @@ class ClockManager {
           timeElem.innerHTML = timeString.toUpperCase();
         }
       });
+    }
+  }
+
+  /**
+   * Clean up backup timer
+   */
+  cleanup() {
+    if (this.backupTimer) {
+      clearInterval(this.backupTimer);
+      this.backupTimer = null;
     }
   }
 }

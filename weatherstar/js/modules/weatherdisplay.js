@@ -163,7 +163,8 @@ class WeatherDisplay {
 
     // Register with timing manager for navigation
     if (this.timing && this.timing.totalScreens > 0) {
-      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay);
+      const interval = this.timing.baseDelay || 13500; // default to 13.5 seconds
+      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), interval);
     }
 
     // Register with clock manager if needed
