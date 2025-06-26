@@ -28,6 +28,7 @@ const start = () => {
     return;
   }
   resetFlag = false;
+  lastUpdateTime = performance.now();
 
   timingManager.addCallback('scroll', incrementInterval, 100);
   drawScreen();
@@ -83,7 +84,7 @@ const drawScreen = async () => {
 
   // add the hazards if on screen 0
   if (screenIndex === 0) {
-    data.hazards = await getHazards(() => this.stillWaiting());
+    data.hazards = await getHazards();
   }
 
   // nothing to do if there's no data yet
@@ -272,11 +273,25 @@ const parseMessage = event => {
 // add event listener for start message
 window.addEventListener('message', parseMessage);
 
+// debug method to check scroll status
+const getScrollStatus = () => {
+  return {
+    screenIndex,
+    lastUpdateTime,
+    nextUpdate,
+    resetFlag,
+    lastScreen,
+    hasScrollCallback: timingManager.callbacks.has('scroll'),
+    timingManagerStats: timingManager.getStats(),
+  };
+};
+
 window.CurrentWeatherScroll = {
   addScreen,
   reset,
   start,
   clearScrollInterval,
+  getScrollStatus,
 };
 
-export { addScreen, reset, start, clearScrollInterval };
+export { addScreen, reset, start, clearScrollInterval, getScrollStatus };

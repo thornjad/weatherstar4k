@@ -14,8 +14,8 @@ class TimingManager {
     // Handle visibility changes automatically
     document.addEventListener('visibilitychange', () => {
       this.isVisible = !document.hidden;
-      if (this.isVisible && this.isRunning) {
-        this.start();
+      if (this.isVisible && this.callbacks.size > 0) {
+        this.forceRestart();
       }
     });
   }
@@ -72,25 +72,29 @@ class TimingManager {
    * @param {number} timestamp - High-resolution timestamp
    */
   update(timestamp) {
-    if (!this.isRunning || !this.isVisible) {
+    if (!this.isRunning) {
       return;
     }
 
-    // Update all callbacks
-    for (const [id, { callback, interval, lastCall }] of this.callbacks) {
-      if (timestamp - lastCall >= interval) {
-        try {
-          callback(timestamp);
-          const cb = this.callbacks.get(id);
-          if (cb) {
-            cb.lastCall = timestamp;
+    // Only execute callbacks if visible
+    if (this.isVisible) {
+      // Update all callbacks
+      for (const [id, { callback, interval, lastCall }] of this.callbacks) {
+        if (timestamp - lastCall >= interval) {
+          try {
+            callback(timestamp);
+            const cb = this.callbacks.get(id);
+            if (cb) {
+              cb.lastCall = timestamp;
+            }
+          } catch (error) {
+            console.error(`Error in timing callback ${id}:`, error);
           }
-        } catch (error) {
-          console.error(`Error in timing callback ${id}:`, error);
         }
       }
     }
 
+    // Always continue the animation frame loop
     this.animationId = requestAnimationFrame(this.update.bind(this));
   }
 
@@ -100,6 +104,16 @@ class TimingManager {
   clear() {
     this.stop();
     this.callbacks.clear();
+  }
+
+  /**
+   * Force restart the timing manager (useful after visibility changes)
+   */
+  forceRestart() {
+    if (this.callbacks.size > 0) {
+      this.stop();
+      this.start();
+    }
   }
 
   /**
@@ -169,3 +183,24 @@ class ClockManager {
 // Register clock manager with timing manager (updates every second)
 export const clockManager = new ClockManager();
 timingManager.addCallback('clock', () => clockManager.update(), 1000);
+
+// Global debug function for timing issues
+window.debugTiming = () => {
+  console.log('Timing Manager Status:', timingManager.getStats());
+  console.log('Clock Manager Elements:', clockManager.elements.size);
+
+  if (window.CurrentWeatherScroll?.getScrollStatus) {
+    console.log('Current Weather Scroll Status:', window.CurrentWeatherScroll.getScrollStatus());
+  }
+
+  // Check if any displays are active
+  const activeDisplays = Array.from(timingManager.callbacks.keys()).filter(id => id.startsWith('nav-'));
+  console.log('Active Display Callbacks:', activeDisplays);
+};
+
+// Global restart function for timing system
+window.restartTiming = () => {
+  console.log('Restarting timing system...');
+  timingManager.forceRestart();
+  console.log('Timing system restarted:', timingManager.getStats());
+};
