@@ -47,9 +47,64 @@ const init = () => {
   document.addEventListener('keydown', documentKeydown);
   postMessage('navButton', 'play');
   initImagePreloader();
-  autoGeolocate();
+  initLocationHandling();
   window.addEventListener('beforeunload', cleanup);
   document.addEventListener('visibilitychange', handleVisibilityChange);
+};
+
+const parseLocationFromQuery = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const lat = urlParams.get('lat');
+  const lon = urlParams.get('lon');
+  
+  if (!lat || !lon) {
+    if (lat && !lon) {
+      console.error('Missing longitude parameter (lon) - both lat and lon are required');
+    } else if (!lat && lon) {
+      console.error('Missing latitude parameter (lat) - both lat and lon are required');
+    }
+    return null;
+  }
+  
+  const latitude = parseFloat(lat);
+  const longitude = parseFloat(lon);
+  
+  // validate coordinates with detailed error logging
+  if (isNaN(latitude)) {
+    console.error(`Invalid latitude parameter: "${lat}" is not a valid number`);
+    return null;
+  }
+  
+  if (isNaN(longitude)) {
+    console.error(`Invalid longitude parameter: "${lon}" is not a valid number`);
+    return null;
+  }
+  
+  if (latitude < -90 || latitude > 90) {
+    console.error(`Invalid latitude parameter: ${latitude} is out of range (must be between -90 and 90)`);
+    return null;
+  }
+  
+  if (longitude < -180 || longitude > 180) {
+    console.error(`Invalid longitude parameter: ${longitude} is out of range (must be between -180 and 180)`);
+    return null;
+  }
+  
+  return { latitude, longitude };
+};
+
+const initLocationHandling = async () => {
+  // check for lat/lon query parameters first
+  const queryLocation = parseLocationFromQuery();
+  
+  if (queryLocation) {
+    console.log(`Using location from query params: ${queryLocation.latitude}, ${queryLocation.longitude}`);
+    getForecastFromLatLon(queryLocation.latitude, queryLocation.longitude, true);
+    return;
+  }
+  
+  // fall back to automatic geolocation
+  autoGeolocate();
 };
 
 const autoGeolocate = async () => {
@@ -282,9 +337,15 @@ const getPosition = async () =>
 
 const getForecastFromLatLon = (latitude, longitude) => {
   doRedirectToGeometry({ y: latitude, x: longitude }, point => {
-    const location = point.properties.relativeLocation.properties;
-    // Update the display with location name
-    console.log(`Location: ${location.city}, ${location.state}`);
+    // check if location data is available (NOAA API only covers US territories)
+    if (point.properties && point.properties.relativeLocation && point.properties.relativeLocation.properties) {
+      const location = point.properties.relativeLocation.properties;
+      // update the display with location name
+      console.log(`Location: ${location.city}, ${location.state}`);
+    } else {
+      // log coordinates for non-US locations
+      console.log(`Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)} (outside US coverage area)`);
+    }
   });
 };
 

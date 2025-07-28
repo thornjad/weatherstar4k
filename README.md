@@ -10,6 +10,10 @@ This project is based on the WS4000+ project by Matt Walsh, which you can find [
 
 I've also added an in-memory caching system for images, since the ws4kp image preloading doesn't really work when running for hours or days at a time. The cache provides immediate access to frequently used images during app loops and relies on browser caching for persistence. For debugging you can enable monitoring and a basic set of tests with `window.cacheMonitor()`.
 
+## Usage
+
+By default, the application will request your location via the browser's geolocation API. You can also specify a location by adding `lat` and `lon` query parameters to the URL (e.g., `?lat=40.7128&lon=-74.0060`). Note that weather data is only available for locations where the NOAA API is available.
+
 ## Acknowledgments
 
 This project was initially forked from [WS4000+ (ws4kp)](https://github.com/netbymatt/ws4kp) by Matt Walsh. While this version has been significantly restructured and simplified, it relies heavily on the original graphics and visual assets created by Michael Battaglia. This fork primarily simplifies the code, including removing the complex build system and mess of dependencies, adds image caching, and adds some more screens. It also removed most of the configurability of Matt Walsh's version.
