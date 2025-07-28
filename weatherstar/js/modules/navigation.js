@@ -41,6 +41,13 @@ const getWeather = async (latLon, haveDataCallback) => {
       haveDataCallback(point);
     }
 
+    // check if location is supported (NOAA API only covers US territories)
+    if (!point.properties || !point.properties.relativeLocation) {
+      const error = new Error('LOCATION_NOT_SUPPORTED');
+      error.coordinates = { lat: latLon.lat, lon: latLon.lon };
+      throw error;
+    }
+
     // get stations
     const stations = await fetchAsync(point.properties.observationStations, 'json');
 
@@ -91,7 +98,12 @@ const getWeather = async (latLon, haveDataCallback) => {
     if (loadingDiv) {
       const instructionsDiv = loadingDiv.querySelector('.instructions');
       if (instructionsDiv) {
-        instructionsDiv.textContent = `Error loading weather data: ${error.message}`;
+        if (error.message === 'LOCATION_NOT_SUPPORTED' && error.coordinates) {
+          const { lat, lon } = error.coordinates;
+          instructionsDiv.textContent = `Weather data is not available for this location (${lat.toFixed(4)}, ${lon.toFixed(4)}).`;
+        } else {
+          instructionsDiv.textContent = `Error loading weather data: ${error.message}`;
+        }
       }
     }
   }
