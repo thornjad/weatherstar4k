@@ -24,7 +24,7 @@ class Radar extends WeatherDisplay {
 
     // Staleness tracking
     this.lastDataRefresh = null;
-    this.maxDataAge = 45 * 60 * 1000; // 45 minutes in milliseconds
+    this.maxDataAge = 30 * 60 * 1000; // 30 minutes in milliseconds
 
     // Restore original timing system
     this.timing.baseDelay = 525;
@@ -209,10 +209,10 @@ class Radar extends WeatherDisplay {
     const radarAge = now - latestRadarTime;
 
     // Consider data stale if:
-    // 1. We haven't refreshed data in maxDataAge (45 minutes), OR
-    // 2. The newest radar image is more than 30 minutes old
+    // 1. We haven't refreshed data in maxDataAge (30 minutes), OR
+    // 2. The newest radar image is more than 15 minutes old
     const isRefreshStale = dataAge > this.maxDataAge;
-    const isRadarContentStale = radarAge > (30 * 60 * 1000); // 30 minutes
+    const isRadarContentStale = radarAge > (15 * 60 * 1000); // 15 minutes
 
     if (isRefreshStale || isRadarContentStale) {
       const refreshAgeMin = Math.round(dataAge / 60000);
