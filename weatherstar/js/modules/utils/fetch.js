@@ -26,7 +26,6 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
     const response = await fetchWithRetry(url, params, params.retryCount);
 
     if (!response.ok) {
-      // HTTP error responses (like 503) are not CORS errors - they're valid responses with error status
       throw new Error(
         `Fetch error ${response.status} ${response.statusText} while fetching ${response.url}`
       );
@@ -42,11 +41,8 @@ const fetchAsync = async (_url, responseType, _params = {}) => {
         return response;
     }
   } catch (error) {
-    // Only identify as CORS error if it's a network-level failure (no response received)
-    // HTTP errors (4xx, 5xx) are legitimate responses and should not be treated as CORS errors
-    if ((error.message.includes('CORS') || error.message.includes('cross-origin') || 
-         error.name === 'TypeError' && error.message.includes('Failed to fetch')) &&
-        !error.message.includes('Fetch error')) {
+    // handle CORS errors specifically
+    if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
       throw new Error(`CORS error: Unable to fetch data from ${new URL(_url).hostname}`);
     }
     throw error;
