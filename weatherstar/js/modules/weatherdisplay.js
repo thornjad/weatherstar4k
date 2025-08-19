@@ -21,6 +21,11 @@ class WeatherDisplay {
     this.showOnProgress = true;
     this.autoRefreshHandle = null;
 
+    // Retry and backoff properties
+    this.retryAttempts = 0;
+    this.maxRetryAttempts = 3;
+    this.baseRefreshTime = 600_000; // 10 minutes
+
     // Simplified timing properties
     this.displayDuration = 10000;
     this.startTime = 0;
@@ -53,6 +58,14 @@ class WeatherDisplay {
       id: this.navId,
       status: this.loadingStatus,
     });
+
+    // Handle retry logic on failure
+    if (value === STATUS.failed) {
+      this.handleDataFailure();
+    } else if (value === STATUS.loaded) {
+      // Reset retry attempts on successful load
+      this.retryAttempts = 0;
+    }
   }
 
   get status() {
@@ -322,8 +335,40 @@ class WeatherDisplay {
 
   setAutoReload() {
     // refresh time can be forced by the user (for hazards)
-    const refreshTime = this.refreshTime ?? 600_000;
-    this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => this.getData(false, true), refreshTime);
+    const refreshTime = this.refreshTime ?? this.baseRefreshTime;
+    this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => {
+      // Check for staleness if this display has a staleness check method
+      if (typeof this.checkAndRefreshStaleData === 'function') {
+        this.checkAndRefreshStaleData().catch(error => {
+          console.warn(`Staleness check failed for ${this.name}:`, error);
+          // Fall back to regular refresh if staleness check fails
+          this.getData(false, true);
+        });
+      } else {
+        // Regular refresh for displays without staleness checking
+        this.getData(false, true);
+      }
+    }, refreshTime);
+  }
+
+  // Handle data loading failures with exponential backoff
+  handleDataFailure() {
+    if (this.retryAttempts < this.maxRetryAttempts) {
+      this.retryAttempts++;
+      // Exponential backoff: 30s, 2min, 8min
+      const backoffDelays = [30_000, 120_000, 480_000];
+      const retryDelay = backoffDelays[this.retryAttempts - 1] || backoffDelays[backoffDelays.length - 1];
+
+      console.log(`Display ${this.name}: Retrying in ${retryDelay / 1000}s (attempt ${this.retryAttempts}/${this.maxRetryAttempts})`);
+
+      setTimeout(() => {
+        this.getData(this.weatherParameters, true);
+      }, retryDelay);
+    } else {
+      console.log(`Display ${this.name}: Max retry attempts reached, will retry on next auto-refresh cycle`);
+      // Reset retry attempts for next auto-refresh cycle
+      this.retryAttempts = 0;
+    }
   }
 
   // Replace complex navigation timing with simple duration-based timing
