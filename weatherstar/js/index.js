@@ -152,7 +152,8 @@ const btnFullScreenClick = () => {
     enterFullScreen();
   }
 
-  if (isPlaying()) {
+  // Enable/disable wake lock based on fullscreen state, not play status
+  if (document.fullscreenElement) {
     noSleep(true);
   } else {
     noSleep(false);
