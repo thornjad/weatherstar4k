@@ -24,11 +24,6 @@ import './modules/travelforecast.js';
 import './modules/progress.js';
 import './modules/media.js';
 
-// Fullscreen recovery state tracking
-let userHasEnteredFullscreen = false;
-let fullscreenRecoveryEnabled = false;
-let fullscreenRecoveryTimeout = null;
-
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
@@ -61,7 +56,7 @@ const parseLocationFromQuery = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const lat = urlParams.get('lat');
   const lon = urlParams.get('lon');
-
+  
   if (!lat || !lon) {
     if (lat && !lon) {
       console.error('Missing longitude parameter (lon) - both lat and lon are required');
@@ -70,44 +65,44 @@ const parseLocationFromQuery = () => {
     }
     return null;
   }
-
+  
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lon);
-
+  
   // validate coordinates with detailed error logging
   if (isNaN(latitude)) {
     console.error(`Invalid latitude parameter: "${lat}" is not a valid number`);
     return null;
   }
-
+  
   if (isNaN(longitude)) {
     console.error(`Invalid longitude parameter: "${lon}" is not a valid number`);
     return null;
   }
-
+  
   if (latitude < -90 || latitude > 90) {
     console.error(`Invalid latitude parameter: ${latitude} is out of range (must be between -90 and 90)`);
     return null;
   }
-
+  
   if (longitude < -180 || longitude > 180) {
     console.error(`Invalid longitude parameter: ${longitude} is out of range (must be between -180 and 180)`);
     return null;
   }
-
+  
   return { latitude, longitude };
 };
 
 const initLocationHandling = async () => {
   // check for lat/lon query parameters first
   const queryLocation = parseLocationFromQuery();
-
+  
   if (queryLocation) {
     console.log(`Using location from query params: ${queryLocation.latitude}, ${queryLocation.longitude}`);
     getForecastFromLatLon(queryLocation.latitude, queryLocation.longitude, true);
     return;
   }
-
+  
   // fall back to automatic geolocation
   autoGeolocate();
 };
@@ -152,8 +147,7 @@ const btnFullScreenClick = () => {
     enterFullScreen();
   }
 
-  // Enable/disable wake lock based on fullscreen state, not play status
-  if (document.fullscreenElement) {
+  if (isPlaying()) {
     noSleep(true);
   } else {
     noSleep(false);
@@ -165,9 +159,6 @@ const btnFullScreenClick = () => {
 };
 
 const enterFullScreen = async () => {
-  // Track that user has manually entered fullscreen
-  userHasEnteredFullscreen = true;
-  fullscreenRecoveryEnabled = true;
   const element = document.querySelector('#divTwc');
 
   try {
@@ -186,12 +177,6 @@ const enterFullScreen = async () => {
 };
 
 const exitFullscreen = () => {
-  // Disable recovery when user manually exits fullscreen
-  fullscreenRecoveryEnabled = false;
-  if (fullscreenRecoveryTimeout) {
-    clearTimeout(fullscreenRecoveryTimeout);
-    fullscreenRecoveryTimeout = null;
-  }
   // exit full-screen
   if (document.exitFullscreen) {
     document.exitFullscreen();
@@ -366,34 +351,9 @@ const getForecastFromLatLon = (latitude, longitude) => {
 
 // check for change in full screen triggered by browser and run local functions
 const fullScreenResizeCheck = () => {
-  // Attempt to recover fullscreen mode after unexpected exit
-  const attemptFullscreenRecovery = () => {
-    if (fullscreenRecoveryTimeout) {
-      clearTimeout(fullscreenRecoveryTimeout);
-    }
-    // Wait a short delay before attempting recovery to avoid conflicts
-    fullscreenRecoveryTimeout = setTimeout(async () => {
-      if (!document.fullscreenElement && fullscreenRecoveryEnabled && userHasEnteredFullscreen) {
-        try {
-          console.log('Attempting fullscreen recovery...');
-          await enterFullScreen();
-          console.log('Fullscreen recovery successful');
-        } catch (error) {
-          console.log('Fullscreen recovery failed:', error);
-          // Disable recovery after failed attempt to avoid infinite loops
-          fullscreenRecoveryEnabled = false;
-        }
-      }
-    }, 1000); // 1 second delay
-  };
-
   if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
     // leaving full screen
     exitFullScreenVisibilityChanges();
-  }
-  // Attempt automatic recovery if user had previously entered fullscreen
-  if (fullscreenRecoveryEnabled && userHasEnteredFullscreen) {
-    attemptFullscreenRecovery();
   }
   if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
     // entering full screen
@@ -455,7 +415,3 @@ const handleVisibilityChange = () => {
     navigateFadeIntervalId = null;
   }
 };
-// Attempt fullscreen recovery when page becomes visible again
-if (!document.hidden && fullscreenRecoveryEnabled && userHasEnteredFullscreen && !document.fullscreenElement) {
-  attemptFullscreenRecovery();
-}
