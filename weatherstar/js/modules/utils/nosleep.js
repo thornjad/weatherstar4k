@@ -16,9 +16,12 @@ class NoSleep {
       this._wakeLock.addEventListener('release', () => {
         console.log('Wake Lock released.');
         this.enabled = false;
+        console.log(`_shouldStayActive = ${this._shouldStayActive}`);
         if (this._shouldStayActive) {
           console.log('Wake Lock lost but app still needs it - re-requesting...');
           setTimeout(() => this.enable(), 100);
+        } else {
+          console.log('Wake Lock released and app no longer needs it - not re-requesting');
         }
       });
     } catch (err) {
@@ -29,6 +32,7 @@ class NoSleep {
   }
 
   disable() {
+    console.log('NoSleep.disable() called - setting _shouldStayActive = false');
     this._shouldStayActive = false;
     if (this._wakeLock) {
       this._wakeLock.release();
