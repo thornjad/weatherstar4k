@@ -4,16 +4,22 @@ class NoSleep {
   constructor() {
     this.enabled = false;
     this._wakeLock = null;
+    this._shouldStayActive = false;
   }
 
   async enable() {
     try {
+      this._shouldStayActive = true;
       this._wakeLock = await navigator.wakeLock.request('screen');
       this.enabled = true;
       console.log('Wake Lock active.');
       this._wakeLock.addEventListener('release', () => {
         console.log('Wake Lock released.');
         this.enabled = false;
+        if (this._shouldStayActive) {
+          console.log('Wake Lock auto-releasing, re-requesting...');
+          setTimeout(() => this.enable(), 100);
+        }
       });
     } catch (err) {
       this.enabled = false;
@@ -23,6 +29,7 @@ class NoSleep {
   }
 
   disable() {
+    this._shouldStayActive = false;
     if (this._wakeLock) {
       this._wakeLock.release();
       this._wakeLock = null;
