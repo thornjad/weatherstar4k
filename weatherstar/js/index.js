@@ -43,6 +43,7 @@ const init = () => {
   });
   // local change detection when exiting full screen via ESC key (or other non button click methods)
   window.addEventListener('resize', fullScreenResizeCheck);
+  document.addEventListener('fullscreenchange', fullScreenResizeCheck);
   fullScreenResizeCheck.wasFull = false;
   document.addEventListener('keydown', documentKeydown);
   postMessage('navButton', 'play');
@@ -56,7 +57,7 @@ const parseLocationFromQuery = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const lat = urlParams.get('lat');
   const lon = urlParams.get('lon');
-  
+
   if (!lat || !lon) {
     if (lat && !lon) {
       console.error('Missing longitude parameter (lon) - both lat and lon are required');
@@ -65,44 +66,44 @@ const parseLocationFromQuery = () => {
     }
     return null;
   }
-  
+
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lon);
-  
+
   // validate coordinates with detailed error logging
   if (isNaN(latitude)) {
     console.error(`Invalid latitude parameter: "${lat}" is not a valid number`);
     return null;
   }
-  
+
   if (isNaN(longitude)) {
     console.error(`Invalid longitude parameter: "${lon}" is not a valid number`);
     return null;
   }
-  
+
   if (latitude < -90 || latitude > 90) {
     console.error(`Invalid latitude parameter: ${latitude} is out of range (must be between -90 and 90)`);
     return null;
   }
-  
+
   if (longitude < -180 || longitude > 180) {
     console.error(`Invalid longitude parameter: ${longitude} is out of range (must be between -180 and 180)`);
     return null;
   }
-  
+
   return { latitude, longitude };
 };
 
 const initLocationHandling = async () => {
   // check for lat/lon query parameters first
   const queryLocation = parseLocationFromQuery();
-  
+
   if (queryLocation) {
     console.log(`Using location from query params: ${queryLocation.latitude}, ${queryLocation.longitude}`);
     getForecastFromLatLon(queryLocation.latitude, queryLocation.longitude, true);
     return;
   }
-  
+
   // fall back to automatic geolocation
   autoGeolocate();
 };
@@ -147,12 +148,6 @@ const btnFullScreenClick = () => {
     enterFullScreen();
   }
 
-  if (isPlaying()) {
-    noSleep(true);
-  } else {
-    noSleep(false);
-  }
-
   updateFullScreenNavigate();
 
   return false;
@@ -195,6 +190,26 @@ const exitFullScreenVisibilityChanges = () => {
   divTwcBottom.classList.remove('hidden');
   divTwcBottom.classList.add('visible');
 };
+
+let lastWakeLockState = null;
+
+const updateWakeLockState = () => {
+  const shouldBeActive = isPlaying() && document.fullscreenElement;
+
+  if (shouldBeActive !== lastWakeLockState) {
+    lastWakeLockState = shouldBeActive;
+
+    setTimeout(() => {
+      if (shouldBeActive) {
+        noSleep(true);
+      } else {
+        noSleep(false);
+      }
+    }, 10);
+  }
+};
+
+window.updateWakeLockState = updateWakeLockState;
 
 const btnNavigateMenuClick = () => {
   postMessage('navButton', 'menu');
@@ -350,18 +365,24 @@ const getForecastFromLatLon = (latitude, longitude) => {
 };
 
 // check for change in full screen triggered by browser and run local functions
+let fullScreenDebounceTimeout = null;
+
 const fullScreenResizeCheck = () => {
-  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
-    // leaving full screen
-    exitFullScreenVisibilityChanges();
-  }
-  if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
-    // entering full screen
-    // can't do much here because a UI interaction is required to change the full screen div element
+  if (fullScreenDebounceTimeout) {
+    clearTimeout(fullScreenDebounceTimeout);
   }
 
-  // store state of fullscreen element for next change detection
-  fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
+  fullScreenDebounceTimeout = setTimeout(() => {
+    if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
+      exitFullScreenVisibilityChanges();
+      updateWakeLockState();
+    }
+    if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
+      setTimeout(() => updateWakeLockState(), 100);
+    }
+
+    fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
+  }, 100);
 };
 
 // expose functions for external use
@@ -416,55 +437,3 @@ const handleVisibilityChange = () => {
   }
 };
 
-// Conservative fullscreen recovery - only attempt if user was previously in fullscreen
-let userWasInFullscreen = false;
-let fullscreenRecoveryTimeout = null;
-
-// Track when user enters fullscreen manually
-const originalEnterFullScreen = enterFullScreen;
-enterFullScreen = async () => {
-  userWasInFullscreen = true;
-  return originalEnterFullScreen();
-};
-
-// Track when user exits fullscreen manually  
-const originalExitFullscreen = exitFullscreen;
-exitFullscreen = () => {
-  userWasInFullscreen = false;
-  if (fullscreenRecoveryTimeout) {
-    clearTimeout(fullscreenRecoveryTimeout);
-    fullscreenRecoveryTimeout = null;
-  }
-  return originalExitFullscreen();
-};
-
-// Conservative recovery attempt
-const attemptFullscreenRecovery = () => {
-  if (fullscreenRecoveryTimeout) {
-    clearTimeout(fullscreenRecoveryTimeout);
-  }
-  
-  fullscreenRecoveryTimeout = setTimeout(async () => {
-    if (!document.fullscreenElement && userWasInFullscreen) {
-      try {
-        console.log('Attempting conservative fullscreen recovery...');
-        await enterFullScreen();
-        console.log('Fullscreen recovery successful');
-      } catch (error) {
-        console.log('Fullscreen recovery failed:', error);
-        userWasInFullscreen = false; // Stop trying after failure
-      }
-    }
-  }, 2000); // 2 second delay
-};
-
-// Add recovery to existing fullScreenResizeCheck
-const originalFullScreenResizeCheck = fullScreenResizeCheck;
-fullScreenResizeCheck = () => {
-  originalFullScreenResizeCheck();
-  
-  // If we just lost fullscreen and user was previously in it, attempt recovery
-  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement && userWasInFullscreen) {
-    attemptFullscreenRecovery();
-  }
-};
