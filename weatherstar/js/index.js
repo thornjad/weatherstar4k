@@ -193,6 +193,8 @@ const exitFullScreenVisibilityChanges = () => {
 
 const updateWakeLockState = () => {
   const shouldBeActive = isPlaying() && document.fullscreenElement;
+  console.log('updateWakeLockState called:', { isPlaying: isPlaying(), fullscreenElement: !!document.fullscreenElement, shouldBeActive });
+  console.trace('Call stack:');
 
   setTimeout(() => {
     if (shouldBeActive) {
