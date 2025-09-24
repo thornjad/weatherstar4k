@@ -189,8 +189,6 @@ const exitFullScreenVisibilityChanges = () => {
   const divTwcBottom = document.querySelector('#divTwcBottom');
   divTwcBottom.classList.remove('hidden');
   divTwcBottom.classList.add('visible');
-
-  updateWakeLockState();
 };
 
 const updateWakeLockState = () => {
