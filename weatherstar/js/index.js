@@ -194,11 +194,13 @@ const exitFullScreenVisibilityChanges = () => {
 const updateWakeLockState = () => {
   const shouldBeActive = isPlaying() && document.fullscreenElement;
 
-  if (shouldBeActive) {
-    noSleep(true);
-  } else {
-    noSleep(false);
-  }
+  setTimeout(() => {
+    if (shouldBeActive) {
+      noSleep(true);
+    } else {
+      noSleep(false);
+    }
+  }, 10);
 };
 
 window.updateWakeLockState = updateWakeLockState;
@@ -369,11 +371,11 @@ const fullScreenResizeCheck = () => {
       exitFullScreenVisibilityChanges();
     }
     if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
-      updateWakeLockState();
+      setTimeout(() => updateWakeLockState(), 100);
     }
 
     fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
-  }, 50);
+  }, 100);
 };
 
 // expose functions for external use
