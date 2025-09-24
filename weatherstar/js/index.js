@@ -380,9 +380,12 @@ const fullScreenResizeCheck = () => {
 
   fullScreenDebounceTimeout = setTimeout(() => {
     if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
+      console.log('Detected exit from fullscreen');
       exitFullScreenVisibilityChanges();
+      updateWakeLockState();
     }
     if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
+      console.log('Detected enter to fullscreen');
       setTimeout(() => updateWakeLockState(), 100);
     }
 
