@@ -147,7 +147,6 @@ const btnFullScreenClick = () => {
     enterFullScreen();
   }
 
-  updateWakeLockState();
   updateFullScreenNavigate();
 
   return false;
