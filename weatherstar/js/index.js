@@ -153,7 +153,7 @@ const btnFullScreenClick = () => {
   return false;
 };
 
-let enterFullScreen = async () => {
+const enterFullScreen = async () => {
   const element = document.querySelector('#divTwc');
 
   try {
@@ -425,55 +425,8 @@ const handleVisibilityChange = () => {
   }
 };
 
-// Conservative fullscreen recovery - only attempt if user was previously in fullscreen
-let userWasInFullscreen = false;
-let fullscreenRecoveryTimeout = null;
-
-// Track when user enters fullscreen manually
-const originalEnterFullScreen = enterFullScreen;
-enterFullScreen = async () => {
-  userWasInFullscreen = true;
-  return originalEnterFullScreen();
-};
-
-// Track when user exits fullscreen manually
-const originalExitFullscreen = exitFullscreen;
-exitFullscreen = () => {
-  userWasInFullscreen = false;
-  if (fullscreenRecoveryTimeout) {
-    clearTimeout(fullscreenRecoveryTimeout);
-    fullscreenRecoveryTimeout = null;
-  }
-  return originalExitFullscreen();
-};
-
-const attemptFullscreenRecovery = () => {
-  if (fullscreenRecoveryTimeout) {
-    clearTimeout(fullscreenRecoveryTimeout);
-  }
-
-  fullscreenRecoveryTimeout = setTimeout(async () => {
-    if (!document.fullscreenElement && userWasInFullscreen) {
-      try {
-        console.log('Attempting conservative fullscreen recovery...');
-        await enterFullScreen();
-        console.log('Fullscreen recovery successful');
-        updateWakeLockState();
-      } catch (error) {
-        console.log('Fullscreen recovery failed:', error);
-        userWasInFullscreen = false;
-      }
-    }
-  }, 2000);
-};
-
-// Add recovery to existing fullScreenResizeCheck
-const originalFullScreenResizeCheck = fullScreenResizeCheck;
-fullScreenResizeCheck = () => {
-  originalFullScreenResizeCheck();
-
-  // If we just lost fullscreen and user was previously in it, attempt recovery
-  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement && userWasInFullscreen) {
-    attemptFullscreenRecovery();
+const fullScreenResizeCheck = () => {
+  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
+    updateWakeLockState();
   }
 };
