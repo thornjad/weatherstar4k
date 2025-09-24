@@ -153,7 +153,7 @@ const btnFullScreenClick = () => {
   return false;
 };
 
-const enterFullScreen = async () => {
+let enterFullScreen = async () => {
   const element = document.querySelector('#divTwc');
 
   try {
