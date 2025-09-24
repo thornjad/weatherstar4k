@@ -17,7 +17,7 @@ class NoSleep {
         console.log('Wake Lock released.');
         this.enabled = false;
         if (this._shouldStayActive) {
-          console.log('Wake Lock auto-releasing, re-requesting...');
+          console.log('Wake Lock lost but app still needs it - re-requesting...');
           setTimeout(() => this.enable(), 100);
         }
       });
