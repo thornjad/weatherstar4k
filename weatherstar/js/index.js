@@ -361,15 +361,11 @@ const getForecastFromLatLon = (latitude, longitude) => {
 // check for change in full screen triggered by browser and run local functions
 const fullScreenResizeCheck = () => {
   if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
-    // leaving full screen
     exitFullScreenVisibilityChanges();
   }
   if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
-    // entering full screen
-    // can't do much here because a UI interaction is required to change the full screen div element
   }
 
-  // store state of fullscreen element for next change detection
   fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
 };
 
@@ -425,8 +421,3 @@ const handleVisibilityChange = () => {
   }
 };
 
-const fullScreenResizeCheck = () => {
-  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
-    updateWakeLockState();
-  }
-};
