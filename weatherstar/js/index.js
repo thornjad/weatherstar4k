@@ -191,18 +191,25 @@ const exitFullScreenVisibilityChanges = () => {
   divTwcBottom.classList.add('visible');
 };
 
+let lastWakeLockState = null;
+
 const updateWakeLockState = () => {
   const shouldBeActive = isPlaying() && document.fullscreenElement;
   console.log('updateWakeLockState called:', { isPlaying: isPlaying(), fullscreenElement: !!document.fullscreenElement, shouldBeActive });
   console.trace('Call stack:');
 
-  setTimeout(() => {
-    if (shouldBeActive) {
-      noSleep(true);
-    } else {
-      noSleep(false);
-    }
-  }, 10);
+  // Only change wake lock state if it's actually different
+  if (shouldBeActive !== lastWakeLockState) {
+    lastWakeLockState = shouldBeActive;
+
+    setTimeout(() => {
+      if (shouldBeActive) {
+        noSleep(true);
+      } else {
+        noSleep(false);
+      }
+    }, 10);
+  }
 };
 
 window.updateWakeLockState = updateWakeLockState;
