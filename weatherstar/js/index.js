@@ -192,14 +192,17 @@ const exitFullScreenVisibilityChanges = () => {
 };
 
 let lastWakeLockState = null;
+let updateWakeLockStateCallCount = 0;
 
 const updateWakeLockState = () => {
+  updateWakeLockStateCallCount++;
   const shouldBeActive = isPlaying() && document.fullscreenElement;
-  console.log('updateWakeLockState called:', { isPlaying: isPlaying(), fullscreenElement: !!document.fullscreenElement, shouldBeActive });
+  console.log(`updateWakeLockState call #${updateWakeLockStateCallCount}:`, { isPlaying: isPlaying(), fullscreenElement: !!document.fullscreenElement, shouldBeActive });
   console.trace('Call stack:');
 
   // Only change wake lock state if it's actually different
   if (shouldBeActive !== lastWakeLockState) {
+    console.log(`Wake lock state changing from ${lastWakeLockState} to ${shouldBeActive}`);
     lastWakeLockState = shouldBeActive;
 
     setTimeout(() => {
@@ -209,6 +212,8 @@ const updateWakeLockState = () => {
         noSleep(false);
       }
     }, 10);
+  } else {
+    console.log(`Wake lock state unchanged (${shouldBeActive}), skipping`);
   }
 };
 
