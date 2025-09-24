@@ -48,20 +48,16 @@ class NoSleep {
 let wakeLock = false;
 
 const noSleep = (enable = false) => {
-  console.log(`noSleep called with enable=${enable}, current wakeLock=${wakeLock}`);
-
   // get a nosleep controller
   if (!noSleep.controller) {
     noSleep.controller = new NoSleep();
   }
   // don't call anything if the states match
   if (wakeLock === enable) {
-    console.log('noSleep: states match, returning early');
     return false;
   }
   // store the value
   wakeLock = enable;
-  console.log(`noSleep: calling ${enable ? 'enable' : 'disable'}()`);
   // call the function
   if (enable) {
     return noSleep.controller.enable();
