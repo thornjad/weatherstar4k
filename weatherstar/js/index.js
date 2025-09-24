@@ -43,6 +43,7 @@ const init = () => {
   });
   // local change detection when exiting full screen via ESC key (or other non button click methods)
   window.addEventListener('resize', fullScreenResizeCheck);
+  document.addEventListener('fullscreenchange', fullScreenResizeCheck);
   fullScreenResizeCheck.wasFull = false;
   document.addEventListener('keydown', documentKeydown);
   postMessage('navButton', 'play');
@@ -363,6 +364,7 @@ const fullScreenResizeCheck = () => {
     exitFullScreenVisibilityChanges();
   }
   if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
+    updateWakeLockState();
   }
 
   fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
