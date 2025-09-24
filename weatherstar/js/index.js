@@ -193,7 +193,6 @@ const exitFullScreenVisibilityChanges = () => {
 
 const updateWakeLockState = () => {
   const shouldBeActive = isPlaying() && document.fullscreenElement;
-  console.log('updateWakeLockState called:', { isPlaying: isPlaying(), fullscreenElement: !!document.fullscreenElement, shouldBeActive });
 
   if (shouldBeActive) {
     noSleep(true);
@@ -358,19 +357,23 @@ const getForecastFromLatLon = (latitude, longitude) => {
 };
 
 // check for change in full screen triggered by browser and run local functions
+let fullScreenDebounceTimeout = null;
+
 const fullScreenResizeCheck = () => {
-  console.log('fullScreenResizeCheck called:', { wasFull: fullScreenResizeCheck.wasFull, isFull: !!document.fullscreenElement });
-
-  if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
-    console.log('Detected exit from fullscreen');
-    exitFullScreenVisibilityChanges();
-  }
-  if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
-    console.log('Detected enter to fullscreen');
-    updateWakeLockState();
+  if (fullScreenDebounceTimeout) {
+    clearTimeout(fullScreenDebounceTimeout);
   }
 
-  fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
+  fullScreenDebounceTimeout = setTimeout(() => {
+    if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
+      exitFullScreenVisibilityChanges();
+    }
+    if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
+      updateWakeLockState();
+    }
+
+    fullScreenResizeCheck.wasFull = !!document.fullscreenElement;
+  }, 50);
 };
 
 // expose functions for external use
