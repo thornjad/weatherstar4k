@@ -5,6 +5,14 @@ class NoSleep {
     this.enabled = false;
     this._wakeLock = null;
     this._shouldStayActive = false;
+
+    // Listen for visibility changes to re-request wake lock when page becomes visible
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this._shouldStayActive && !this.enabled) {
+        console.log('Page became visible and wake lock is needed - re-requesting...');
+        this.enable();
+      }
+    });
   }
 
   async enable() {
@@ -19,7 +27,13 @@ class NoSleep {
         console.log(`_shouldStayActive = ${this._shouldStayActive}`);
         if (this._shouldStayActive) {
           console.log('Wake Lock lost but app still needs it - re-requesting...');
-          setTimeout(() => this.enable(), 100);
+          setTimeout(() => {
+            if (!document.hidden) {
+              this.enable();
+            } else {
+              console.log('Page is hidden, not re-requesting wake lock');
+            }
+          }, 100);
         } else {
           console.log('Wake Lock released and app no longer needs it - not re-requesting');
         }
