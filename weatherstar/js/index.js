@@ -195,23 +195,17 @@ let lastWakeLockState = null;
 
 const updateWakeLockState = () => {
   const shouldBeActive = isPlaying() && document.fullscreenElement;
-  console.log(`updateWakeLockState: isPlaying=${isPlaying()}, fullscreenElement=${!!document.fullscreenElement}, shouldBeActive=${shouldBeActive}`);
 
   if (shouldBeActive !== lastWakeLockState) {
-    console.log(`Wake lock state changing from ${lastWakeLockState} to ${shouldBeActive}`);
     lastWakeLockState = shouldBeActive;
 
     setTimeout(() => {
       if (shouldBeActive) {
-        console.log('Calling noSleep(true)');
         noSleep(true);
       } else {
-        console.log('Calling noSleep(false)');
         noSleep(false);
       }
     }, 10);
-  } else {
-    console.log(`Wake lock state unchanged (${shouldBeActive}), skipping`);
   }
 };
 
@@ -380,12 +374,10 @@ const fullScreenResizeCheck = () => {
 
   fullScreenDebounceTimeout = setTimeout(() => {
     if (fullScreenResizeCheck.wasFull && !document.fullscreenElement) {
-      console.log('Detected exit from fullscreen');
       exitFullScreenVisibilityChanges();
       updateWakeLockState();
     }
     if (!fullScreenResizeCheck.wasFull && document.fullscreenElement) {
-      console.log('Detected enter to fullscreen');
       setTimeout(() => updateWakeLockState(), 100);
     }
 
