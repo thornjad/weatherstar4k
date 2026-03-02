@@ -1,6 +1,23 @@
 import { removeDopplerRadarImageNoise } from './radar-utils.js';
 import { RADAR_FULL_SIZE, RADAR_FINAL_SIZE } from './radar-constants.js';
 
+// crop canvas dimensions (constants)
+const CROP_WIDTH = 240;
+const CROP_HEIGHT = 163;
+
+// reusable OffscreenCanvases -- allocated once, reused on every message
+const radarCanvas = new OffscreenCanvas(RADAR_FULL_SIZE.width, RADAR_FULL_SIZE.height);
+const radarContext = radarCanvas.getContext('2d');
+radarContext.imageSmoothingEnabled = false;
+
+const croppedRadarCanvas = new OffscreenCanvas(CROP_WIDTH, CROP_HEIGHT);
+const croppedRadarContext = croppedRadarCanvas.getContext('2d', { willReadFrequently: true });
+croppedRadarContext.imageSmoothingEnabled = false;
+
+const stretchCanvas = new OffscreenCanvas(RADAR_FINAL_SIZE.width, RADAR_FINAL_SIZE.height);
+const stretchContext = stretchCanvas.getContext('2d', { willReadFrequently: true });
+stretchContext.imageSmoothingEnabled = false;
+
 onmessage = async (e) => {
 	const {
 		url, RADAR_HOST, OVERRIDES, radarSourceXY,
@@ -12,16 +29,11 @@ onmessage = async (e) => {
 
 	// calculate offsets and sizes
 	const radarSource = {
-		width: 240,
-		height: 163,
+		width: CROP_WIDTH,
+		height: CROP_HEIGHT,
 		x: Math.round(radarSourceXY.x / 2),
 		y: Math.round(radarSourceXY.y / 2),
 	};
-
-	// create radar context for manipulation
-	const radarCanvas = new OffscreenCanvas(RADAR_FULL_SIZE.width, RADAR_FULL_SIZE.height);
-	const radarContext = radarCanvas.getContext('2d');
-	radarContext.imageSmoothingEnabled = false;
 
 	// test response
 	const radarResponse = await radarResponsePromise;
@@ -35,20 +47,17 @@ onmessage = async (e) => {
 	// draw the entire image
 	radarContext.clearRect(0, 0, RADAR_FULL_SIZE.width, RADAR_FULL_SIZE.height);
 	radarContext.drawImage(radarImgElement, 0, 0, RADAR_FULL_SIZE.width, RADAR_FULL_SIZE.height);
+	radarImgElement.close();
 
 	// crop the radar image without scaling
-	const croppedRadarCanvas = new OffscreenCanvas(radarSource.width, radarSource.height);
-	const croppedRadarContext = croppedRadarCanvas.getContext('2d');
-	croppedRadarContext.imageSmoothingEnabled = false;
+	croppedRadarContext.clearRect(0, 0, CROP_WIDTH, CROP_HEIGHT);
 	croppedRadarContext.drawImage(radarCanvas, radarSource.x, radarSource.y, croppedRadarCanvas.width, croppedRadarCanvas.height, 0, 0, croppedRadarCanvas.width, croppedRadarCanvas.height);
 
 	// clean the image
 	removeDopplerRadarImageNoise(croppedRadarContext);
 
 	// stretch the radar image
-	const stretchCanvas = new OffscreenCanvas(RADAR_FINAL_SIZE.width, RADAR_FINAL_SIZE.height);
-	const stretchContext = stretchCanvas.getContext('2d', { willReadFrequently: true });
-	stretchContext.imageSmoothingEnabled = false;
+	stretchContext.clearRect(0, 0, RADAR_FINAL_SIZE.width, RADAR_FINAL_SIZE.height);
 	stretchContext.drawImage(croppedRadarCanvas, 0, 0, radarSource.width, radarSource.height, 0, 0, RADAR_FINAL_SIZE.width, RADAR_FINAL_SIZE.height);
 
 	const stretchedRadar = stretchCanvas.transferToImageBitmap();

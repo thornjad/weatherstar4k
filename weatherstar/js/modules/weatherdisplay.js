@@ -4,6 +4,7 @@ import STATUS from './status.js';
 import { displayNavMessage, isPlaying, msg, updateStatus } from './navigation.js';
 import { formatDate, formatTimeWithSeconds24Hour } from './utils/date-utils.js';
 import { clockManager, timingManager } from './timing-manager.js';
+import { log, warn } from './utils/log.js';
 
 class WeatherDisplay {
   constructor(navId, elemId, name) {
@@ -20,6 +21,8 @@ class WeatherDisplay {
     this.okToDrawCurrentDateTime = true;
     this.showOnProgress = true;
     this.autoRefreshHandle = null;
+    // bound once so timingManager.addCallback doesn't allocate a new function object on each display activation
+    this._boundCheckNavigation = this.checkNavigation.bind(this);
 
     // Retry and backoff properties
     this.retryAttempts = 0;
@@ -175,7 +178,7 @@ class WeatherDisplay {
 
     // Register with timing manager for navigation
     if (this.timing && this.timing.totalScreens > 0) {
-      timingManager.addCallback(`nav-${this.navId}`, this.checkNavigation.bind(this), this.timing.baseDelay || 1000);
+      timingManager.addCallback(`nav-${this.navId}`, this._boundCheckNavigation, this.timing.baseDelay || 1000);
     }
 
     // Register with clock manager if needed
@@ -249,7 +252,7 @@ class WeatherDisplay {
     if (this.screenIndexChange) {
       this.screenIndexChange(this.screenIndex);
     } else {
-      await this.drawCanvas();
+      this.drawCanvas();
     }
   }
 
@@ -336,19 +339,24 @@ class WeatherDisplay {
   setAutoReload() {
     // refresh time can be forced by the user (for hazards)
     const refreshTime = this.refreshTime ?? this.baseRefreshTime;
-    this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => {
-      // Check for staleness if this display has a staleness check method
-      if (typeof this.checkAndRefreshStaleData === 'function') {
-        this.checkAndRefreshStaleData().catch(error => {
-          console.warn(`Staleness check failed for ${this.name}:`, error);
-          // Fall back to regular refresh if staleness check fails
+    this.autoRefreshHandle =
+      this.autoRefreshHandle ??
+      setInterval(() => {
+        if (document.hidden) {
+          return;
+        }
+        // Check for staleness if this display has a staleness check method
+        if (typeof this.checkAndRefreshStaleData === 'function') {
+          this.checkAndRefreshStaleData().catch(error => {
+            warn(`Staleness check failed for ${this.name}:`, error);
+            // Fall back to regular refresh if staleness check fails
+            this.getData(false, true);
+          });
+        } else {
+          // Regular refresh for displays without staleness checking
           this.getData(false, true);
-        });
-      } else {
-        // Regular refresh for displays without staleness checking
-        this.getData(false, true);
-      }
-    }, refreshTime);
+        }
+      }, refreshTime);
   }
 
   // Handle data loading failures with exponential backoff
@@ -359,13 +367,15 @@ class WeatherDisplay {
       const backoffDelays = [30_000, 120_000, 480_000];
       const retryDelay = backoffDelays[this.retryAttempts - 1] || backoffDelays[backoffDelays.length - 1];
 
-      console.log(`Display ${this.name}: Retrying in ${retryDelay / 1000}s (attempt ${this.retryAttempts}/${this.maxRetryAttempts})`);
+      log(
+        `Display ${this.name}: Retrying in ${retryDelay / 1000}s (attempt ${this.retryAttempts}/${this.maxRetryAttempts})`
+      );
 
       setTimeout(() => {
         this.getData(this.weatherParameters, true);
       }, retryDelay);
     } else {
-      console.log(`Display ${this.name}: Max retry attempts reached, will retry on next auto-refresh cycle`);
+      log(`Display ${this.name}: Max retry attempts reached, will retry on next auto-refresh cycle`);
       // Reset retry attempts for next auto-refresh cycle
       this.retryAttempts = 0;
     }
