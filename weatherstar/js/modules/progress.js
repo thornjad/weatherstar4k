@@ -13,6 +13,7 @@ class Progress extends WeatherDisplay {
     // setup event listener for dom-required initialization
     document.addEventListener('DOMContentLoaded', () => {
       this.version = document.querySelector('#version').innerHTML.replace(/\s/g, '');
+      this.elem.querySelector('.title .bottom').textContent = `v${this.version}`;
       this.elem.querySelector('.container').addEventListener('click', this.lineClick.bind(this));
     });
 

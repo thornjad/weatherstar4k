@@ -19,6 +19,10 @@ class LocationInfo extends WeatherDisplay {
       return;
     }
 
+    // set version in header from canonical source
+    const version = document.querySelector('#version')?.innerHTML.replace(/\s/g, '');
+    if (version) this.elem.querySelector('.title .bottom').textContent = `v${version}`;
+
     // Format the location name (same as what gets logged to console)
     const locationName = `${this.weatherParameters.city}, ${this.weatherParameters.state}`;
 
