@@ -19,9 +19,7 @@ class NoSleep {
       this._shouldStayActive = true;
       this._wakeLock = await navigator.wakeLock.request('screen');
       this.enabled = true;
-      console.log('Wake Lock active.');
       this._wakeLock.addEventListener('release', () => {
-        console.log('Wake Lock released.');
         this.enabled = false;
         if (this._shouldStayActive) {
           setTimeout(() => {

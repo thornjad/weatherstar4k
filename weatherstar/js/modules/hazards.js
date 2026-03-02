@@ -229,6 +229,7 @@ class Hazards extends WeatherDisplay {
     return new Promise(resolve => {
       if (this.data) {
         resolve(this.data);
+        return;
       }
       // data not available, put it into the data callback queue
       this.getDataCallbacks.push(() => resolve(this.data));
@@ -244,6 +245,7 @@ class Hazards extends WeatherDisplay {
     return new Promise(resolve => {
       if (this.data) {
         resolve(this.data);
+        return;
       }
       // data not available, put it into the data callback queue
       this.getDataCallbacks.push(() => resolve(this.data));

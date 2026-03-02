@@ -9,6 +9,7 @@ import WeatherDisplay from './weatherdisplay.js';
 import { registerDisplay } from './navigation.js';
 import { distanceKilometers, distanceMeters, pressure, temperature, windSpeed } from './utils/units.js';
 import { deriveIconFromObservation } from './utils/icon-derivation.js';
+import { log } from './utils/log.js';
 
 // some stations prefixed do not provide all the necessary data
 const skipStations = [
@@ -92,7 +93,7 @@ class CurrentWeather extends WeatherDisplay {
           const derivedIcon = deriveIconFromObservation(obs);
           if (derivedIcon) {
             obs.icon = derivedIcon;
-            console.log(
+            log(
               `Derived icon "${derivedIcon}" for station ${station.properties.stationIdentifier} (${station.properties.name})`
             );
           } else {
@@ -192,6 +193,7 @@ class CurrentWeather extends WeatherDisplay {
     return new Promise(resolve => {
       if (this.data) {
         resolve(this.data);
+        return;
       }
       // data not available, put it into the data callback queue
       this.getDataCallbacks.push(() => resolve(this.data));

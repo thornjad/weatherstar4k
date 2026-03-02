@@ -7,6 +7,8 @@ import { isPlaying, msg, registerDisplay } from './navigation.js';
 import * as utils from './radar-utils.js';
 import { version } from './progress.js';
 import setTiles from './radar-tiles.js';
+import { RADAR_FINAL_SIZE } from './radar-constants.js';
+import { log, warn } from './utils/log.js';
 
 // Empty overrides object for static version
 const OVERRIDES = {};
@@ -21,6 +23,19 @@ class Radar extends WeatherDisplay {
 
     // set max images
     this.dopplerRadarImageMax = 6;
+
+    // persistent canvas elements for radar frames
+    this.frameCanvases = [];
+    this.frameContexts = [];
+    for (let i = 0; i < this.dopplerRadarImageMax; i++) {
+      const canvas = document.createElement('canvas');
+      canvas.width = RADAR_FINAL_SIZE.width;
+      canvas.height = RADAR_FINAL_SIZE.height;
+      canvas.classList.add('frame');
+      const ctx = canvas.getContext('bitmaprenderer');
+      this.frameCanvases.push(canvas);
+      this.frameContexts.push(ctx);
+    }
 
     // Staleness tracking
     this.lastDataRefresh = null;
@@ -90,7 +105,7 @@ class Radar extends WeatherDisplay {
             // get a list of available radars with retry logic
             return fetchAsync(url, 'text', { retryCount: 3 });
           } catch (error) {
-            console.log('Unable to get list of radars after retries');
+            log('Unable to get list of radars after retries');
             console.error(error);
             return false;
           }
@@ -134,9 +149,9 @@ class Radar extends WeatherDisplay {
     });
 
     // Load the most recent doppler radar images.
-    let radarInfo;
+    const times = [];
     try {
-      radarInfo = await Promise.all(
+      await Promise.all(
         urls.map(async (url, index) => {
           const processedRadar = await this.workers[index].processRadar({
             url,
@@ -157,41 +172,33 @@ class Radar extends WeatherDisplay {
             minute: parseInt(minute),
           });
 
-          const onscreenCanvas = document.createElement('canvas');
-          onscreenCanvas.width = processedRadar.width;
-          onscreenCanvas.height = processedRadar.height;
-          const onscreenContext = onscreenCanvas.getContext('bitmaprenderer');
-          onscreenContext.transferFromImageBitmap(processedRadar);
+          // transfer bitmap directly to persistent canvas
+          this.frameContexts[index].transferFromImageBitmap(processedRadar);
+          processedRadar.close();
 
-          const dataUrl = onscreenCanvas.toDataURL();
-
-          const elem = this.fillTemplate('frame', {
-            map: { type: 'img', src: dataUrl },
-          });
-          return {
-            time,
-            elem,
-          };
+          times[index] = time;
         })
       );
     } catch (error) {
-      console.log('Radar processing failed:', error.message);
+      console.error('Radar processing failed:', error.message);
       this.setStatus(STATUS.failed);
       return;
     }
 
-    // put the elements in the container
+    // put the persistent canvases in the container (only re-append if needed)
     const scrollArea = this.elem.querySelector('.scroll-area');
-    scrollArea.innerHTML = '';
-    scrollArea.append(...radarInfo.map(r => r.elem));
+    if (scrollArea.firstChild !== this.frameCanvases[0]) {
+      scrollArea.innerHTML = '';
+      scrollArea.append(...this.frameCanvases);
+    }
 
     // set max length
-    this.timing.totalScreens = radarInfo.length;
+    this.timing.totalScreens = times.length;
 
-    this.times = radarInfo.map(radar => radar.time);
+    this.times = times;
     // Start with the latest frame (index 5)
     this.screenIndex = 5;
-    
+
     // Record successful data refresh time
     this.lastDataRefresh = Date.now();
     this.setStatus(STATUS.loaded);
@@ -212,12 +219,12 @@ class Radar extends WeatherDisplay {
     // 1. We haven't refreshed data in maxDataAge (30 minutes), OR
     // 2. The newest radar image is more than 15 minutes old
     const isRefreshStale = dataAge > this.maxDataAge;
-    const isRadarContentStale = radarAge > (15 * 60 * 1000); // 15 minutes
+    const isRadarContentStale = radarAge > 15 * 60 * 1000; // 15 minutes
 
     if (isRefreshStale || isRadarContentStale) {
       const refreshAgeMin = Math.round(dataAge / 60000);
       const radarAgeMin = Math.round(radarAge / 60000);
-      console.log(`Radar data is stale: last refresh ${refreshAgeMin}min ago, newest image ${radarAgeMin}min old`);
+      log(`Radar data is stale: last refresh ${refreshAgeMin}min ago, newest image ${radarAgeMin}min old`);
       return true;
     }
 
@@ -227,19 +234,18 @@ class Radar extends WeatherDisplay {
   // Force refresh radar data if stale
   async checkAndRefreshStaleData() {
     if (this.isDataStale() && this.loadingStatus !== STATUS.loading) {
-      console.log('Forcing radar refresh due to stale data');
       await this.getData(this.weatherParameters, true);
     }
   }
 
   async drawCanvas() {
     super.drawCanvas();
-    
+
     // Check for stale data and refresh if needed (non-blocking)
     this.checkAndRefreshStaleData().catch(error => {
-      console.warn('Staleness check failed:', error);
+      warn('Staleness check failed:', error);
     });
-    
+
     const time = formatTimeSimple24Hour(this.times[this.screenIndex]);
     const timePadded = time.length >= 5 ? time : `&nbsp;${time}`;
     this.elem.querySelector('.header .right .time').innerHTML = timePadded;
@@ -344,7 +350,7 @@ const radarWorker = () => {
       };
 
       // Handle worker errors
-      worker.onerror = (error) => {
+      worker.onerror = error => {
         clearTimeout(timeoutId);
         reject(new Error(`Worker error: ${error.message}`));
       };
@@ -359,15 +365,12 @@ const radarWorker = () => {
       try {
         return await processRadar(data);
       } catch (error) {
-        console.log(`Radar worker attempt ${attempt}/${maxRetries} failed:`, error.message);
-        
         if (attempt === maxRetries) {
           throw error; // Final attempt failed
         }
 
         // Exponential backoff: 1s, 4s, 16s
         const backoffDelay = Math.pow(4, attempt - 1) * 1000;
-        console.log(`Retrying radar worker in ${backoffDelay / 1000}s...`);
         await new Promise(resolve => setTimeout(resolve, backoffDelay));
       }
     }

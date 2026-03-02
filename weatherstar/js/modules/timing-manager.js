@@ -10,6 +10,7 @@ class TimingManager {
     this.callbacks = new Map();
     this.isRunning = false;
     this.isVisible = true;
+    this._boundUpdate = this.update.bind(this);
 
     // Handle visibility changes automatically
     document.addEventListener('visibilitychange', () => {
@@ -53,7 +54,7 @@ class TimingManager {
     }
     this.isRunning = true;
     this.lastUpdate = performance.now();
-    this.animationId = requestAnimationFrame(this.update.bind(this));
+    this.animationId = requestAnimationFrame(this._boundUpdate);
   }
 
   /**
@@ -95,7 +96,7 @@ class TimingManager {
     }
 
     // Always continue the animation frame loop
-    this.animationId = requestAnimationFrame(this.update.bind(this));
+    this.animationId = requestAnimationFrame(this._boundUpdate);
   }
 
   /**
