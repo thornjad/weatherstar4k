@@ -21,6 +21,7 @@ class WeatherDisplay {
     this.okToDrawCurrentDateTime = true;
     this.showOnProgress = true;
     this.autoRefreshHandle = null;
+    // bound once so timingManager.addCallback doesn't allocate a new function object on each display activation
     this._boundCheckNavigation = this.checkNavigation.bind(this);
 
     // Retry and backoff properties

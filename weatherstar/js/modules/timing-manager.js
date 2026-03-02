@@ -10,6 +10,7 @@ class TimingManager {
     this.callbacks = new Map();
     this.isRunning = false;
     this.isVisible = true;
+    // bound once so requestAnimationFrame doesn't allocate a new function object every frame
     this._boundUpdate = this.update.bind(this);
 
     // Handle visibility changes automatically
