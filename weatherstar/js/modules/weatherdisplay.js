@@ -252,7 +252,7 @@ class WeatherDisplay {
     if (this.screenIndexChange) {
       this.screenIndexChange(this.screenIndex);
     } else {
-      await this.drawCanvas();
+      this.drawCanvas();
     }
   }
 
