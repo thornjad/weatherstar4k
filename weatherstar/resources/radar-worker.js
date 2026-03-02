@@ -11,11 +11,11 @@ const radarContext = radarCanvas.getContext('2d');
 radarContext.imageSmoothingEnabled = false;
 
 const croppedRadarCanvas = new OffscreenCanvas(CROP_WIDTH, CROP_HEIGHT);
-const croppedRadarContext = croppedRadarCanvas.getContext('2d');
+const croppedRadarContext = croppedRadarCanvas.getContext('2d', { willReadFrequently: true });
 croppedRadarContext.imageSmoothingEnabled = false;
 
 const stretchCanvas = new OffscreenCanvas(RADAR_FINAL_SIZE.width, RADAR_FINAL_SIZE.height);
-const stretchContext = stretchCanvas.getContext('2d');
+const stretchContext = stretchCanvas.getContext('2d', { willReadFrequently: true });
 stretchContext.imageSmoothingEnabled = false;
 
 onmessage = async (e) => {

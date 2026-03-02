@@ -172,9 +172,8 @@ class Radar extends WeatherDisplay {
             minute: parseInt(minute),
           });
 
-          // transfer bitmap directly to persistent canvas
+          // transfer bitmap directly to persistent canvas (transfer detaches the bitmap)
           this.frameContexts[index].transferFromImageBitmap(processedRadar);
-          processedRadar.close();
 
           times[index] = time;
         })
@@ -185,11 +184,17 @@ class Radar extends WeatherDisplay {
       return;
     }
 
-    // put the persistent canvases in the container (only re-append if needed)
+    // clear unused canvases beyond the actual frame count
+    for (let i = times.length; i < this.dopplerRadarImageMax; i++) {
+      this.frameContexts[i].transferFromImageBitmap(null);
+    }
+
+    // put the active canvases in the container (only re-append if count changed)
+    const activeCanvases = this.frameCanvases.slice(0, times.length);
     const scrollArea = this.elem.querySelector('.scroll-area');
-    if (scrollArea.firstChild !== this.frameCanvases[0]) {
+    if (scrollArea.childElementCount !== activeCanvases.length || scrollArea.firstChild !== activeCanvases[0]) {
       scrollArea.innerHTML = '';
-      scrollArea.append(...this.frameCanvases);
+      scrollArea.append(...activeCanvases);
     }
 
     // set max length
