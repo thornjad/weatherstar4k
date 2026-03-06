@@ -352,14 +352,6 @@ const getPosition = async () =>
   });
 
 const getForecastFromLatLon = (latitude, longitude) => {
-  // persist location in URL so it survives scheduled reloads
-  const currentUrl = new URL(window.location);
-  if (!currentUrl.searchParams.has('lat')) {
-    currentUrl.searchParams.set('lat', latitude.toFixed(4));
-    currentUrl.searchParams.set('lon', longitude.toFixed(4));
-    history.replaceState(null, '', currentUrl);
-  }
-
   doRedirectToGeometry({ y: latitude, x: longitude }, point => {
     // check if location data is available (NOAA API only covers US territories)
     if (point.properties && point.properties.relativeLocation && point.properties.relativeLocation.properties) {

@@ -12,14 +12,14 @@ I've also added an in-memory caching system for images, since the ws4kp image pr
 
 ## Usage
 
-By default, the application will request your location via the browser's geolocation API. You can also specify a location by adding `lat` and `lon` query parameters to the URL (e.g., `?lat=40.7128&lon=-74.0060`). Note that weather data is only available for locations where the NOAA API is available. If location is obtained via geolocation, the coordinates are automatically persisted to the URL so they survive page reloads.
+By default, the application will request your location via the browser's geolocation API. You can also specify a location by adding `lat` and `lon` query parameters to the URL (e.g., `?lat=40.7128&lon=-74.0060`). Note that weather data is only available for locations where the NOAA API is available.
 
 ### URL Parameters
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `lat` | (none) | Latitude. Auto-persisted to URL after geolocation resolves. |
-| `lon` | (none) | Longitude. Auto-persisted to URL after geolocation resolves. |
+| `lat` | (none) | Latitude. Latitude/longitude for the forecast location. |
+| `lon` | (none) | Longitude. Latitude/longitude for the forecast location. |
 | `reload` | `3` in kiosk mode, off otherwise | Hour (1-24) at which to reload the page daily for memory management. Use 24 for midnight. Set to `0` or `false` to disable. |
 
 The `reload` parameter allows the app to run indefinitely by resetting accumulated browser memory once per day. The reload takes about 5-10 seconds and resumes automatically. In kiosk mode, this defaults to 3 AM.
