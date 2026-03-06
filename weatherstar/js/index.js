@@ -51,6 +51,7 @@ const init = () => {
   initLocationHandling();
   window.addEventListener('beforeunload', cleanup);
   document.addEventListener('visibilitychange', handleVisibilityChange);
+  scheduleReload();
 };
 
 const parseLocationFromQuery = () => {
@@ -351,6 +352,14 @@ const getPosition = async () =>
   });
 
 const getForecastFromLatLon = (latitude, longitude) => {
+  // persist location in URL so it survives scheduled reloads
+  const currentUrl = new URL(window.location);
+  if (!currentUrl.searchParams.has('lat')) {
+    currentUrl.searchParams.set('lat', latitude.toFixed(4));
+    currentUrl.searchParams.set('lon', longitude.toFixed(4));
+    history.replaceState(null, '', currentUrl);
+  }
+
   doRedirectToGeometry({ y: latitude, x: longitude }, point => {
     // check if location data is available (NOAA API only covers US territories)
     if (point.properties && point.properties.relativeLocation && point.properties.relativeLocation.properties) {
@@ -435,5 +444,34 @@ const handleVisibilityChange = () => {
     clearTimeout(navigateFadeIntervalId);
     navigateFadeIntervalId = null;
   }
+};
+
+// daily page reload to reset browser memory accumulation
+const inKiosk = !window.locationbar.visible;
+
+const scheduleReload = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const reloadParam = urlParams.get('reload');
+
+  if (reloadParam === 'false' || reloadParam === '0') {return;}
+
+  // default: 3 AM in kiosk, disabled otherwise
+  const rawValue = reloadParam ?? (inKiosk ? '3' : null);
+  if (!rawValue) {return;}
+
+  const reloadHour = parseInt(rawValue, 10);
+  if (isNaN(reloadHour) || reloadHour < 1 || reloadHour > 24) {return;}
+
+  // 24 = midnight
+  const targetHour = reloadHour === 24 ? 0 : reloadHour;
+
+  const now = new Date();
+  const target = new Date();
+  target.setHours(targetHour, 0, 0, 0);
+  if (target <= now) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  setTimeout(() => window.location.replace(window.location.href), target - now);
 };
 

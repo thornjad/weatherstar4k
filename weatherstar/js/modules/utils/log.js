@@ -1,7 +1,7 @@
 const isDebug = () => window.DEBUG === true;
 
 const log = (...args) => {
-  if (isDebug()) console.log(...args);
+  if (isDebug()) {console.log(...args);}
 };
 
 // warnings always pass through -- they indicate operational issues

@@ -12,7 +12,62 @@ I've also added an in-memory caching system for images, since the ws4kp image pr
 
 ## Usage
 
-By default, the application will request your location via the browser's geolocation API. You can also specify a location by adding `lat` and `lon` query parameters to the URL (e.g., `?lat=40.7128&lon=-74.0060`). Note that weather data is only available for locations where the NOAA API is available.
+By default, the application will request your location via the browser's geolocation API. You can also specify a location by adding `lat` and `lon` query parameters to the URL (e.g., `?lat=40.7128&lon=-74.0060`). Note that weather data is only available for locations where the NOAA API is available. If location is obtained via geolocation, the coordinates are automatically persisted to the URL so they survive page reloads.
+
+### URL Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `lat` | (none) | Latitude. Auto-persisted to URL after geolocation resolves. |
+| `lon` | (none) | Longitude. Auto-persisted to URL after geolocation resolves. |
+| `reload` | `3` in kiosk mode, off otherwise | Hour (1-24) at which to reload the page daily for memory management. Use 24 for midnight. Set to `0` or `false` to disable. |
+
+The `reload` parameter allows the app to run indefinitely by resetting accumulated browser memory once per day. The reload takes about 5-10 seconds and resumes automatically. In kiosk mode, this defaults to 3 AM.
+
+## Running on a Raspberry Pi
+
+This application can run continuously on a Raspberry Pi as a dedicated weather display. It has been tested on a Raspberry Pi 3 with Firefox ESR.
+
+Note that Raspberry Pi normally doesn't provide location services to the browser, so you should provide `lat` and `lon` query parameters in the URL.
+
+### Kiosk mode
+
+The recommended way to run on a Pi is Firefox in kiosk mode. This provides a fullscreen display with no browser chrome, and the daily reload (default 3 AM) keeps browser memory in check for indefinite operation.
+
+```bash
+firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON&reload=3"
+```
+
+To set this up without a keyboard, create a clickable desktop shortcut:
+
+```bash
+echo '[Desktop Entry]
+Type=Application
+Name=WeatherStar
+Exec=firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON"
+Icon=firefox' > ~/Desktop/weatherstar.desktop
+chmod +x ~/Desktop/weatherstar.desktop
+```
+
+### Troubleshooting: crashes after several hours
+
+If the app crashes after running for several hours, the browser may be running out of memory. Increasing swap space can help. Make sure you understand these commands before running them, as they modify your system's storage configuration.
+
+Disable existing swap, create a 4GB swap file, and enable it:
+
+```bash
+sudo swapoff -a
+sudo dd if=/dev/zero of=/var/swap bs=1M count=4096
+sudo chmod 600 /var/swap
+sudo mkswap /var/swap
+sudo swapon /var/swap
+```
+
+To make this persistent across reboots, ensure `/var/swap` is in `/etc/fstab`:
+
+```
+/var/swap none swap sw 0 0
+```
 
 ## Acknowledgments
 
