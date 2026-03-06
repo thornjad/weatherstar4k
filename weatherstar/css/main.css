@@ -40,14 +40,12 @@ body {
   background-color: #000;
   color: #fff;
   width: 100%;
-  max-width: 640px;
 
   &:fullscreen {
     display: flex;
     align-items: center;
     justify-content: center;
     align-content: center;
-    max-width: none;
     width: 100vw;
     height: 100vh;
     background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
@@ -179,7 +177,6 @@ body {
   flex-direction: row;
   background-color: #000;
   color: #fff;
-  max-width: 640px;
 
   > div {
     padding-left: 6px;
