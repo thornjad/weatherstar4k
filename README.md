@@ -38,17 +38,6 @@ The recommended way to run on a Pi is Firefox in kiosk mode. This provides a ful
 firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON&reload=3"
 ```
 
-To set this up without a keyboard, create a clickable desktop shortcut:
-
-```bash
-echo '[Desktop Entry]
-Type=Application
-Name=WeatherStar
-Exec=firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON"
-Icon=firefox' > ~/Desktop/weatherstar.desktop
-chmod +x ~/Desktop/weatherstar.desktop
-```
-
 ### Troubleshooting: crashes after several hours
 
 If the app crashes after running for several hours, the browser may be running out of memory. Increasing swap space can help. Make sure you understand these commands before running them, as they modify your system's storage configuration.
