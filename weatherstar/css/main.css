@@ -62,9 +62,14 @@ body {
     justify-content: center;
     width: 100vw;
     height: 100vh;
+    background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
 
     #display {
       position: relative;
+    }
+
+    #divTwcBottom {
+      zoom: calc(1 / var(--app-zoom, 1));
     }
 
     .weather-display {

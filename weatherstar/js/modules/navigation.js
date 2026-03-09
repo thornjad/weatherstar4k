@@ -338,7 +338,9 @@ const resize = () => {
   const heightZoomPercent = window.innerHeight / 480;
 
   const scale = Math.min(widthZoomPercent, heightZoomPercent);
-  document.querySelector('#divTwc').style.zoom = scale;
+  const divTwc = document.querySelector('#divTwc');
+  divTwc.style.zoom = scale;
+  divTwc.style.setProperty('--app-zoom', scale);
 };
 
 // reset all statuses to loading on all displays, used to keep the progress bar accurate during refresh
