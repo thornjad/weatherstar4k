@@ -37,19 +37,22 @@ body {
 }
 
 #divTwc {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   background-color: #000;
   color: #fff;
-  width: 100%;
-  height: 100vh;
+  width: 640px;
+  margin: 0 auto;
 
   &.no-cursor {
     cursor: none;
   }
 
   &:fullscreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
     background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
 
     #display {

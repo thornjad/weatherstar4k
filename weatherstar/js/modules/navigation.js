@@ -334,11 +334,11 @@ const getDisplay = index => displays[index];
 // resize the container on a page resize
 const resize = () => {
   const targetWidth = 640;
-  const widthZoomPercent = document.querySelector('#divTwcBottom').getBoundingClientRect().width / targetWidth;
+  const widthZoomPercent = window.innerWidth / targetWidth;
   const heightZoomPercent = window.innerHeight / 480;
 
   const scale = Math.min(widthZoomPercent, heightZoomPercent);
-  document.querySelector('#container').style.zoom = scale;
+  document.querySelector('#divTwc').style.zoom = scale;
 };
 
 // reset all statuses to loading on all displays, used to keep the progress bar accurate during refresh
