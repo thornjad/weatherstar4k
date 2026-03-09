@@ -24,6 +24,8 @@ import './modules/travelforecast.js';
 import './modules/progress.js';
 import './modules/media.js';
 
+const inKiosk = !window.locationbar.visible;
+
 document.addEventListener('DOMContentLoaded', () => {
   init();
 });
@@ -36,10 +38,14 @@ const init = () => {
   document.querySelector('#NavigatePlay').addEventListener('click', btnNavigatePlayClick);
   document.querySelector('#ToggleFullScreen').addEventListener('click', btnFullScreenClick);
 
-  document.querySelector('#divTwc').addEventListener('mousemove', updateFullScreenNavigate);
+  const divTwc = document.querySelector('#divTwc');
+  divTwc.addEventListener('mousemove', updateFullScreenNavigate);
 
   // hide nav and cursor on startup
-  document.querySelector('#divTwc').classList.add('no-cursor');
+  divTwc.classList.add('no-cursor');
+  if (inKiosk) {
+    divTwc.classList.add('kiosk');
+  }
   const divTwcBottom = document.querySelector('#divTwcBottom');
   divTwcBottom.classList.remove('visible');
   divTwcBottom.classList.add('hidden');
@@ -197,7 +203,7 @@ const exitFullScreenVisibilityChanges = () => {
 let lastWakeLockState = null;
 
 const updateWakeLockState = () => {
-  const shouldBeActive = isPlaying() && document.fullscreenElement;
+  const shouldBeActive = isPlaying() && (document.fullscreenElement || inKiosk);
 
   if (shouldBeActive !== lastWakeLockState) {
     lastWakeLockState = shouldBeActive;
@@ -439,8 +445,6 @@ const handleVisibilityChange = () => {
 };
 
 // daily page reload to reset browser memory accumulation
-const inKiosk = !window.locationbar.visible;
-
 const scheduleReload = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const reloadParam = urlParams.get('reload');

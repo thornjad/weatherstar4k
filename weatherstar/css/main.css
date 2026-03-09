@@ -27,6 +27,7 @@ body {
   margin: 0;
   background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
   min-height: 100vh;
+  overflow: hidden;
 
   @media (prefers-color-scheme: dark) {
     color: #fff;
@@ -57,7 +58,8 @@ body {
       opacity 1s linear;
   }
 
-  &:fullscreen {
+  &:fullscreen,
+  &.kiosk {
     background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
 
     #display {
