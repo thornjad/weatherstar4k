@@ -39,7 +39,7 @@ body {
 #divTwc {
   display: block;
   position: relative;
-  background-color: #000;
+  background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
   color: #fff;
   width: 640px;
   margin: 0 auto;
@@ -54,7 +54,6 @@ body {
     justify-content: center;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
 
     #display {
       position: relative;
