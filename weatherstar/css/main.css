@@ -68,10 +68,6 @@ body {
       position: relative;
     }
 
-    #divTwcBottom {
-      zoom: calc(1 / var(--app-zoom, 1));
-    }
-
     .weather-display {
       background-image: none !important;
     }
@@ -116,6 +112,7 @@ body {
   width: 100%;
   position: absolute;
   bottom: 0;
+  zoom: calc(1 / var(--app-zoom, 1));
 
   @media (prefers-color-scheme: dark) {
     background-color: #303030;
