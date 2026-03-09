@@ -44,7 +44,11 @@ const init = () => {
 
   // hide nav and cursor on startup
   divTwc.classList.add('no-cursor');
-  console.log(`kiosk detection: locationbar=${window.locationbar.visible}, fullScreen=${window.fullScreen}, inKiosk=${inKiosk}`);
+  // temporary: show kiosk detection on screen for debugging
+  const debugEl = document.querySelector('#loading .instructions');
+  if (debugEl) {
+    debugEl.textContent = `locationbar=${window.locationbar.visible} fullScreen=${window.fullScreen} kiosk=${inKiosk}`;
+  }
   if (inKiosk) {
     divTwc.classList.add('kiosk');
   }
