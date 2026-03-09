@@ -25,7 +25,8 @@
 body {
   font-family: 'Star4000';
   margin: 0;
-  background-color: #000;
+  background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
+  min-height: 100vh;
 
   @media (prefers-color-scheme: dark) {
     color: #fff;
@@ -39,13 +40,20 @@ body {
 #divTwc {
   display: block;
   position: relative;
-  background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
   color: #fff;
   width: 640px;
   margin: 0 auto;
 
   &.no-cursor {
     cursor: none;
+  }
+
+  .hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      visibility 0s 1s,
+      opacity 1s linear;
   }
 
   &:fullscreen {
@@ -57,14 +65,6 @@ body {
 
     #display {
       position: relative;
-    }
-
-    .hidden {
-      visibility: hidden;
-      opacity: 0;
-      transition:
-        visibility 0s 1s,
-        opacity 1s linear;
     }
 
     .weather-display {
@@ -333,7 +333,7 @@ body {
   transition: opacity 0.1s linear;
 }
 
-#divTwc:fullscreen .hidden {
+#divTwc .hidden {
   visibility: hidden;
   opacity: 0;
   transition:
