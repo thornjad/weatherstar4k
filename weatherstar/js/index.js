@@ -37,10 +37,18 @@ const init = () => {
   document.querySelector('#ToggleFullScreen').addEventListener('click', btnFullScreenClick);
 
   document.querySelector('#divTwc').addEventListener('mousemove', () => {
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement || inKiosk) {
       updateFullScreenNavigate();
     }
   });
+
+  // in kiosk mode, hide nav and cursor immediately
+  if (inKiosk) {
+    document.querySelector('#divTwc').classList.add('no-cursor');
+    const divTwcBottom = document.querySelector('#divTwcBottom');
+    divTwcBottom.classList.remove('visible');
+    divTwcBottom.classList.add('hidden');
+  }
   // local change detection when exiting full screen via ESC key (or other non button click methods)
   window.addEventListener('resize', fullScreenResizeCheck);
   document.addEventListener('fullscreenchange', fullScreenResizeCheck);
@@ -266,7 +274,7 @@ const updateFullScreenNavigate = () => {
   }
 
   navigateFadeIntervalId = setTimeout(() => {
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement || inKiosk) {
       divTwcBottom.classList.remove('visible');
       divTwcBottom.classList.add('hidden');
       document.querySelector('#divTwc').classList.add('no-cursor');

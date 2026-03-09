@@ -24,9 +24,10 @@
 
 body {
   font-family: 'Star4000';
+  margin: 0;
+  background-color: #000;
 
   @media (prefers-color-scheme: dark) {
-    background-color: #000;
     color: #fff;
 
     a {
@@ -36,23 +37,20 @@ body {
 }
 
 #divTwc {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #000;
   color: #fff;
   width: 100%;
+  height: 100vh;
+
+  &.no-cursor {
+    cursor: none;
+  }
 
   &:fullscreen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-content: center;
-    width: 100vw;
-    height: 100vh;
     background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
-
-    &.no-cursor {
-      cursor: none;
-    }
 
     #display {
       position: relative;
