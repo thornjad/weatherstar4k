@@ -38,6 +38,7 @@ body {
 
 #divTwc {
   display: block;
+  position: relative;
   background-color: #000;
   color: #fff;
   width: 640px;
@@ -57,16 +58,6 @@ body {
 
     #display {
       position: relative;
-    }
-
-    #divTwcBottom {
-      display: flex;
-      flex-direction: row;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: #fff;
-      width: 100%;
-      position: absolute;
-      bottom: 0px;
     }
 
     .hidden {
@@ -116,9 +107,11 @@ body {
 #divTwcBottom {
   display: flex;
   flex-direction: row;
-  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   width: 100%;
+  position: absolute;
+  bottom: 0;
 
   @media (prefers-color-scheme: dark) {
     background-color: #303030;
