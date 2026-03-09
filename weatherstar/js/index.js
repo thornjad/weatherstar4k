@@ -24,7 +24,8 @@ import './modules/travelforecast.js';
 import './modules/progress.js';
 import './modules/media.js';
 
-const inKiosk = !window.locationbar.visible;
+// window.fullScreen is Firefox-specific, true in --kiosk mode
+const inKiosk = !window.locationbar.visible || (window.fullScreen && !document.fullscreenElement);
 
 document.addEventListener('DOMContentLoaded', () => {
   init();
@@ -43,6 +44,7 @@ const init = () => {
 
   // hide nav and cursor on startup
   divTwc.classList.add('no-cursor');
+  console.log(`kiosk detection: locationbar=${window.locationbar.visible}, fullScreen=${window.fullScreen}, inKiosk=${inKiosk}`);
   if (inKiosk) {
     divTwc.classList.add('kiosk');
   }
