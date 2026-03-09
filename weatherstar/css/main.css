@@ -58,6 +58,8 @@ body {
   }
 
   &:fullscreen {
+    background: linear-gradient(to bottom, #1c0a57 0%, #233270 100%);
+
     #display {
       position: relative;
     }
