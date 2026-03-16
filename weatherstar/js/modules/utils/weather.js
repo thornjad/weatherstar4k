@@ -4,7 +4,8 @@ const getPoint = async (lat, lon) => {
   try {
     return await fetchAsync(
       `https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`,
-      'json'
+      'json',
+      { retryCount: 3 }
     );
   } catch (error) {
     console.log(`Unable to get point ${lat}, ${lon}`);

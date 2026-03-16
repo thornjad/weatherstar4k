@@ -37,6 +37,13 @@ const getWeather = async (latLon, haveDataCallback) => {
     // get initial weather data
     const point = await getPoint(latLon.lat, latLon.lon);
 
+    // API failure — schedule retry instead of showing permanent error
+    if (!point) {
+      const error = new Error('API_UNAVAILABLE');
+      error.coordinates = { lat: latLon.lat, lon: latLon.lon };
+      throw error;
+    }
+
     if (typeof haveDataCallback === 'function') {
       haveDataCallback(point);
     }
@@ -93,18 +100,22 @@ const getWeather = async (latLon, haveDataCallback) => {
     displays.forEach(display => display.getData(weatherParameters));
   } catch (error) {
     console.error('Error in getWeather:', error);
-    // Show error to user
     const loadingDiv = document.querySelector('#loading');
-    if (loadingDiv) {
-      const instructionsDiv = loadingDiv.querySelector('.instructions');
+    const instructionsDiv = loadingDiv?.querySelector('.instructions');
+
+    if (error.message === 'LOCATION_NOT_SUPPORTED' && error.coordinates) {
+      const { lat, lon } = error.coordinates;
       if (instructionsDiv) {
-        if (error.message === 'LOCATION_NOT_SUPPORTED' && error.coordinates) {
-          const { lat, lon } = error.coordinates;
-          instructionsDiv.textContent = `Weather data is not available for this location (${lat.toFixed(4)}, ${lon.toFixed(4)}).`;
-        } else {
-          instructionsDiv.textContent = `Error loading weather data: ${error.message}`;
-        }
+        instructionsDiv.textContent = `Weather data is not available for this location (${lat.toFixed(4)}, ${lon.toFixed(4)}).`;
       }
+    } else {
+      // transient failure — show message and retry in 5 minutes
+      const retryMs = 5 * 60 * 1000;
+      console.log(`Weather data load failed, retrying in ${retryMs / 1000}s`);
+      if (instructionsDiv) {
+        instructionsDiv.textContent = 'Weather data temporarily unavailable. Retrying shortly\u2026';
+      }
+      setTimeout(() => getWeather(latLon, haveDataCallback), retryMs);
     }
   }
 };
