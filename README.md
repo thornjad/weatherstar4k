@@ -26,23 +26,52 @@ The `reload` parameter allows the app to run indefinitely by resetting accumulat
 
 ## Running on a Raspberry Pi
 
-This application can run continuously on a Raspberry Pi as a dedicated weather display. It has been tested on a Raspberry Pi 3 with Firefox ESR.
-
-Note that Raspberry Pi normally doesn't provide location services to the browser, so you should provide `lat` and `lon` query parameters in the URL.
+This application can run continuously on a Raspberry Pi as a dedicated weather display. It has been tested on a Raspberry Pi 3 (1GB RAM) with Firefox in kiosk mode. Note that Raspberry Pi normally doesn't provide location services to the browser, so you should provide `lat` and `lon` query parameters in the URL.
 
 ### Kiosk mode
 
-The recommended way to run on a Pi is Firefox in kiosk mode. This provides a fullscreen display with no browser chrome, and the daily reload (default 3 AM) keeps browser memory in check for indefinite operation.
+The recommended way to run on a Pi is Firefox in kiosk mode. This provides a fullscreen display with no browser chrome, and the daily reload (default 3 AM) keeps browser memory in check.
 
 ```bash
-firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON&reload=3"
+firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON"
 ```
 
-### Troubleshooting: crashes after several hours
+### Auto-restart wrapper
 
-If the app crashes after running for several hours, the browser may be running out of memory. Increasing swap space can help. Make sure you understand these commands before running them, as they modify your system's storage configuration.
+Firefox on a Pi 3 will occasionally crash due to memory pressure, typically every several hours. The application recovers gracefully on reload, so the recommended approach is a wrapper script that automatically restarts Firefox when it exits.
 
-Disable existing swap, create a 4GB swap file, and enable it:
+> **Warning**: Do not blindly copy and run scripts you find on the internet. Read and understand every line before running it on your system. This applies to the scripts below and to any code you find online.
+
+Create a script like `~/weatherstar-kiosk.sh`:
+
+```bash
+#!/bin/bash
+LOG=~/weatherstar.log
+echo "$(date): kiosk script started" >> "$LOG"
+xset s off
+xset -dpms
+xset s noblank
+while true; do
+  echo "$(date): starting firefox" >> "$LOG"
+  firefox --kiosk "https://weather.jmthornton.net?lat=YOUR_LAT&lon=YOUR_LON"
+  echo "$(date): firefox exited (code=$?), restarting in 5s" >> "$LOG"
+  sleep 5
+done
+```
+
+To start this automatically on boot, create `~/.config/autostart/weatherstar.desktop`:
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=WeatherStar
+Exec=/home/YOUR_USER/weatherstar-kiosk.sh
+X-GNOME-Autostart-enabled=true
+```
+
+### Increasing swap space
+
+The Pi 3 has only 1GB of RAM, which is marginal for a continuously running browser. Increasing swap space to 4GB helps significantly. Make sure you understand these commands before running them, as they modify your system's storage configuration.
 
 ```bash
 sudo swapoff -a
