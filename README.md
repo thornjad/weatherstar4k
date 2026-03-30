@@ -94,3 +94,7 @@ This project was initially forked from [WS4000+ (ws4kp)](https://github.com/netb
 ## Disclaimer
 
 This application is for entertainment and educational purposes only. It is NOT intended for use in life-threatening weather conditions or emergency situations, or be relied on to inform the public of such situations. Do not rely on this application for critical weather decisions. Always consult official weather services and emergency broadcasts during severe weather. This application may not provide real-time or accurate weather information. Use official weather apps and services for safety-critical decisions. The authors of this code and of [weather.jmthornton.net](https://weather.jmthornton.net) shall not be held liable in the event of injury, death or property damage that occur as a result of disregarding this warning. See the included [license](./LICENSE) for specific language limiting liability (it's the ISC license).
+
+---
+
+Found this useful? [Buy me a coffee!](https://buymeacoffee.com/jademichaelthornton)
