@@ -46,8 +46,9 @@ body {
   height: 100vh;
   overflow: hidden;
 
-  &.no-cursor {
-    cursor: none;
+  &.no-cursor,
+  &.no-cursor * {
+    cursor: none !important;
   }
 
   .hidden {
