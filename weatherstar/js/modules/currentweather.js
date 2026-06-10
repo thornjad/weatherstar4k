@@ -249,7 +249,6 @@ const parseData = data => {
     data.WindSpeed = windConverter(observations.windSpeed.value);
     data.WindDirection = directionToNSEW(observations.windDirection.value);
     data.WindGust = windConverter(observations.windGust.value);
-    data.WindSpeed = windConverter(data.WindSpeed);
     data.WindUnit = windConverter.units;
   } else {
     data.WindSpeed = null;
